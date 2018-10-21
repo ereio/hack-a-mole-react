@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 
+// redux 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
+// react router
 import { Route } from 'react-router';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom'; 
 
 // scene components
 import Login from 'views/login';
@@ -13,7 +15,26 @@ import Game from 'views/game';
 // local styling
 import './styles.css';
 
-class App extends Component {
+class App extends Component { 
+  componentDidMount() { 
+    this.redirectUnauthed();
+  }
+
+  componentDidUpdate(){ 
+    this.redirectUnauthed();
+  }
+
+  // redirects users if they attempt to access the game directly
+  redirectUnauthed(){
+    const {history} = this.props;
+    const {authenticated} = this.props.user;
+
+    console.log(history);
+    if(!authenticated && history.location.pathname != "/login"){ 
+      history.replace( '/login' );
+    }
+  }
+
   render() {
     return (
       <div className="App">
@@ -26,12 +47,8 @@ class App extends Component {
     );
   }
 }
-
-// TODO - set state needed at app layer
-const mapStateToProps = state => ({});
-
-// TODO - set actions needed at app layer
-const mapDispatchToProps = dispatch => bindActionCreators({
-}, dispatch);
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App)); 
+ 
+const mapStateToProps = state => ({user: state.user});
+ 
+// no actions needed yet at app layer
+export default withRouter(connect(mapStateToProps)(App)); 

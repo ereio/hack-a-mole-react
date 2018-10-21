@@ -1,4 +1,15 @@
 import React, { Component } from 'react';
+ 
+// redux 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+
+// react router
+import { Route } from 'react-router';
+import { withRouter } from 'react-router-dom'; 
+
+// actions
+import { createUser, loginUser, checkUsernameExists } from 'domain/user/actions';
 
 //global components
 import { MaterialButton } from 'global/components/material/button';
@@ -54,4 +65,12 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapStateToProps = state => ({ user: state.user });
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+  createUser,
+  loginUser,
+  checkUsernameExists
+}, dispatch);
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
