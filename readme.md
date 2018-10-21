@@ -11,7 +11,7 @@
     * added login scene
     * added event handler templates for login scene
     * implemented react-router for navigation
-    
+    * created authentication wall with login and the game
 ### Requirements:
 
 **Create a simple Whack-a-mole game:**

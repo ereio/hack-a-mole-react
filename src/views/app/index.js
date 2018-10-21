@@ -27,12 +27,12 @@ class App extends Component {
   // redirects users if they attempt to access the game directly
   redirectUnauthed(){
     const {history} = this.props;
-    const {authenticated} = this.props.user;
+    const {isAuthenticated} = this.props.user;
 
     console.log(history);
-    if(!authenticated && history.location.pathname != "/login"){ 
+    if(!isAuthenticated && history.location.pathname != "/login"){ 
       history.replace( '/login' );
-    }
+    } 
   }
 
   render() {

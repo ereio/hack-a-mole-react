@@ -16,19 +16,54 @@ export const CHECK_USER_EXISTS_SUCCESS = 'CHECK_USER_SUCCESS';
 export const CHECK_USER_EXISTS_FAILURE = 'CHECK_USER_FAILURE';
 
 export const createUser = (username, password) => {
+    return(dispatch) => {
+        dispatch({
+            type: CREATE_USER
+        })
 
+        dispatch({
+            type: CREATE_USER_SUCCESS
+        })
+    }
 }
 
 export const loginUser = (username, password) => {
+    return(dispatch) => {
+        dispatch({
+            type: LOGIN
+        })
 
+        dispatch({
+            type: LOGIN_SUCCESS
+        })
+    }
 }
 
 export const logoutUser = (username) => {
+    return(dispatch) => {
+        dispatch({
+            type: LOGOUT
+        })
 
+        dispatch({
+            type: LOGOUT_SUCCESS
+        })
+    }
 }
 
 export const checkUsernameExists = (username) => {
-    return (dispatch) => {
+    return(dispatch) => {
+        dispatch({
+            type: CHECK_USER_EXISTS
+        })
+
+        dispatch({
+            type: CHECK_USER_EXISTS_SUCCESS
+        })
     }
+}
+
+export const checkAuthenticated = () => {
+    
 }
 
