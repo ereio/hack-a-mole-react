@@ -1,29 +1,37 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 
-import './styles.css'; 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+
+import { Route } from 'react-router';
+import { withRouter } from 'react-router-dom';
+
+// scene components
+import Login from 'views/login';
+import Game from 'views/game';
+
+// local styling
+import './styles.css';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+          <Route exact path="/" component={Login} />
+          <Route path="/login" component={Login} />
+          <Route path="/game" component={Game} />
         </header>
       </div>
     );
   }
 }
 
-export default App;
+// TODO - set state needed at app layer
+const mapStateToProps = state => ({});
+
+// TODO - set actions needed at app layer
+const mapDispatchToProps = dispatch => bindActionCreators({
+}, dispatch);
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App)); 

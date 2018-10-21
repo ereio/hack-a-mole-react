@@ -1,0 +1,46 @@
+/* MATERIAL BUTTON STYLES */
+
+.add-button-field {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 65%;
+}
+
+.add-button-field.large {
+  width: 100%;
+}
+
+.add-button {
+  background: linear-gradient(to bottom right, rgba(26, 187, 156, 0.85), rgba(26, 187, 156, 0.55));
+  color: #fefefe;
+  border-radius: 30px;
+  display: block;
+  width: 80%;
+  min-height: 55px;
+  cursor: pointer;
+}
+
+.add-button {
+  color: #fefefe;
+  padding-top: 7.5px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.add-button:hover {
+  color: #fefefe;
+}
+
+.add-button:visited {
+  color: #fefefe;
+}
+
+.add-button:active {
+  color: #fefefe;
+  background-color: rgba(44, 226, 190, 0.85);
+}
+
+.add-button-text {
+  text-decoration: none;
+}
