@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
 
+// redux 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+
+// react router 
+import { withRouter } from 'react-router-dom';
+
 //global components
 import { MaterialButton } from 'global/components/material/button';
 
@@ -18,5 +25,7 @@ class Game extends Component {
     );
   }
 }
-
-export default Game;
+const mapStateToProps = state => ({user: state.user, game: state.game});
+ 
+// no actions needed yet at app layer
+export default withRouter(connect(mapStateToProps)(Game)); 

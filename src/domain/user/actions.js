@@ -29,12 +29,17 @@ export const createUser = (username, password) => {
 
 export const loginUser = (username, password) => {
     return(dispatch) => {
+        const user = {
+            name: "Joe Test",
+            highscore: 0,
+        };
+        
         dispatch({
             type: LOGIN
         })
 
         dispatch({
-            type: LOGIN_SUCCESS
+            type: LOGIN_SUCCESS, user
         })
     }
 }

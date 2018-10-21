@@ -14,7 +14,9 @@
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
-    "react-scripts": "0.8.5"
+    "react-scripts": "0.8.5",
+    "redux-testkit": "^1.0.6",
+    "seamless-immutable": "^7.1.4"
   },
   "scripts": {
     "start": "react-scripts start",

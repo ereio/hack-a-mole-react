@@ -3,13 +3,12 @@ import * as types from './actions';
 const initialState = {
     isLoading: false,
     isAuthenticated: false,
-    isNameAvailable: true,
+    isNameAvailable: false,
     current: {},
     errors: []
 };
 
-export default function user(state = initialState, action = {}) {
-    console.log(action.type, action);
+export default function user(state = initialState, action = {}) { 
     switch (action.type) {
         case types.LOGIN_SUCCESS:
             return {
