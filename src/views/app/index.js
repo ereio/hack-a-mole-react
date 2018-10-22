@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
-// redux 
-import { bindActionCreators } from 'redux'
+// redux  
 import { connect } from 'react-redux'
 
 // react router
@@ -30,7 +29,7 @@ class App extends Component {
     const {isAuthenticated} = this.props.user;
 
     console.log(history);
-    if(!isAuthenticated && history.location.pathname != "/login"){ 
+    if(!isAuthenticated && history.location.pathname !== '/login'){ 
       history.replace( '/login' );
     } 
   }

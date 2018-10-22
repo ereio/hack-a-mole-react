@@ -4,29 +4,31 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-content: center;
   width: 65%;
 }
 
 .add-button-field.large {
   width: 100%;
 }
-
+ 
 .add-button {
-  background: linear-gradient(to bottom right, rgba(26, 187, 156, 0.85), rgba(26, 187, 156, 0.55));
-  color: #fefefe;
+  flex:1;
+  min-height: 6vh; 
   border-radius: 30px;
-  display: block;
-  width: 80%;
-  min-height: 55px;
-  cursor: pointer;
-}
-
-.add-button {
-  color: #fefefe;
-  padding-top: 7.5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  color: #fefefe; 
   text-align: center;
-  cursor: pointer;
+  cursor: pointer;  
+  background: linear-gradient(to bottom right, rgba(26, 187, 156, 0.85), rgba(26, 187, 156, 0.55));
 }
+ 
+.add-button.disabled { 
+  color: #fefefe;
+  background-color: rgba(44, 226, 190, 0.85);}
 
 .add-button:hover {
   color: #fefefe;
@@ -41,6 +43,7 @@
   background-color: rgba(44, 226, 190, 0.85);
 }
 
-.add-button-text {
+.add-button-text {  
+  padding-bottom: 5px;
   text-decoration: none;
 }

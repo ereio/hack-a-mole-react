@@ -14,14 +14,15 @@ import { createUser, loginUser, checkUsernameExists } from 'domain/user/actions'
 import { MaterialButton } from 'global/components/material/button';
 
 import './styles.css';
+import { MaterialInput } from '../../global/components/material/input';
 
 class Login extends Component {
   constructor() {
     super();
 
     this.state = {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
       isReady: false,
     }
 
@@ -34,7 +35,7 @@ class Login extends Component {
     const {history} = this.props;
     const {isAuthenticated} = this.props.user;
  
-    if(isAuthenticated && history.location.pathname === "/login"){ 
+    if(isAuthenticated && history.location.pathname === '/login'){ 
       history.push( '/game' );
     } 
   }
@@ -89,18 +90,8 @@ class Login extends Component {
           height="84"
           width="84" />
         <h1 className="login-title">Hack A Mole</h1>
-        <div className="login-field-container">
-          <input className="login-field" type="text" required="required" onChange={this.onChangeUsername} />
-          <span className="highlight"></span>
-          <span className="bar"></span>
-          <label className="login-field-label">Username</label>
-        </div>
-        <div className="login-field-container">
-          <input className="login-field" type="password" required="required" onChange={this.onChangePassword} />
-          <span className="highlight"></span>
-          <span className="bar"></span>
-          <label className="login-field-label">Password</label>
-        </div>
+        <MaterialInput label={"Username"} type="text" onChange={this.onChangeUsername} />  
+        <MaterialInput label={"Password"} type="password" onChange={this.onChangePassword} /> 
         <MaterialButton buttonText={"Login"} disabled={isReady} onClick={this.onClickLogin} />
       </div>
     );

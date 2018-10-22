@@ -22,13 +22,13 @@
   margin: 25px 0 0 0;
 }
 
-.login-field-container {
+/* .login-field-container {
   position: relative;
   margin-bottom: 45px;
-}
+} */
 
 /* LOGIN FIELD STYLEING ======================================= */
-
+/* 
 .login-field {
   font-size: 18px;
   font-family: 'Montserrat', sans-serif;
@@ -137,4 +137,4 @@
     width: 0;
     background: transparent;
   }
-}
+} */

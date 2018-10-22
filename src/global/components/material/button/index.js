@@ -4,6 +4,11 @@ import PropTypes from 'prop-types';
 import './styles.css';
 
 export class MaterialButton extends Component {
+  static propTypes = {
+    buttonText: PropTypes.string,
+    large: PropTypes.bool
+  };
+
   constructor(){
     super();
 
@@ -18,20 +23,15 @@ export class MaterialButton extends Component {
   }
 
   render() {
-    return (<div
-      className={"add-button-field " + (
-        this.props.large
-          ? "large"
-          : ""
-      )}>
+    let styles = "add-button-field ";
+    styles += this.props.large ? "large " : "";
+    styles += this.props.disabled ? "disabled " : "";
+
+    return (
+    <div className={styles}>
       <div className="add-button" onClick={this.onClick}>
-        <h4 className="add-button-text">{this.props.buttonText}</h4>
+        <div className="add-button-text">{this.props.buttonText}</div>
       </div>
     </div>)
   }
-}
-
-MaterialButton.propTypes = {
-  buttonText: PropTypes.string,
-  large: PropTypes.bool
-};
+} 

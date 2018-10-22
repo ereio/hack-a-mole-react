@@ -6,8 +6,7 @@ import * as reducers from 'domain';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 import createHistory from 'history/createBrowserHistory';
 
-// redux reducers
-const initialState = {};
+// redux reducers 
 const rootReducer = combineReducers({...reducers, router: routerReducer})
 
 // middleware for async and browser history

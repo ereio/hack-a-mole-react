@@ -111,7 +111,7 @@ class Board extends Component {
   }
 
   render() {
-    const { user, game } = this.props;
+    const { game } = this.props;
 
     return (
       <div className="board">
