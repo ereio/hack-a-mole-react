@@ -9,7 +9,11 @@ import { store, history } from 'global/store';
 import { ConnectedRouter } from 'react-router-redux';
 
 // service worker for offline support
-import * as serviceWorker from './serviceWorker';
+import * as serviceWorker from './serviceWorker'; 
+
+// dotenv
+import dotenv from 'dotenv';
+dotenv.config()
 
 // extracting app into a view seperates its concern
 // it's nothing but a glorified root view component,

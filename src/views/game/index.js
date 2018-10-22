@@ -56,15 +56,15 @@ class Game extends Component {
   }
 
   render() {
-    const { game } = this.props; 
-    const {email} = this.props.user.current;
+    const { game } = this.props;
+    const { email } = this.props.user.current;
     return (
       <div className="game">
         <div className="stats-container">
           <div className="score">{"Score: " + game.score}</div>
           {this.renderTimeRemaining(game)}
         </div>
-        <div className="game-board-container"> 
+        <div className="game-board-container">
           {game.isStarted ? this.renderReadyPanel() : <Board />}
         </div>
         <div className="info-container">
