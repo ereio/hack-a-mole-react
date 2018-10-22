@@ -3,7 +3,8 @@ import thunk from 'redux-thunk';
 import * as reducers from 'domain';
 
 // react router navigation history 
-import { routerReducer, routerMiddleware } from 'react-router-redux';
+import { routerReducer, routerMiddleware } from 'react-router-redux'; 
+
 import createHistory from 'history/createBrowserHistory';
 
 // redux reducers 

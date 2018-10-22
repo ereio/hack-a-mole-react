@@ -4,20 +4,23 @@ const initialState = {
     isLoading: false,
     isAuthenticated: false,
     isNameAvailable: false,
+    unregisterAuthObserver: null,
     current: {},
     errors: []
 };
 
-export default function user(state = initialState, action = {}) { 
+export default function user(state = initialState, action = {}) {
+    console.log(action.type, action, state);
     switch (action.type) {
         case types.LOGIN_SUCCESS:
+        case types.CHECK_AUTHENTICATED_SUCCESS:
             return {
                 ...state,
                 errors: [],
                 current: action.user,
-                isAuthenticated: true,
+                isAuthenticated: action.isAuthenticated,
                 isLoading: false,
-            }  
+            }
         case types.CREATE_USER_SUCCESS:
             return {
                 ...state,
@@ -25,32 +28,49 @@ export default function user(state = initialState, action = {}) {
                 isAuthenticated: true,
                 isLoading: false,
             }
-        case types.CHECK_USER_EXISTS_SUCCESS:
+        case types.CREATE_USER_FAILURE:
+            const createUserErrors = [action.error];
+            return {
+                ...state,
+                isAuthenticated: true,
+                isNameAvailable: true,
+                isLoading: false,
+                errors: createUserErrors
+            }
+        case types.CHECK_USER_AVAILABLE_SUCCESS:
             return {
                 ...state,
                 isNameAvailable: true,
                 isLoading: false,
             }
 
-        case types.CHECK_USER_EXISTS_FAILURE:
+        case types.CHECK_USER_AVAILABLE_FAILURE:
+            const userAvailableErrors = [action.error];
             return {
                 ...state,
                 isNameAvailable: false,
                 isLoading: false,
+                errors: userAvailableErrors
+            }
+        case types.CHECK_AUTHENTICATED:
+            return {
+                ...state,
+                unregisterAuthObserver: action.unregisterAuthObserver
             }
         case types.LOGIN:
         case types.LOGOUT:
         case types.CREATE_USER:
-        case types.CHECK_USER_EXISTS:
+        case types.CHECK_USER_AVAILABLE:
             return {
                 ...state,
                 isLoading: true,
             }
         case types.LOGIN_FAILURE:
-        case types.LOGOUT_FAILURE: 
+        case types.LOGOUT_FAILURE:
+            const loginErrors = [action.error];
             return {
                 ...state,
-                errors: action.errors,
+                errors: loginErrors,
                 isLoading: false,
             };
         default:

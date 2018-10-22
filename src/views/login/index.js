@@ -8,13 +8,16 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 
 // actions
-import { createUser, loginUser, checkUsernameExists } from 'domain/user/actions';
+import { createUser, loginUser, checkUsernameAvailable, uncheckAuthenticated, checkAuthenticated } from 'domain/user/actions';
 
 //global components
 import { MaterialButton } from 'global/components/material/button';
+import { MaterialInput } from 'global/components/material/input';
 
 import './styles.css';
-import { MaterialInput } from '../../global/components/material/input';
+
+const MIN_EMAIL_LENGTH = 5;
+const MIN_PASSWORD_LENGTH = 5;
 
 class Login extends Component {
   constructor() {
@@ -26,15 +29,25 @@ class Login extends Component {
       isReady: false,
     }
 
+    this.onBlurUsername = this.onBlurUsername.bind(this);
     this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
     this.onClickLogin = this.onClickLogin.bind(this);
   }
 
+  componentDidMount(){ 
+    const { checkAuthenticated } = this.props;
+    checkAuthenticated();
+  }
+  
+  componentWillUnmount() {
+    const { uncheckAuthenticated } = this.props;
+    uncheckAuthenticated();
+  }
+
   componentDidUpdate() {
     const { history } = this.props;
-    const { isAuthenticated } = this.props.user;
-
+    const { isAuthenticated } = this.props.user;  
     if (isAuthenticated && history.location.pathname === '/login') {
       history.replace('/game');
     }
@@ -42,8 +55,8 @@ class Login extends Component {
 
   setLoginReady() {
     this.setState((state) => ({
-      isReady: state.username.length > 2 && state.password.length > 2,
-    }));  
+      isReady: state.username.length > MIN_EMAIL_LENGTH && state.password.length > MIN_PASSWORD_LENGTH,
+    }));
   }
 
   onChangeUsername({ target }) {
@@ -52,8 +65,13 @@ class Login extends Component {
     this.setState((state) => ({
       username: value
     }))
-    checkUsernameExists(value);
     this.setLoginReady();
+  }
+
+  onBlurUsername() {
+    const { username } = this.state;
+    const { checkUsernameAvailable } = this.props;
+    checkUsernameAvailable(username);
   }
 
   onChangePassword({ target }) {
@@ -86,14 +104,20 @@ class Login extends Component {
   renderErrors() {
     const { errors } = this.props.user;
 
-    return errors.map((error) => {
-      return (<div>{error}</div>)
+    const errorItems = errors.map((error, index) => {
+      return (<div key={index} className="errors-item">{error}</div>)
     });
+
+    return (
+      <div className="error-list">
+        {errorItems}
+      </div>
+    )
   }
 
   render() {
     const { isReady } = this.state;
- 
+
     return (
       <div className="login-panel">
         <img
@@ -103,7 +127,7 @@ class Login extends Component {
           height="84"
           width="84" />
         <h1 className="login-title">Hack A Mole</h1>
-        <MaterialInput label={"Username"} type="text" onChange={this.onChangeUsername} />
+        <MaterialInput label={"Email"} type="email" onChange={this.onChangeUsername} onBlur={this.onBlurUsername} />
         <MaterialInput label={"Password"} type="password" onChange={this.onChangePassword} />
         <MaterialButton buttonText={"Login"} disabled={!isReady} onClick={this.onClickLogin} />
         {this.renderErrors()}
@@ -117,7 +141,9 @@ const mapStateToProps = state => ({ user: state.user });
 const mapDispatchToProps = dispatch => bindActionCreators({
   createUser,
   loginUser,
-  checkUsernameExists
+  checkUsernameAvailable, 
+  checkAuthenticated,
+  uncheckAuthenticated
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));

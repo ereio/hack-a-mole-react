@@ -10,7 +10,10 @@ import { withRouter } from 'react-router-dom';
 // libs
 import moment from 'moment';
 
-//global components
+// actions
+import { logoutUser } from 'domain/user/actions';
+
+// global components
 import { MaterialButton } from 'global/components/material/button';
 
 // local components
@@ -25,6 +28,11 @@ class Game extends Component {
     this.onClickReady = this.onClickReady.bind(this);
   }
 
+  componentWillUnmount(){
+    const {logoutUser} = this.props;
+    logoutUser();
+  }
+  
   onClickReady() {
     const { startGame } = this.props.game;
     startGame();
@@ -68,5 +76,9 @@ class Game extends Component {
 }
 const mapStateToProps = state => ({ user: state.user, game: state.game });
 
+const mapDispatchToProps = dispatch => bindActionCreators({
+  logoutUser, 
+}, dispatch);
+
 // no actions needed yet at app layer
-export default withRouter(connect(mapStateToProps)(Game)); 
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Game)); 

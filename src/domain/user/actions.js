@@ -1,4 +1,8 @@
 
+// libs
+import firebase from 'global/firebase';
+
+// action types
 export const LOGIN = 'LOGIN';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
@@ -11,64 +15,130 @@ export const CREATE_USER = 'CREATE_USER';
 export const CREATE_USER_SUCCESS = 'CREATE_USER_SUCCESS';
 export const CREATE_USER_FAILURE = 'CREATE_USER_FAILURE';
 
-export const CHECK_USER_EXISTS = "CHECK_USER";
-export const CHECK_USER_EXISTS_SUCCESS = 'CHECK_USER_SUCCESS';
-export const CHECK_USER_EXISTS_FAILURE = 'CHECK_USER_FAILURE';
+export const CHECK_USER_AVAILABLE = "CHECK_USER_AVAILABLE";
+export const CHECK_USER_AVAILABLE_SUCCESS = 'CHECK_USER_AVAILABLE_SUCCESS';
+export const CHECK_USER_AVAILABLE_FAILURE = 'CHECK_USER_AVAILABLE_FAILURE';
 
-export const createUser = (username, password) => {
-    return(dispatch) => {
+export const CHECK_AUTHENTICATED = "CHECK_AUTHENTICATED";
+export const CHECK_AUTHENTICATED_SUCCESS = 'CHECK_AUTHENTICATED_SUCCESS';
+export const UNCHECK_AUTHENTICATED = "UNCHECK_AUTHENTICATED";
+
+// actions
+export const createUser = (email, password) => {
+    return (dispatch) => {
         dispatch({
             type: CREATE_USER
         })
 
-        dispatch({
-            type: CREATE_USER_SUCCESS
-        })
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((response) => {
+                console.log("CREATE RESPONSE", response);
+                dispatch({
+                    type: CREATE_USER_SUCCESS
+                })
+            })
+            .catch((error) => {
+                dispatch({
+                    type: CREATE_USER_FAILURE,
+                    error: error.message
+                })
+            });
     }
 }
 
-export const loginUser = (username, password) => {
-    return(dispatch) => {
-        const user = {
-            name: "Joe Test",
-            highscore: 0,
-        };
-        
+export const loginUser = (email, password) => {
+    return (dispatch) => {
         dispatch({
             type: LOGIN
         })
 
-        dispatch({
-            type: LOGIN_SUCCESS, user
-        })
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(({user}) => { 
+                dispatch({
+                    type: LOGIN_SUCCESS,
+                    isAuthenticated: !!user,
+                    user        
+                })
+            })
+            .catch((error) => {
+                dispatch({
+                    type: LOGIN_FAILURE,
+                    error: error.message
+                })
+            });
     }
 }
 
-export const logoutUser = (username) => {
-    return(dispatch) => {
+export const logoutUser = (email) => {
+    return (dispatch) => {
+
         dispatch({
             type: LOGOUT
         })
 
-        dispatch({
-            type: LOGOUT_SUCCESS
-        })
+        firebase.auth().signOut()
+            .then(() => {
+                dispatch({
+                    type: LOGOUT_SUCCESS
+                })
+            })
+            .catch((error) => {
+                dispatch({
+                    type: LOGOUT_FAILURE,
+                    error: error.message
+                })
+            })
+
     }
 }
 
-export const checkUsernameExists = (username) => {
-    return(dispatch) => {
+export const checkUsernameAvailable = (email) => {
+    return (dispatch) => {
         dispatch({
-            type: CHECK_USER_EXISTS
+            type: CHECK_USER_AVAILABLE
         })
-
-        dispatch({
-            type: CHECK_USER_EXISTS_SUCCESS
-        })
+        firebase.auth().signInWithEmailAndPassword(email, "check")
+            .catch((error) => {
+                if (error.code === "auth/user-not-found") {
+                    dispatch({
+                        type: CHECK_USER_AVAILABLE_SUCCESS
+                    })
+                } else {
+                    dispatch({
+                        type: CHECK_USER_AVAILABLE_FAILURE,
+                    })
+                }
+            });
     }
 }
 
 export const checkAuthenticated = () => {
-    
+    return (dispatch) => {
+        const unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {
+            dispatch({
+                type: CHECK_AUTHENTICATED_SUCCESS,
+                isAuthenticated: !!user,
+                current: user
+            });
+        });
+
+        dispatch({
+            type: CHECK_AUTHENTICATED,
+            unregisterAuthObserver
+        });
+    }
 }
 
+
+export const uncheckAuthenticated = () => {
+    return (dispatch, getState) => {
+        const { unregisterAuthObserver } = getState().user;
+
+        unregisterAuthObserver();
+
+        dispatch({
+            type: UNCHECK_AUTHENTICATED,
+            unregisterAuthObserver: null
+        });
+    }
+}

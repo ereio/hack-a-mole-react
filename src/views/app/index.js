@@ -17,18 +17,22 @@ import './styles.css';
 class App extends Component { 
   componentDidMount() { 
     this.redirectUnauthed();
-  }
+  } 
 
   componentDidUpdate(){ 
     this.redirectUnauthed();
+  }
+  
+  componentWillUnmount(){ 
+    // Un-registers the auth state observer.
+    this.unregisterAuthObserver(); 
   }
 
   // redirects users if they attempt to access the game directly
   redirectUnauthed(){
     const {history} = this.props;
     const {isAuthenticated} = this.props.user;
-
-    console.log(history);
+ 
     if(!isAuthenticated && history.location.pathname !== '/login'){ 
       history.replace( '/login' );
     } 

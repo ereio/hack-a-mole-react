@@ -28,7 +28,8 @@
  
 .add-button.disabled { 
   color: #fefefe;
-  background-color: rgba(44, 226, 190, 0.85);}
+  background-color: rgba(44, 226, 190, 1);
+}
 
 .add-button:hover {
   color: #fefefe;

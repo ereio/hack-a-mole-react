@@ -6,12 +6,17 @@
     * uses .env file with NODE_PATH set so the node development server allows absolute pathing
 
 ### Order Of Implementations
-    * created structure of domain - all future redux stores
-    * added redux frameworks and created template actions and reducers
+    * added structure of domain - some future packages for redux stores
+    * added redux frameworks and templated actions and reducers
     * added login scene
     * added event handler templates for login scene
     * implemented react-router for navigation
-    * created authentication wall with login and the game
+    * added authentication wall with login and the game
+    * added tests for user redux store
+    * added game board template
+    * added game board redux store
+    * refactored and bug fixes
+    * implemented firebase auth and cloud cloud storage
 ### Requirements:
 
 **Create a simple Whack-a-mole game:**

@@ -1,7 +1,6 @@
 
 
-import user from './user/reducer';
-import stats from './stats/reducer'; 
+import user from './user/reducer'; 
 import game from './game/reducer';
 
 // would want to combineReducers with an index of several reducers
@@ -20,7 +19,6 @@ import game from './game/reducer';
 //        | - index.js
 
 export {
-    user,
-    stats, 
+    user, 
     game
 }
