@@ -1,8 +1,7 @@
 
 
 import user from './user/reducer';
-import stats from './stats/reducer';
-import board from './board/reducer';
+import stats from './stats/reducer'; 
 import game from './game/reducer';
 
 // would want to combineReducers with an index of several reducers
@@ -22,7 +21,6 @@ import game from './game/reducer';
 
 export {
     user,
-    stats,
-    board,
+    stats, 
     game
 }
