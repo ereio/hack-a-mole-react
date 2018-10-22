@@ -10,7 +10,7 @@ import { whackMole, spawnMole, despawnMole, } from 'domain/game/actions';
 // local components
 import Hole from './hole';
 
-import './styles.css'; 
+import './styles.css';
 
 class Board extends Component {
   constructor() {
@@ -27,31 +27,22 @@ class Board extends Component {
   }
 
   componentDidMount() {
-    const spawner = setInterval(this.onSpawnMole, 1250);
-    const despawner = setInterval(this.onDespawnMole, 1500);
+
+    const spawner = setInterval(this.onSpawnMole, 750);
+    const despawner = setInterval(this.onDespawnMole, 500);
 
     this.setState((state) => ({
       spawner,
       despawner
     }));
   }
+ 
 
-  componentDidUpdate(prevState, prevProps) {
-    const { isStarted } = this.props.game;
-    if (!isStarted && prevState.isStarted !== isStarted) { 
-      const { spawner, despawner } = this.state;
-      clearInterval(spawner);
-      clearInterval(despawner);
-    }
-  }
-   
   componentWillUnmount() {
-    const { spawner, despawner } = this.state;
-    clearInterval(spawner);
-    clearInterval(despawner);
+    this.clearSpawners();
   }
 
-  clearSpawners(){
+  clearSpawners() {
     const { spawner, despawner } = this.state;
     clearInterval(spawner);
     clearInterval(despawner);
@@ -62,7 +53,8 @@ class Board extends Component {
     })
   }
 
-  onSpawnMole({ rows, holes }) {
+  onSpawnMole() {
+    const { rows, holes } = this.props.game;
     const { spawnMole } = this.props;
     const row = Math.floor((Math.random() * 10) + 1);
     const hole = Math.floor((Math.random() * 10) + 1);
@@ -70,7 +62,8 @@ class Board extends Component {
     spawnMole(cell);
   }
 
-  onDespawnMole({ rows, holes }) {
+  onDespawnMole() {
+    const { rows, holes } = this.props.game;
     const { despawnMole } = this.props;
     const row = Math.floor((Math.random() * 10) + 1);
     const hole = Math.floor((Math.random() * 10) + 1);
@@ -79,7 +72,7 @@ class Board extends Component {
   }
 
   onWhackMole(cell) {
-    const { whackMole } = this.props;
+    const { whackMole, spawnMole } = this.props;
     whackMole(cell);
   }
 
@@ -90,6 +83,7 @@ class Board extends Component {
 
         // find the cell id for the hole
         const cell = row + hole;
+
         // see if its on the list of active moles
         const isActive = undefined !== moles.find((mole) => {
           return mole.cell === cell;

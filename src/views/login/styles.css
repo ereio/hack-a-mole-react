@@ -23,11 +23,6 @@
 }
 
 .error-list {
-  color: violet;
-
+  color: violet; 
   padding: 2vh 0 2vh 0;
-}
-
-.error-item {
-  
-}
+} 

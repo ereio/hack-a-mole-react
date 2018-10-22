@@ -13,9 +13,10 @@ const rootReducer = combineReducers({...reducers, router: routerReducer})
 // middleware for async and browser history
 const history = createHistory();
 const middleware = [thunk, routerMiddleware(history)];
-const composedEnhancers = compose(applyMiddleware(...middleware));
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composedEnhancers = composeEnhancers(applyMiddleware(...middleware));
 
 // store init
-const store = createStore(rootReducer, applyMiddleware(thunk));
+const store = createStore(rootReducer, composedEnhancers);
 
 export { store, history }; 

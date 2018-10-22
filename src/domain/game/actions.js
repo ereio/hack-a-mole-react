@@ -50,10 +50,10 @@ export const spawnMole = (cell) => {
 }
 
 export const despawnMole = (cell) => {
-    const mole = {
-        cell
-    }
     return (dispatch) => {
+        const mole = {
+            cell
+        }
         dispatch({
             type: DESPAWN_MOLE,
             mole

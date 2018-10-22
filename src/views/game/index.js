@@ -28,11 +28,11 @@ class Game extends Component {
     this.onClickReady = this.onClickReady.bind(this);
   }
 
-  componentWillUnmount(){
-    const {logoutUser} = this.props;
+  componentWillUnmount() {
+    const { logoutUser } = this.props;
     logoutUser();
   }
-  
+
   onClickReady() {
     const { startGame } = this.props.game;
     startGame();
@@ -47,15 +47,16 @@ class Game extends Component {
     )
   }
 
-  renderTimeRemaining({startTime, endTime, isStarted}){
-    if(isStarted){ 
+  renderTimeRemaining({ startTime, endTime, isStarted }) {
+    if (isStarted) {
       return (
         <div className="time">{"Time: " + startTime.diff(endTime).format("m:ss")}</div>
-      ) 
+      )
     }
   }
+
   render() {
-    const { user, game } = this.props; 
+    const { user, game } = this.props;
 
     return (
       <div className="game">
@@ -63,8 +64,7 @@ class Game extends Component {
           <div className="score">{"Score: " + 0}</div>
           {this.renderTimeRemaining(game)}
         </div>
-        <div className="game-board-container">
-          {}
+        <div className="game-board-container"> 
           {game.isStarted ? this.renderReadyPanel() : <Board />}
         </div>
         <div className="info-container">
@@ -77,7 +77,7 @@ class Game extends Component {
 const mapStateToProps = state => ({ user: state.user, game: state.game });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  logoutUser, 
+  logoutUser,
 }, dispatch);
 
 // no actions needed yet at app layer

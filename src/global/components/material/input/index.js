@@ -4,6 +4,10 @@ import PropTypes from 'prop-types';
 import './styles.css';
 
 export class MaterialInput extends Component {
+  static propTypes = { 
+    label: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired
+  };
 
   render() {
     const { onBlur, onChange, label, type, } = this.props;

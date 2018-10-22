@@ -11,9 +11,15 @@ class Hole extends Component {
     const {id, onWhack} = this.props;
     onWhack(id);
   }
+  
   render() { 
+    const {isActive} = this.props;
+
+    let styles = "mole-hole ";
+    styles += isActive ? "active " : "";
+
     return (
-      <div className="hole" onClick={this.onClick}>  
+      <div className={styles} onClick={this.onClick}>  
       </div>
     );
   }
