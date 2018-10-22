@@ -44,5 +44,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: center; 
+  padding: 2vh 0;
   min-width: 75vw;
 }

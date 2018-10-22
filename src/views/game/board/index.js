@@ -26,8 +26,7 @@ class Board extends Component {
     this.onDespawnMole = this.onDespawnMole.bind(this);
   }
 
-  componentDidMount() {
-
+  componentDidMount() { 
     const spawner = setInterval(this.onSpawnMole, 750);
     const despawner = setInterval(this.onDespawnMole, 500);
 

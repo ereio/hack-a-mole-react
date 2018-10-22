@@ -62,6 +62,11 @@ export default function game(state = initialState, action = {}) {
                 ...state,
                 moles: despawnedMoles
             }
+        case types.INCREMENT_SCORE: 
+            return {
+                ...state,
+                score: state.score + 1
+            }
         default:
             return state;
     }

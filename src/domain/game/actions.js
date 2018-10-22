@@ -5,6 +5,8 @@ export const START_GAME_FINISHED = 'START_GAME_FINISHED';
 export const END_GAME = 'END_GAME';
 export const END_GAME_FINISHED = 'END_GAME_FINISHED';
 
+export const INCREMENT_SCORE = "INCREMENT_SCORE";
+
 export const WHACK_MOLE = "MOLE_WHACKED";
 export const DESPAWN_MOLE = "MOLE_DESPAWN"
 export const SPAWN_MOLE = "MOLE_SPAWN";
@@ -26,7 +28,13 @@ export const endGame = () => {
 }
 
 export const whackMole = (cell) => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+        const { moles } = getState().game 
+        if (moles.find((mole) => mole.cell === cell)) {
+            dispatch({
+                type: INCREMENT_SCORE,
+            })
+        }
         const mole = {
             cell
         }
