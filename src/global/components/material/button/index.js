@@ -23,14 +23,17 @@ export class MaterialButton extends Component {
   }
 
   render() {
-    let styles = "add-button-field ";
-    styles += this.props.large ? "large " : "";
-    styles += this.props.disabled ? "disabled " : "";
+    const {large, disabled, buttonText} = this.props; 
+    let containerStyles = "add-button-field ";
+    containerStyles += large ? "large " : "";
+
+    let buttonStyles = "add-button "
+    buttonStyles += disabled ? "disabled " : "";
 
     return (
-    <div className={styles}>
-      <div className="add-button" onClick={this.onClick}>
-        <div className="add-button-text">{this.props.buttonText}</div>
+    <div className={containerStyles}>
+      <div className={buttonStyles} onClick={this.onClick}>
+        <div className="add-button-text">{buttonText}</div>
       </div>
     </div>)
   }

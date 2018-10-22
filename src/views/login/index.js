@@ -31,33 +31,37 @@ class Login extends Component {
     this.onClickLogin = this.onClickLogin.bind(this);
   }
 
-  componentDidUpdate(){
-    const {history} = this.props;
-    const {isAuthenticated} = this.props.user;
- 
-    if(isAuthenticated && history.location.pathname === '/login'){ 
-      history.push( '/game' );
-    } 
+  componentDidUpdate() {
+    const { history } = this.props;
+    const { isAuthenticated } = this.props.user;
+
+    if (isAuthenticated && history.location.pathname === '/login') {
+      history.replace('/game');
+    }
   }
 
   setLoginReady() {
-    const { username, password } = this.state;
-    const { isNameAvailable } = this.props.user;
+    this.setState((state) => ({
+      isReady: state.username.length > 2 && state.password.length > 2,
+    }));  
+  }
+
+  onChangeUsername({ target }) {
+    const { value } = target;
 
     this.setState((state) => ({
-      isReady: username.length > 2 && password.length > 2,
+      username: value
     }))
-
-  } 
- 
-  onChangeUsername() {
-    const { checkUsernameExists } = this.props;
-    const { username } = this.state;
-    checkUsernameExists(username);
+    checkUsernameExists(value);
     this.setLoginReady();
   }
 
-  onChangePassword() {
+  onChangePassword({ target }) {
+    const { value } = target;
+
+    this.setState((state) => ({
+      password: value
+    }))
     this.setLoginReady();
   }
 
@@ -79,8 +83,17 @@ class Login extends Component {
     }
   }
 
+  renderErrors() {
+    const { errors } = this.props.user;
+
+    return errors.map((error) => {
+      return (<div>{error}</div>)
+    });
+  }
+
   render() {
     const { isReady } = this.state;
+ 
     return (
       <div className="login-panel">
         <img
@@ -90,9 +103,10 @@ class Login extends Component {
           height="84"
           width="84" />
         <h1 className="login-title">Hack A Mole</h1>
-        <MaterialInput label={"Username"} type="text" onChange={this.onChangeUsername} />  
-        <MaterialInput label={"Password"} type="password" onChange={this.onChangePassword} /> 
-        <MaterialButton buttonText={"Login"} disabled={isReady} onClick={this.onClickLogin} />
+        <MaterialInput label={"Username"} type="text" onChange={this.onChangeUsername} />
+        <MaterialInput label={"Password"} type="password" onChange={this.onChangePassword} />
+        <MaterialButton buttonText={"Login"} disabled={!isReady} onClick={this.onClickLogin} />
+        {this.renderErrors()}
       </div>
     );
   }

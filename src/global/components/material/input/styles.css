@@ -13,7 +13,7 @@
     width: 300px;
     border: none;
     background: rgba(0, 0, 0, 0);
-    border-bottom: 1px solid #757575;
+    border-bottom: 1px solid #757575;    color: grey;
   }
   
 .login-field:focus {
