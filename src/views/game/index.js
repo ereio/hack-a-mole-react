@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 
-// redux 
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+// redux
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-// react router 
+// react router
 import { withRouter } from 'react-router-dom';
 
-// libs
-import moment from 'moment';
 
 // actions
-import { logoutUser } from 'domain/user/actions';
+import { logoutUser } from 'store/user/actions';
+import { startGame } from 'store/game/actions';
 
 // global components
 import { MaterialButton } from 'global/components/material/button';
@@ -26,59 +25,72 @@ class Game extends Component {
     super();
 
     this.onClickReady = this.onClickReady.bind(this);
+    this.renderReadyPanel = this.renderReadyPanel.bind(this);
+    this.renderTimeRemaining = this.renderTimeRemaining.bind(this);
   }
 
   componentWillUnmount() {
-    const { logoutUser } = this.props;
-    logoutUser();
+    const { onLogoutUser } = this.props;
+    onLogoutUser();
   }
 
   onClickReady() {
-    const { startGame } = this.props.game;
-    startGame();
+    const { onStartGame } = this.props.game;
+    onStartGame();
   }
 
   renderReadyPanel() {
     const { isStarted } = this.props.game;
     return (
       <div>
-        <MaterialButton buttonText={"Ready?"} disabled={isStarted} onClick={this.onClickReady} />
+        <MaterialButton buttonText="Ready?" disabled={isStarted} onClick={this.onClickReady} />
       </div>
-    )
+    );
   }
 
-  renderTimeRemaining({ startTime, endTime, isStarted }) {
+  renderTimeRemaining() {
+    const { startTime, endTime, isStarted } = this.props.game;
+
     if (isStarted) {
       return (
-        <div className="time">{"Time: " + startTime.diff(endTime).format("m:ss")}</div>
-      )
+        <div className="time">{`Time: ${startTime.diff(endTime).format('m:ss')}`}</div>
+      );
     }
+    return undefined;
   }
 
   render() {
-    const { game } = this.props;
+    const { isStarted, score } = this.props.game;
     const { email } = this.props.user.current;
+
     return (
       <div className="game">
         <div className="stats-container">
-          <div className="score">{"Score: " + game.score}</div>
-          {this.renderTimeRemaining(game)}
+          <div className="score">{`Score: ${score}`}</div>
+          {this.renderTimeRemaining()}
         </div>
         <div className="game-board-container">
-          {game.isStarted ? this.renderReadyPanel() : <Board />}
+          {isStarted ? this.renderReadyPanel() : <Board />}
         </div>
         <div className="info-container">
-          <span className="message"> {"Welcome " + email}</span>
+          <span className="message">
+            {' '}
+            {`Welcome ${email}`}
+          </span>
         </div>
       </div>
     );
   }
 }
-const mapStateToProps = state => ({ user: state.user, game: state.game });
+const mapStateToProps = (state) => ({
+  user: state.user,
+  game: state.game,
+});
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-  logoutUser,
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onLogoutUser: logoutUser,
+  onStartGame: startGame,
 }, dispatch);
 
 // no actions needed yet at app layer
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Game)); 
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Game));

@@ -9,7 +9,7 @@ const initialState = {
   isAuthenticated: false,
   isNameAvailable: false,
   current: {},
-  errors: []
+  errors: [],
 };
 
 
@@ -22,7 +22,7 @@ describe('user reducer', () => {
     const isLoadingState = {
       ...initialState,
       isLoading: true,
-    }
+    };
     Reducer(user).expect({ type: types.CREATE_USER }).toReturnState(isLoadingState);
   });
 
@@ -35,10 +35,10 @@ describe('user reducer', () => {
 
   it('login should set authenticated and the current user', () => {
     const existingState = Immutable({ ...initialState, isNameAvailable: true });
-    const user ={
-      name: "Joe Test",
+    const user = {
+      name: 'Joe Test',
       highscore: 0,
-    }
+    };
     const authenticatedUser = {
       current: user,
       isAuthenticated: true,

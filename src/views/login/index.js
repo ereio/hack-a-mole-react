@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 
 // actions
-import { createUser, loginUser, checkUsernameAvailable, uncheckAuthenticated, checkAuthenticated } from 'domain/user/actions';
+import { createUser, loginUser, checkUsernameAvailable, uncheckAuthenticated, checkAuthenticated } from 'store/user/actions';
 
 //global components
 import { MaterialButton } from 'global/components/material/button';
