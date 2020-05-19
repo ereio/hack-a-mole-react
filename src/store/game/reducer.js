@@ -19,6 +19,7 @@ export default function game(state = initialState, action = {}) {
     case types.START_GAME:
       return {
         ...state,
+        score: 0,
         isStarted: true,
         startTime: moment().format(),
         endTime: moment().add(state.timeLimit, 'seconds').format(),

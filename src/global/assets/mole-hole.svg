@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="106px" height="105px" viewBox="0 0 106 105" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Oval</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="iPhone-8" transform="translate(-136.000000, -270.000000)">
+            <g id="mole-in-hole" transform="translate(125.000000, 270.000000)">
+                <circle id="Oval"  fill-rule="nonzero" cx="63.74" cy="52.33" r="52.31"></circle>
+                <ellipse id="Oval" fill="#845D40" fill-rule="nonzero" cx="62.88" cy="85.27" rx="62.59" ry="42.33"></ellipse>
+                <g id="Group-2" transform="translate(24.400000, 14.830000)">
+                    <ellipse id="Oval" fill="#181716" fill-rule="nonzero" cx="39.96" cy="44.7" rx="39.96" ry="11.67"></ellipse>
+                    <path d="M12.4,52.06 L14.82,31.48 L15.16,28.61 C17.6,13.71 25.77,4.17 38.85,4.17 L38.85,4.17 C51.94,4.17 59.52,13.71 62.6,28.61 L67.6,52.06 L12.4,52.06 Z" id="Path" fill="#584E47" fill-rule="nonzero"></path>
+                    <line x1="42.15" y1="0.51" x2="39.77" y2="5.83" id="Path" stroke="#584E47" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <line x1="38.05" y1="1.86517468e-14" x2="39.22" y2="5.71" id="Path" stroke="#584E47" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <circle id="Oval" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" cx="26.22" cy="18.12" r="7.89"></circle>
+                    <circle id="Oval" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" cx="50.43" cy="18.12" r="7.89"></circle>
+                    <circle id="Oval" fill="#E975BA" fill-rule="nonzero" cx="37.92" cy="33.67" r="2.34"></circle>
+                    <line x1="34.18" y1="15.12" x2="41.84" y2="15.12" id="Path" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <line x1="49.82" y1="36.83" x2="44.22" y2="35.19" id="Path" stroke="#3E322B" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <line x1="49.77" y1="30.5" x2="44.27" y2="32.44" id="Path" stroke="#3E322B" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <line x1="26.11" y1="36.83" x2="31.7" y2="35.19" id="Path" stroke="#3E322B" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <line x1="26.15" y1="30.5" x2="31.66" y2="32.44" id="Path" stroke="#3E322B" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <path d="M31.79,47.97 C31.79,46.21 34.58,42.87 38.08,42.83 C41.58,42.79 44.46,46.08 44.4801046,47.83 C44.5,49.58 41.65,49.21 38.15,49.25 C34.65,49.29 31.8,49.73 31.79,47.97 Z" id="Path" fill="#2B2320" fill-rule="nonzero"></path>
+                    <circle id="Oval" fill="#1E1917" fill-rule="nonzero" cx="25.74" cy="15.68" r="1.58"></circle>
+                    <polygon id="Path" fill="#584E47" fill-rule="nonzero" points="15.16 29.96 10.92 36.25 13.71 35.83 11.02 41.29 13.76 41.03 20.39 31.25"></polygon>
+                    <polygon id="Path" fill="#584E47" fill-rule="nonzero" points="64.24 36.61 68.48 42.9 65.69 42.49 68.38 47.95 65.63 47.69 59.01 37.9"></polygon>
+                    <path d="M12.4,52.06 L67.51,52.06 C67.51,52.06 53.65,58.79 38.05,58.37 C22.45,57.95 12.4,52.06 12.4,52.06 Z" id="Path" fill="#584E47" fill-rule="nonzero"></path>
+                    <circle id="Oval" fill="#1E1917" fill-rule="nonzero" cx="48.28" cy="15.68" r="1.58"></circle>
+                    <path d="M12.22,50.71 C10.43,52.49 9.79,55.71 9.85,58.05 C9.85561267,58.3107465 10.0263749,58.5390797 10.2749045,58.6181573 C10.5234341,58.6972349 10.794744,58.609561 10.95,58.4 L12.84,55.8 C12.9492059,55.6485006 13.1453299,55.5873088 13.321311,55.6498284 C13.497292,55.712348 13.6108519,55.883559 13.6,56.07 L13.45,59.22 C13.4291337,59.4897319 13.5913587,59.7400655 13.8460825,59.8312052 C14.1008064,59.9223449 14.3850167,59.8317451 14.54,59.61 L16.45,57.01 C16.5595724,56.8707016 16.7447926,56.8151745 16.9129269,56.8712193 C17.0810612,56.927264 17.1959211,57.0828178 17.2,57.26 L17.2,60.49 C17.2139082,60.7198995 17.3581893,60.9215468 17.5712931,61.0089193 C17.7843969,61.0962919 18.0287066,61.0539668 18.2,60.9 C19.8882736,59.1202136 20.8634409,56.7819474 20.94,54.33 C20.94,52.33 19.36,51.06 17.61,50.48 C16.27,50.04 13.55,49.48 12.36,50.54 C12.3093361,50.593253 12.2625499,50.6500649 12.22,50.71 Z" id="Path" fill="#EC93C9" fill-rule="nonzero"></path>
+                    <path d="M59.11,53.7 C58.79,56.2 60.25,59.11 61.75,60.94 C61.9152498,61.1398482 62.1887892,61.2133739 62.4319661,61.1233084 C62.6751429,61.0332429 62.834796,60.7992755 62.83,60.54 L62.73,57.33 C62.7239629,57.1454716 62.8391391,56.9786392 63.0138266,56.9188777 C63.1885141,56.8591162 63.3817441,56.9204412 63.49,57.07 L65.31,59.65 C65.4674736,59.8624271 65.7438807,59.9492044 65.9945122,59.8649011 C66.2451437,59.7805978 66.4129183,59.5444139 66.41,59.28 L66.31,56.06 C66.3055398,55.8791426 66.417392,55.7157512 66.5876102,55.6544727 C66.7578283,55.5931941 66.9481594,55.6477996 67.06,55.79 L69.06,58.34 C69.210264,58.5417848 69.4704585,58.6283943 69.7116803,58.5569212 C69.9529022,58.485448 70.1239161,58.2710731 70.14,58.02 C70.3670007,55.5810269 69.6909165,53.1435655 68.24,51.17 C67.03,49.58 64.99,49.56 63.24,50.17 C61.91,50.64 59.41,51.87 59.13,53.45 L59.11,53.7 Z" id="Path" fill="#EC93C9" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

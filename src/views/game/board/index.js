@@ -37,7 +37,7 @@ class Board extends Component {
     const despawner = setInterval(this.onDespawnMole, 500);
     const killer = setInterval(this.onCheckGameOver, 500);
     const fullstory = (mouseEvent) => {
-      onWhackAttempt(mouseEvent);
+      onWhackAttempt({ event: mouseEvent });
     };
     document.addEventListener('click', fullstory);
 
