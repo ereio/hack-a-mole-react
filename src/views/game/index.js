@@ -27,9 +27,9 @@ class Game extends Component {
   constructor() {
     super();
 
+    this.renderMenu = this.renderMenu.bind(this);
+
     this.onClickReady = this.onClickReady.bind(this);
-    this.renderReadyPanel = this.renderReadyPanel.bind(this);
-    this.renderTimeRemaining = this.renderTimeRemaining.bind(this);
   }
 
   componentWillUnmount() {
@@ -42,27 +42,28 @@ class Game extends Component {
     onStartGame();
   }
 
-  renderReadyPanel() {
+  renderMenu() {
     const { isStarted } = this.props.game;
+    const { history } = this.props;
     return (
       <div>
-        <div style={{ marginBottom: '12px' }}>
+        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
           <MaterialButton
-            buttonText="Leaderboards"
+            buttonText="leaderboards"
             disabled={isStarted}
-            onClick={this.onClickReady}
+            onClick={() => history.push('/leaderboard')}
           />
         </div>
-        <div style={{ marginBottom: '12px' }}>
+        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
           <MaterialButton
-            buttonText="Review Gameplay"
+            buttonText="review gameplay"
             disabled={isStarted}
-            onClick={this.onClickReady}
+            onClick={() => history.push('/review')}
           />
         </div>
-        <div style={{ marginTop: '32px' }}>
+        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
           <MaterialButton
-            buttonText="Start Game"
+            buttonText="start game"
             disabled={isStarted}
             onClick={this.onClickReady}
           />
@@ -71,21 +72,8 @@ class Game extends Component {
     );
   }
 
-  renderTimeRemaining() {
-    const { endTime, isStarted } = this.props.game;
-
-    if (isStarted) {
-      return (
-        <div className="time">
-          {`Time: ${moment(endTime).diff(moment(), 'seconds')}`}
-        </div>
-      );
-    }
-    return undefined;
-  }
-
   render() {
-    const { isStarted, score } = this.props.game;
+    const { isStarted, endTime, score } = this.props.game;
     const { email } = this.props.user.current;
 
     return (
@@ -94,7 +82,15 @@ class Game extends Component {
           <div className="score">
             {`Score: ${score}`}
           </div>
-          {this.renderTimeRemaining()}
+          {isStarted ? (
+            <div className="time">
+              {`Time: ${moment(endTime).diff(moment(), 'seconds')}`}
+            </div>
+          ) : (
+            <span className="message">
+              {`Welcome ${email}`}
+            </span>
+          ) }
           <div className="settings">
             <TouchableButton end onClick={() => {}}>
               <FiSettings />
@@ -102,13 +98,9 @@ class Game extends Component {
           </div>
         </div>
         <div className="container-game-board">
-          {isStarted ? <Board /> : this.renderReadyPanel() }
+          {isStarted ? <Board /> : this.renderMenu() }
         </div>
-        <div className="container-info">
-          <span className="message">
-            {`Welcome ${email}`}
-          </span>
-        </div>
+        <div className="container-info" />
       </div>
     );
   }

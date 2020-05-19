@@ -23,11 +23,11 @@ export class MaterialButton extends Component {
 
   render() {
     const { large, disabled, buttonText } = this.props;
-    let containerStyles = 'button-field';
-    containerStyles += large ? 'large ' : '';
+    let containerStyles = 'material-button-field';
+    containerStyles += large ? ' large' : '';
 
-    let buttonStyles = 'button';
-    buttonStyles += disabled ? 'disabled ' : '';
+    let buttonStyles = 'material-button';
+    buttonStyles += disabled ? ' disabled ' : '';
 
     return (
       <div className={containerStyles}>

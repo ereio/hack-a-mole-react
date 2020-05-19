@@ -34,7 +34,7 @@ class App extends Component {
     const { isAuthenticated } = this.props.user;
 
     if (!isAuthenticated && history.location.pathname !== '/login') {
-      history.replace('/login');
+      // history.replace('/login');
     }
   }
 

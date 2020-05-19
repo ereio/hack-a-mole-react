@@ -129,14 +129,15 @@ class Login extends Component {
 
     return (
       <div className="login-panel">
-        <img
+        <MoleIcon
           alt="Hack a mole login"
           className="login-logo"
-          src="images/primary-logo.png"
-          height="84"
-          width="84"
+          style={{
+            flex: 1,
+            height: 84,
+            width: 84,
+          }}
         />
-        <MoleIcon />
         <h1 className="login-title">
           Hack A Mole
         </h1>
