@@ -1,28 +1,28 @@
 import React, { Component } from 'react';
-  
+
 import './styles.css';
 
 class Hole extends Component {
-  constructor(){
-    super(); 
+  constructor() {
+    super();
     this.onClick = this.onClick.bind(this);
   }
-  onClick(){
-    const {id, onWhack} = this.props;
+
+  onClick() {
+    const { id, onWhack } = this.props;
     onWhack(id);
   }
-  
-  render() { 
-    const {isActive} = this.props;
 
-    let styles = "mole-hole ";
-    styles += isActive ? "active " : "";
+  render() {
+    const { isActive } = this.props;
+
+    let styles = 'mole-hole ';
+    styles += isActive ? 'active ' : '';
 
     return (
-      <div className={styles} onClick={this.onClick}>  
-      </div>
+      <div className={styles} onClick={this.onClick} />
     );
   }
-} 
- 
-export default Hole; 
+}
+
+export default Hole;

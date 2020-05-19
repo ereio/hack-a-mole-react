@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 
-// redux 
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+// redux
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 // actions
-import { whackMole, spawnMole, despawnMole, } from 'domain/game/actions';
+import * as gameActions from 'store/game/actions';
 
 // local components
 import Hole from './hole';
@@ -19,29 +19,29 @@ class Board extends Component {
     this.state = {
       spawner: null,
       despawner: null,
-    }
+    };
 
     this.onWhackMole = this.onWhackMole.bind(this);
     this.onSpawnMole = this.onSpawnMole.bind(this);
     this.onDespawnMole = this.onDespawnMole.bind(this);
   }
 
-  componentDidMount() { 
+  componentDidMount() {
     const spawner = setInterval(this.onSpawnMole, 750);
     const despawner = setInterval(this.onDespawnMole, 500);
 
     this.setState((state) => ({
       spawner,
-      despawner
+      despawner,
     }));
   }
- 
+
 
   componentWillUnmount() {
-    this.clearSpawners();
+    this.onClearSpawners();
   }
 
-  clearSpawners() {
+  onClearSpawners() {
     const { spawner, despawner } = this.state;
     clearInterval(spawner);
     clearInterval(despawner);
@@ -49,7 +49,7 @@ class Board extends Component {
     this.setState({
       spawner: null,
       despawner: null,
-    })
+    });
   }
 
   onSpawnMole() {
@@ -71,7 +71,7 @@ class Board extends Component {
   }
 
   onWhackMole(cell) {
-    const { whackMole, spawnMole } = this.props;
+    const { whackMole } = this.props;
     whackMole(cell);
   }
 
@@ -79,25 +79,22 @@ class Board extends Component {
     // map the components to each row and hole id
     const rowComponents = rows.map((row) => {
       const holeComponents = holes.map((hole) => {
-
         // find the cell id for the hole
         const cell = row + hole;
 
         // see if its on the list of active moles
-        const isActive = undefined !== moles.find((mole) => {
-          return mole.cell === cell;
-        });
+        const isActive = undefined !== moles.find((mole) => mole.cell === cell);
 
         return (
           <Hole key={row + hole} id={cell} onWhack={this.onWhackMole} isActive={isActive} />
-        )
+        );
       });
 
       return (
         <div key={row} className="mole-row">
           {holeComponents}
         </div>
-      )
+      );
     });
 
     return rowComponents;
@@ -113,14 +110,14 @@ class Board extends Component {
     );
   }
 }
-const mapStateToProps = state => ({ user: state.user, game: state.game });
+const mapStateToProps = (state) => ({ user: state.user, game: state.game });
 
 // binds dispatch to all the actions which allows the actions to be thunked together
-const mapDispatchToProps = dispatch => bindActionCreators({
-  whackMole,
-  spawnMole,
-  despawnMole,
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  whackMole: gameActions.whackMole,
+  spawnMole: gameActions.spawnMole,
+  despawnMole: gameActions.despawnMole,
 }, dispatch);
 
 // no actions needed yet at app layer
-export default connect(mapStateToProps, mapDispatchToProps)(Board); 
+export default connect(mapStateToProps, mapDispatchToProps)(Board);

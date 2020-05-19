@@ -3,33 +3,37 @@ import ReactDOM from 'react-dom';
 
 // Redux linking
 import { Provider } from 'react-redux';
-import { store, history } from 'global/store';
+import { ConnectedRouter } from 'connected-react-router';
+import dotenv from 'dotenv';
+import { store, history } from './store';
 
-// React Navigation 
-import { ConnectedRouter } from 'react-router-redux';
+// React Navigation
 
 // service worker for offline support
-import * as serviceWorker from './serviceWorker'; 
+import * as serviceWorker from './serviceWorker';
 
 // dotenv
-import dotenv from 'dotenv';
-dotenv.config()
 
 // extracting app into a view seperates its concern
 // it's nothing but a glorified root view component,
 // usually used for navigation
-import App from './views/app';
+import App from './views';
 
 // global styling
 import './index.css';
 
+dotenv.config();
+
 ReactDOM.render(
+  <React.StrictMode>
     <Provider store={store}>
-        <ConnectedRouter history={history}>
-            <App />
-        </ConnectedRouter>
-    </Provider>,
-    document.getElementById('root'));
+      <ConnectedRouter history={history}>
+        <App />
+      </ConnectedRouter>
+    </Provider>
+  </React.StrictMode>,
+  document.getElementById('root'),
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
