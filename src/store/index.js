@@ -5,20 +5,21 @@ import thunk from 'redux-thunk';
 
 
 // react router navigation history
-import { routerReducer, routerMiddleware } from 'react-router-redux';
-
+import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { createBrowserHistory as createHistory } from 'history';
 
-import * as reducers from './state';
+// reducer prep
+import * as reducers from './reducers';
+
+const history = createHistory();
 
 // redux reducers
 const rootReducer = combineReducers({
   ...reducers,
-  router: routerReducer,
+  router: connectRouter(history),
 });
 
 // middleware for async and browser history
-const history = createHistory();
 const middleware = [thunk, routerMiddleware(history)];
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const composedEnhancers = composeEnhancers(applyMiddleware(...middleware));

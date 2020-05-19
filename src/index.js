@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 // Redux linking
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'react-router-redux';
+import { ConnectedRouter } from 'connected-react-router';
 import dotenv from 'dotenv';
 import { store, history } from './store';
 
@@ -17,7 +17,7 @@ import * as serviceWorker from './serviceWorker';
 // extracting app into a view seperates its concern
 // it's nothing but a glorified root view component,
 // usually used for navigation
-import App from './views/app';
+import App from './views';
 
 // global styling
 import './index.css';
@@ -25,11 +25,13 @@ import './index.css';
 dotenv.config();
 
 ReactDOM.render(
-  <Provider store={store}>
-    <ConnectedRouter history={history}>
-      <App />
-    </ConnectedRouter>
-  </Provider>,
+  <React.StrictMode>
+    <Provider store={store}>
+      <ConnectedRouter history={history}>
+        <App />
+      </ConnectedRouter>
+    </Provider>
+  </React.StrictMode>,
   document.getElementById('root'),
 );
 

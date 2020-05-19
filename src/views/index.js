@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 // react router
-import { Route } from 'react-router';
+import { Route, Switch } from 'react-router';
 import { withRouter } from 'react-router-dom';
 
 // scene components
-import Login from 'views/login';
-import Game from 'views/game';
+import Login from './login';
+import Game from './game';
 
 // local styling
 import './styles.css';
@@ -42,9 +42,11 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <Route exact path="/" component={Login} />
-          <Route path="/login" component={Login} />
-          <Route path="/game" component={Game} />
+          <Switch>
+            <Route exact path="/" component={Login} />
+            <Route path="/login" component={Login} />
+            <Route path="/game" component={Game} />
+          </Switch>
         </header>
       </div>
     );
