@@ -23,16 +23,18 @@ export class MaterialButton extends Component {
 
   render() {
     const { large, disabled, buttonText } = this.props;
-    let containerStyles = 'add-button-field ';
+    let containerStyles = 'button-field';
     containerStyles += large ? 'large ' : '';
 
-    let buttonStyles = 'add-button ';
+    let buttonStyles = 'button';
     buttonStyles += disabled ? 'disabled ' : '';
 
     return (
       <div className={containerStyles}>
         <div className={buttonStyles} onClick={this.onClick}>
-          <div className="add-button-text">{buttonText}</div>
+          <div className="button-text">
+            {buttonText || this.props.children}
+          </div>
         </div>
       </div>
     );

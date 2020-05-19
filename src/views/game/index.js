@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 
 // redux
 import { bindActionCreators } from 'redux';
@@ -7,13 +8,15 @@ import { connect } from 'react-redux';
 // react router
 import { withRouter } from 'react-router-dom';
 
-
 // actions
 import { logoutUser } from 'store/user/actions';
 import { startGame } from 'store/game/actions';
 
 // global components
+import { FiSettings } from 'react-icons/fi';
 import { MaterialButton } from 'global/components/material/button';
+import { TouchableButton } from 'global/components/material/touchable';
+
 
 // local components
 import Board from './board';
@@ -35,7 +38,7 @@ class Game extends Component {
   }
 
   onClickReady() {
-    const { onStartGame } = this.props.game;
+    const { onStartGame } = this.props;
     onStartGame();
   }
 
@@ -43,17 +46,39 @@ class Game extends Component {
     const { isStarted } = this.props.game;
     return (
       <div>
-        <MaterialButton buttonText="Ready?" disabled={isStarted} onClick={this.onClickReady} />
+        <div style={{ marginBottom: '12px' }}>
+          <MaterialButton
+            buttonText="Leaderboards"
+            disabled={isStarted}
+            onClick={this.onClickReady}
+          />
+        </div>
+        <div style={{ marginBottom: '12px' }}>
+          <MaterialButton
+            buttonText="Review Gameplay"
+            disabled={isStarted}
+            onClick={this.onClickReady}
+          />
+        </div>
+        <div style={{ marginTop: '32px' }}>
+          <MaterialButton
+            buttonText="Start Game"
+            disabled={isStarted}
+            onClick={this.onClickReady}
+          />
+        </div>
       </div>
     );
   }
 
   renderTimeRemaining() {
-    const { startTime, endTime, isStarted } = this.props.game;
+    const { endTime, isStarted } = this.props.game;
 
     if (isStarted) {
       return (
-        <div className="time">{`Time: ${startTime.diff(endTime).format('m:ss')}`}</div>
+        <div className="time">
+          {`Time: ${moment(endTime).diff(moment(), 'seconds')}`}
+        </div>
       );
     }
     return undefined;
@@ -65,16 +90,22 @@ class Game extends Component {
 
     return (
       <div className="game">
-        <div className="stats-container">
-          <div className="score">{`Score: ${score}`}</div>
+        <div className="container-stats">
+          <div className="score">
+            {`Score: ${score}`}
+          </div>
           {this.renderTimeRemaining()}
+          <div className="settings">
+            <TouchableButton end onClick={() => {}}>
+              <FiSettings />
+            </TouchableButton>
+          </div>
         </div>
-        <div className="game-board-container">
-          {isStarted ? this.renderReadyPanel() : <Board />}
+        <div className="container-game-board">
+          {isStarted ? <Board /> : this.renderReadyPanel() }
         </div>
-        <div className="info-container">
+        <div className="container-info">
           <span className="message">
-            {' '}
             {`Welcome ${email}`}
           </span>
         </div>

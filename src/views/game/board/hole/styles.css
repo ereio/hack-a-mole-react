@@ -9,6 +9,7 @@
     border: 1px solid grey;
     border-radius: 50%; 
     margin: 2vh 2vw;
+    cursor: pointer;  
 }
 
 .mole-hole.active {

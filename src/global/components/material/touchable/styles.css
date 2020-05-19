@@ -1,0 +1,48 @@
+/* MATERIAL BUTTON STYLES */
+
+.touchable-button-field {
+  display: flex;
+  flex-direction: row; 
+}
+
+.touchable-button-field.large {
+  width: 100%;
+}
+ 
+.touchable-button { 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  text-align: center; 
+  border-radius: 30px; 
+  padding: 8px;
+  padding: 8px;
+  color: #fefefe; 
+  text-align: center;
+  cursor: pointer;
+  user-select: none; 
+}
+ 
+.touchable-button, .end {  
+  justify-content: flex-end;
+}
+.touchable-button, .start {  
+  justify-content: flex-start;
+}
+
+.touchable-button.disabled {  
+  opacity: 0.7;
+}
+
+.touchable-button:hover { 
+}
+
+.touchable-button:visited { 
+}
+
+.touchable-button:active {
+  color: #fefefe;
+  opacity: 0.7;
+}
+  

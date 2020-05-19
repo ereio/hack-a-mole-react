@@ -59,7 +59,7 @@ export default function user(state = initialState, action = {}) {
         ...state,
         unregisterAuthObserver: action.unregisterAuthObserver,
       };
-    case types.LOGIN:
+    case types.LOGIN_ATTEMPT:
     case types.LOGOUT:
     case types.CREATE_USER:
     case types.CHECK_USER_AVAILABLE:

@@ -1,8 +1,6 @@
 import moment from 'moment';
 import * as types from './actions';
 
-// libs
-
 const initialState = {
   isActive: false,
   isStarted: false,
@@ -20,8 +18,8 @@ export default function game(state = initialState, action = {}) {
       return {
         ...state,
         isStarted: true,
-        startTime: moment(),
-        endTime: moment().addl(1, 'minute'),
+        startTime: moment().format(),
+        endTime: moment().add(1, 'minute').format(),
       };
     case types.START_GAME_FINISHED:
       return {

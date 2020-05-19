@@ -3,7 +3,7 @@
 // TODO: new api interface
 
 // action types
-export const LOGIN = 'LOGIN';
+export const LOGIN_ATTEMPT = 'LOGIN';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 
@@ -46,8 +46,15 @@ export const createUser = (email, password) => (dispatch) => {
 
 export const loginUser = (email, password) => (dispatch) => {
   dispatch({
-    type: LOGIN,
+    type: LOGIN_ATTEMPT,
   });
+
+  dispatch({
+    type: LOGIN_SUCCESS,
+    isAuthenticated: !!{},
+    user: {},
+  });
+
 
   // firebase.auth().signInWithEmailAndPassword(email, password)
   //     .then(({user}) => {
@@ -112,9 +119,12 @@ export const checkAuthenticated = () => (dispatch) => {
   //     });
   // });
 
+  // TODO: STUB
+  const unregisterAuthObserver = () => {};
+
   dispatch({
     type: CHECK_AUTHENTICATED,
-    unregisterAuthObserver: null,
+    unregisterAuthObserver,
   });
 };
 
@@ -124,8 +134,11 @@ export const uncheckAuthenticated = () => (dispatch, getState) => {
 
   // unregisterAuthObserver();
 
+  // TODO: STUB
+  const unregisterAuthObserver = () => {};
+
   dispatch({
     type: UNCHECK_AUTHENTICATED,
-    unregisterAuthObserver: null,
+    unregisterAuthObserver,
   });
 };
