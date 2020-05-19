@@ -4,8 +4,10 @@ import * as types from './actions';
 const initialState = {
   isActive: false,
   isStarted: false,
+  isEnded: false,
   startTime: 0,
   endTime: 0,
+  timeLimit: 10,
   rows: ['A', 'B', 'C'],
   holes: ['1', '2', '3'],
   score: 0,
@@ -19,7 +21,7 @@ export default function game(state = initialState, action = {}) {
         ...state,
         isStarted: true,
         startTime: moment().format(),
-        endTime: moment().add(1, 'minute').format(),
+        endTime: moment().add(state.timeLimit, 'seconds').format(),
       };
     case types.START_GAME_FINISHED:
       return {
@@ -30,6 +32,8 @@ export default function game(state = initialState, action = {}) {
       return {
         ...state,
         isStarted: false,
+        isActive: false,
+        isEnded: true,
         startTime: 0,
         endTime: 0,
       };

@@ -10,7 +10,8 @@ const initialState = {
 };
 
 export default function user(state = initialState, action = {}) {
-  console.log(action.type, action, state);
+  // TODO: for debugging
+  // console.log(action.type, action, state);
   switch (action.type) {
     case types.LOGIN_SUCCESS:
     case types.CHECK_AUTHENTICATED_SUCCESS:
