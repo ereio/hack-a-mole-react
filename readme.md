@@ -16,7 +16,7 @@
     * added game board template
     * added game board redux store
     * refactored and bug fixes
-    * implemented firebase auth and cloud cloud storage
+    * implemented firebase auth and google cloud storage
 ### Requirements:
 
 **Create a simple Whack-a-mole game:**
