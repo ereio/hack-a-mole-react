@@ -12,6 +12,29 @@ export const DESPAWN_MOLE = 'MOLE_DESPAWN';
 export const SPAWN_MOLE = 'MOLE_SPAWN';
 
 /**
+ * Save Mole Spawn
+ *
+ * This will purposefully call the api to save
+ * mole spawn positions, this is so we can have a high
+ * (and inefficient) throughput of requests
+ */
+export const saveMoleSpawn = (mole) => (dispatch) => {
+  console.log('[saveMoleSpawn]', mole);
+};
+
+
+/**
+ * Save Mole Despawn
+ *
+ * This will purposefully call the api to save
+ * mole spawn positions, this is so we can have a high
+ * (and inefficient) throughput of requests
+ */
+export const saveMoleDespawn = (mole) => (dispatch) => {
+  console.log('[saveMoleDespawn]', mole);
+};
+
+/**
  * Save Mole Whack
  *
  * This will purposefully call the api to save the game
@@ -20,6 +43,17 @@ export const SPAWN_MOLE = 'MOLE_SPAWN';
  */
 export const saveMoleWhack = ({ mole, timestamp }) => (dispatch) => {
   console.log('[saveMoleWhack]', mole, timestamp);
+};
+
+/**
+ * Save Whack Attempt (generic on press)
+ *
+ * This will purposefully call the api to save
+ * mole spawn positions, this is so we can have a high
+ * (and inefficient) throughput of requests
+ */
+export const saveWhackAttempt = ({ mole, timestamp, event }) => (dispatch) => {
+  console.log('[saveWhackAttempt]', event);
 };
 
 /**
@@ -33,40 +67,15 @@ export const saveScore = (score) => (dispatch) => {
   console.log('[saveScore]', score);
 };
 
-/**
- * Save Spawned Mole
- *
- * This will purposefully call the api to save
- * mole spawn positions, this is so we can have a high
- * (and inefficient) throughput of requests
- */
-export const saveSpawnedMole = (mole) => (dispatch) => {
-  console.log('[saveSpawnedMole]', mole);
-};
 
 /**
- * Save Despawned Mole
  *
- * This will purposefully call the api to save
- * mole spawn positions, this is so we can have a high
- * (and inefficient) throughput of requests
- */
-export const saveDespawnedMole = (mole) => (dispatch) => {
-  console.log('[saveDespawnedMole]', mole);
-};
-
-/**
- * Save Whack Attempt (generic on press)
+ * State Management
  *
- * This will purposefully call the api to save
- * mole spawn positions, this is so we can have a high
- * (and inefficient) throughput of requests
+ * The following actions call the remote calls above or
+ * manage just the local state
+ *
  */
-export const saveWhackAttempt = (event) => (dispatch) => {
-  console.log('[saveWhackAttempt]', event);
-};
-
-
 export const startGame = () => (dispatch) => {
   dispatch({
     type: START_GAME,
@@ -92,11 +101,11 @@ export const whackMole = (cell) => (dispatch, getState) => {
 export const spawnMole = (cell) => (dispatch) => {
   const mole = { cell };
   dispatch({ type: SPAWN_MOLE, mole });
-  dispatch(saveSpawnedMole(mole));
+  dispatch(saveMoleSpawn(mole));
 };
 
 export const despawnMole = (cell) => (dispatch) => {
   const mole = { cell };
   dispatch({ type: DESPAWN_MOLE, mole });
-  dispatch(saveDespawnedMole(mole));
+  dispatch(saveMoleDespawn(mole));
 };
