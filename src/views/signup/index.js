@@ -9,7 +9,12 @@ import { withRouter } from 'react-router-dom';
 
 // actions
 import {
-  createUser, loginUser, checkUsernameAvailable, uncheckAuthenticated, checkAuthenticated,
+  createUser,
+  loginUser,
+  checkUsernameAvailable,
+  checkEmailAvailability,
+  uncheckAuthenticated,
+  checkAuthenticated,
 } from 'store/user/actions';
 
 // global components
@@ -19,7 +24,6 @@ import { MaterialInput } from 'global/components/material/input';
 import { ReactComponent as MoleIcon } from '../../global/assets/mole-icon.svg';
 
 import './styles.css';
-import { TouchableButton } from '../../global/components/material/touchable';
 
 const MIN_EMAIL_LENGTH = 5;
 const MIN_PASSWORD_LENGTH = 5;
@@ -31,14 +35,23 @@ class Login extends Component {
     this.state = {
       username: '',
       password: '',
+      email: '',
       isReady: false,
+      loading: false,
+      emailBlured: false,
+      usernameBlured: false,
+      emailLoading: false,
+      usernameLoading: false,
     };
 
-    this.onClickLogin = this.onClickLogin.bind(this);
+    this.onBlurEmail = this.onBlurEmail.bind(this);
+    this.onChangeEmail = this.onChangeEmail.bind(this);
+
+
     this.onBlurUsername = this.onBlurUsername.bind(this);
     this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
-    this.onNavigateToSignup = this.onNavigateToSignup.bind(this);
+    this.onClickSignup = this.onClickSignup.bind(this);
   }
 
   componentDidMount() {
@@ -69,25 +82,46 @@ class Login extends Component {
     }));
   }
 
-  onChangeUsername({ target }) {
+  onChangeEmail({ target }) {
     const { value } = target;
 
-    this.setState(() => ({
-      username: value,
-    }));
+    this.setState(() => ({ email: value }));
 
     this.onUpdateLoginReady();
   }
 
-  onNavigateToSignup() {
-    const { history } = this.props;
-    history.replace('/signup');
+  async onBlurEmail() {
+    const { email } = this.state;
+    const { onCheckEmailAvailable } = this.props;
+
+    this.setState(() => ({ emailLoading: true }));
+    await onCheckEmailAvailable(email);
+
+    this.setState(() => ({
+      emailBlured: true,
+      emailLoading: false,
+    }));
+    this.onUpdateLoginReady();
   }
 
-  onBlurUsername() {
+
+  onChangeUsername({ target }) {
+    const { value } = target;
+
+    this.setState(() => ({ username: value }));
+
+    this.onUpdateLoginReady();
+  }
+
+  async onBlurUsername() {
     const { username } = this.state;
     const { onCheckUsernameAvailable } = this.props;
-    onCheckUsernameAvailable(username);
+    this.setState(() => ({ usernameLoading: true }));
+    await onCheckUsernameAvailable(username);
+    this.setState(() => ({
+      usernameLoading: false,
+      usernameBlured: true,
+    }));
   }
 
   onChangePassword({ target }) {
@@ -103,20 +137,15 @@ class Login extends Component {
    * the isNameAvailable value actually dictates if the user is logging in or
    * creating a new user
    */
-  onClickLogin() {
-    const { username, password } = this.state;
-    const { onCreateUser, onLoginUser } = this.props;
-    const { isNameAvailable } = this.props.user;
+  onClickSignup() {
+    const { email, username, password } = this.state;
+    const { onCreateUser } = this.props;
 
-    if (isNameAvailable) {
-      onCreateUser(username, password);
-    } else {
-      onLoginUser(username, password);
-    }
+    onCreateUser(email, password, username);
   }
 
   renderErrors() {
-    const { errors } = this.props.user;
+    const { errors } = this.props;
 
     const errorItems = errors.map((error) => (
       <div key={error} className="errors-item">{error}</div>
@@ -130,12 +159,26 @@ class Login extends Component {
   }
 
   render() {
-    const { isReady } = this.state;
+    const {
+      isReady,
+      email,
+      username,
+      loading,
+      emailLoading,
+      usernameLoading,
+      emailBlured,
+      usernameBlured,
+    } = this.state;
+
+    const {
+      emailAvailable,
+      usernameAvailable,
+    } = this.props;
 
     return (
       <div className="login-panel">
         <MoleIcon
-          alt="Hack a mole login"
+          alt="Hack a mole signup"
           className="login-logo"
           style={{
             flex: 1,
@@ -144,30 +187,57 @@ class Login extends Component {
           }}
         />
         <h1 className="login-title">
-          Hack A Mole
+          Sign Up To Play
         </h1>
         {/** type={'email'} breaks the floaty label */}
-        <MaterialInput label="Email" type="text" onChange={this.onChangeUsername} onBlur={this.onBlurUsername} />
-        <MaterialInput label="Password" type="password" onChange={this.onChangePassword} />
-        <MaterialButton buttonText="login" disabled={!isReady} onClick={this.onClickLogin} />
-        <TouchableButton onClick={this.onNavigateToSignup}>
-          <div style={{ marginTop: 16 }}>
-            <span style={{ fontSize: 16 }}>New to hack-a-mole?</span>
-            <span style={{ fontSize: 16, marginLeft: 4, color: '#FFF800' }}>Signup</span>
-          </div>
-        </TouchableButton>
+        <MaterialInput
+          label="Email"
+          type="text"
+          loading={emailLoading}
+          error={!emailAvailable}
+          valid={!emailLoading && emailAvailable && email.length > 2 && emailBlured}
+          onChange={this.onChangeEmail}
+          onBlur={this.onBlurEmail}
+        />
+        <MaterialInput
+          label="Password"
+          type="password"
+          onChange={this.onChangePassword}
+        />
+        <MaterialInput
+          label="Username"
+          type="text"
+          loading={usernameLoading}
+          error={!usernameAvailable}
+          valid={!usernameLoading && emailAvailable && username.length > 2 && usernameBlured}
+          onChange={this.onChangeUsername}
+          onBlur={this.onBlurUsername}
+        />
+        <MaterialButton
+          buttonText="signup"
+          disabled={loading || !isReady}
+          loading={loading}
+          onClick={this.onClickSignup}
+        />
         {this.renderErrors()}
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => ({ user: state.user });
+const mapStateToProps = (state) => ({
+  user: state.user.currentUser,
+  emailAvailable: state.user.emailAvailable,
+  usernameAvailable: state.user.usernameAvailable,
+  loading: state.user.loading,
+  errors: state.user.errors,
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCreateUser: createUser,
   onLoginUser: loginUser,
   onCheckUsernameAvailable: checkUsernameAvailable,
+  onCheckEmailAvailable: checkEmailAvailability,
   onCheckAuthenticated: checkAuthenticated,
   onUncheckAuthenticated: uncheckAuthenticated,
 }, dispatch);

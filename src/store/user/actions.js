@@ -1,6 +1,6 @@
+import gql from 'graphql-tag';
 
-// libs
-// TODO: new api interface
+import { apiClient } from '../../global/api';
 
 // action types
 export const LOGIN_ATTEMPT = 'LOGIN';
@@ -15,6 +15,10 @@ export const CREATE_USER = 'CREATE_USER';
 export const CREATE_USER_SUCCESS = 'CREATE_USER_SUCCESS';
 export const CREATE_USER_FAILURE = 'CREATE_USER_FAILURE';
 
+export const CHECK_EMAIL_AVAILABLE = 'CHECK_EMAIL_AVAILABLE';
+export const CHECK_EMAIL_AVAILABLE_SUCCESS = 'CHECK_EMAIL_AVAILABLE_SUCCESS';
+export const CHECK_EMAIL_AVAILABLE_FAILURE = 'CHECK_EMAIL_AVAILABLE_FAILURE';
+
 export const CHECK_USER_AVAILABLE = 'CHECK_USER_AVAILABLE';
 export const CHECK_USER_AVAILABLE_SUCCESS = 'CHECK_USER_AVAILABLE_SUCCESS';
 export const CHECK_USER_AVAILABLE_FAILURE = 'CHECK_USER_AVAILABLE_FAILURE';
@@ -28,20 +32,6 @@ export const createUser = (email, password) => (dispatch) => {
   dispatch({
     type: CREATE_USER,
   });
-
-  // firebase.auth().createUserWithEmailAndPassword(email, password)
-  //     .then((response) => {
-  //         console.log("CREATE RESPONSE", response);
-  //         dispatch({
-  //             type: CREATE_USER_SUCCESS
-  //         })
-  //     })
-  //     .catch((error) => {
-  //         dispatch({
-  //             type: CREATE_USER_FAILURE,
-  //             error: error.message
-  //         })
-  //     });
 };
 
 export const loginUser = (email, password) => (dispatch) => {
@@ -54,61 +44,65 @@ export const loginUser = (email, password) => (dispatch) => {
     isAuthenticated: !!{},
     user: {},
   });
-
-
-  // firebase.auth().signInWithEmailAndPassword(email, password)
-  //     .then(({user}) => {
-  //         dispatch({
-  //             type: LOGIN_SUCCESS,
-  //             isAuthenticated: !!user,
-  //             user
-  //         })
-  //     })
-  //     .catch((error) => {
-  //         dispatch({
-  //             type: LOGIN_FAILURE,
-  //             error: error.message
-  //         })
-  //     });
 };
 
 export const logoutUser = (email) => (dispatch) => {
   dispatch({
     type: LOGOUT,
   });
-
-  // firebase.auth().signOut()
-  //     .then(() => {
-  //         dispatch({
-  //             type: LOGOUT_SUCCESS
-  //         })
-  //     })
-  //     .catch((error) => {
-  //         dispatch({
-  //             type: LOGOUT_FAILURE,
-  //             error: error.message
-  //         })
-  //     })
 };
 
-export const checkUsernameAvailable = (email) => (dispatch) => {
-  dispatch({
-    type: CHECK_USER_AVAILABLE,
-  });
+export const checkEmailAvailability = (email) => async (dispatch) => {
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
-  // firebase.auth().signInWithEmailAndPassword(email, "check")
-  //     .catch((error) => {
-  //         if (error.code === "auth/user-not-found") {
-  //             dispatch({
-  //                 type: CHECK_USER_AVAILABLE_SUCCESS
-  //             })
-  //         } else {
-  //             dispatch({
-  //                 type: CHECK_USER_AVAILABLE_FAILURE,
-  //             })
-  //         }
-  //     });
+    const response = await apiClient.query({
+      query: gql`
+        query checkAvailableEmail($email: String!) {
+          checkAvailableEmail(email: $email)
+        }
+      `,
+      variables: { email },
+    });
+
+    console.log(response);
+
+    const { data } = response;
+
+    dispatch({
+      type: CHECK_EMAIL_AVAILABLE,
+      available: data.checkAvailableEmail,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
+
+export const checkUsernameAvailable = (username) => async (dispatch) => {
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    const response = await apiClient.query({
+      query: gql`
+          query checkAvailableUsername($username: String!) {
+            checkAvailableUsername(username: $username)
+          }
+        `,
+      variables: { username },
+    });
+
+    console.log(response);
+
+    const { data } = response;
+    dispatch({
+      type: CHECK_USER_AVAILABLE,
+      available: data.checkAvailableUsername,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
 export const checkAuthenticated = () => (dispatch) => {
   // const unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {

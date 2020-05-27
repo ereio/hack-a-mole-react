@@ -1,4 +1,6 @@
 
+import moment from 'moment';
+
 export const START_GAME = 'START_GAME';
 export const START_GAME_FINISHED = 'START_GAME_FINISHED';
 
@@ -10,6 +12,31 @@ export const INCREMENT_SCORE = 'INCREMENT_SCORE';
 export const WHACK_MOLE = 'MOLE_WHACKED';
 export const DESPAWN_MOLE = 'MOLE_DESPAWN';
 export const SPAWN_MOLE = 'MOLE_SPAWN';
+
+
+/**
+ * Create Game
+ *
+ * This will purposefully call the api to save the game
+ * action at once, this is so we can have a high
+ * (and inefficient) throughput of requests
+ */
+export const createGame = ({ score, startTime, endTime }) => (dispatch) => {
+  console.log('[createGame]', score, startTime, endTime);
+};
+
+
+/**
+ * Save Game
+ *
+ * This will purposefully call the api to save the game
+ * action at once, this is so we can have a high
+ * (and inefficient) throughput of requests
+ */
+export const saveGame = ({ score, startTime, endTime }) => (dispatch) => {
+  console.log('[saveGame]', score, startTime, endTime);
+};
+
 
 /**
  * Save Mole Spawn
@@ -31,7 +58,7 @@ export const saveMoleSpawn = (mole) => (dispatch) => {
  * (and inefficient) throughput of requests
  */
 export const saveMoleDespawn = (mole) => (dispatch) => {
-  console.log('[saveMoleDespawn]', mole);
+  console.log('[saveMoleDespawn]', mole, moment().format());
 };
 
 /**
@@ -56,17 +83,6 @@ export const saveWhackAttempt = ({ mole, timestamp, event }) => (dispatch) => {
   console.log('[saveWhackAttempt]', event);
 };
 
-/**
- * Save Score
- *
- * This will purposefully call the api to save the game
- * action at once, this is so we can have a high
- * (and inefficient) throughput of requests
- */
-export const saveScore = (score) => (dispatch) => {
-  console.log('[saveScore]', score);
-};
-
 
 /**
  *
@@ -82,9 +98,11 @@ export const startGame = () => (dispatch) => {
   });
 };
 
-export const endGame = () => (dispatch) => {
+export const endGame = () => async (dispatch, getState) => {
+  const { score, startTime, endTime } = getState().game;
   dispatch({ type: END_GAME });
-  dispatch(saveScore());
+  await dispatch(saveGame({ score, startTime, endTime }));
+  dispatch({ type: END_GAME_FINISHED });
 };
 
 export const whackMole = (cell) => (dispatch, getState) => {

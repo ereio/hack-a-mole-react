@@ -2,6 +2,7 @@ import moment from 'moment';
 import * as types from './actions';
 
 const initialState = {
+  isLoading: false,
   isActive: false,
   isStarted: false,
   isEnded: false,
@@ -32,16 +33,17 @@ export default function game(state = initialState, action = {}) {
     case types.END_GAME:
       return {
         ...state,
+        isLoading: true,
+      };
+    case types.END_GAME_FINISHED:
+      return {
+        ...state,
+        isLoading: false,
         isStarted: false,
         isActive: false,
         isEnded: true,
         startTime: 0,
         endTime: 0,
-      };
-    case types.END_GAME_FINISHED:
-      return {
-        ...state,
-        isActive: false,
       };
     case types.WHACK_MOLE: {
       const whackedMoles = state.moles.filter((mole) => mole.cell !== action.mole.cell);

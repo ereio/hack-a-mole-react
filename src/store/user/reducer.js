@@ -1,12 +1,13 @@
 import * as types from './actions';
 
 const initialState = {
+  errors: [],
+  currentUser: {},
   isLoading: false,
   isAuthenticated: false,
-  isNameAvailable: false,
+  emailAvailable: true,
+  usernameAvailable: true,
   unregisterAuthObserver: null,
-  current: {},
-  errors: [],
 };
 
 export default function user(state = initialState, action = {}) {
@@ -18,7 +19,7 @@ export default function user(state = initialState, action = {}) {
       return {
         ...state,
         errors: [],
-        current: action.user,
+        currentUser: action.user,
         isAuthenticated: action.isAuthenticated,
         isLoading: false,
       };
@@ -30,29 +31,41 @@ export default function user(state = initialState, action = {}) {
         isLoading: false,
       };
     case types.CREATE_USER_FAILURE: {
-      const createUserErrors = [action.error];
       return {
         ...state,
-        isAuthenticated: true,
-        isNameAvailable: true,
+        isUsernameAvailable: true,
         isLoading: false,
-        errors: createUserErrors,
+        errors: [action.error],
       };
     }
+    case types.CHECK_EMAIL_AVAILABLE:
+    case types.CHECK_EMAIL_AVAILABLE_SUCCESS:
+      return {
+        ...state,
+        emailAvailable: action.available,
+        isLoading: false,
+      };
+    case types.CHECK_EMAIL_AVAILABLE_FAILURE: {
+      return {
+        ...state,
+        emailAvailable: false,
+        isLoading: false,
+        errors: [action.error],
+      };
+    }
+    case types.CHECK_USER_AVAILABLE:
     case types.CHECK_USER_AVAILABLE_SUCCESS:
       return {
         ...state,
-        isNameAvailable: true,
+        usernameAvailable: action.available,
         isLoading: false,
       };
-
     case types.CHECK_USER_AVAILABLE_FAILURE: {
-      const userAvailableErrors = [action.error];
       return {
         ...state,
-        isNameAvailable: false,
+        usernameAvailable: false,
         isLoading: false,
-        errors: userAvailableErrors,
+        errors: [action.error],
       };
     }
     case types.CHECK_AUTHENTICATED:

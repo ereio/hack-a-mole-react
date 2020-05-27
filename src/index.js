@@ -24,6 +24,7 @@ import './index.css';
 
 dotenv.config();
 
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>

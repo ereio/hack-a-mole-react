@@ -37,7 +37,7 @@
   .input-field:focus~.input-field-label, .input-field:valid~.input-field-label {
     top: -20px;
     font-size: 14px;
-    color: rgba(26, 187, 156, 0.85);
+    color: #FFF800D9;
   }
   
   .input-field:focus~.bar:before, .input-field:focus~.bar:after {
@@ -56,7 +56,7 @@
     width: 0;
     bottom: 1px;
     position: absolute;
-    background: rgba(26, 187, 156, 0.85);
+    background: #FFF800D9;
     transition: 0.2s ease all;
     -moz-transition: 0.2s ease all;
     -webkit-transition: 0.2s ease all;
@@ -88,7 +88,7 @@
   
   @-webkit-keyframes inputHighlighter {
     from {
-      background: rgba(26, 187, 156, 0.85);
+      background: #FFF800D9;
     }
     to {
       width: 0;
@@ -98,7 +98,7 @@
   
   @-moz-keyframes inputHighlighter {
     from {
-      background: rgba(26, 187, 156, 0.85);
+      background: #FFF800D9;
     }
     to {
       width: 0;
@@ -108,7 +108,7 @@
   
   @keyframes inputHighlighter {
     from {
-      background: rgba(26, 187, 156, 0.85);
+      background: #FFF800D9;
     }
     to {
       width: 0;
