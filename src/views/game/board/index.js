@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 // redux
+import moment from 'moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -19,37 +20,64 @@ class Board extends Component {
     this.state = {
       spawner: null,
       despawner: null,
+      killer: null,
+      fullstory: null,
     };
 
     this.onWhackMole = this.onWhackMole.bind(this);
     this.onSpawnMole = this.onSpawnMole.bind(this);
     this.onDespawnMole = this.onDespawnMole.bind(this);
+    this.onCheckGameOver = this.onCheckGameOver.bind(this);
   }
 
   componentDidMount() {
+    const { onWhackAttempt } = this.props;
+
     const spawner = setInterval(this.onSpawnMole, 750);
     const despawner = setInterval(this.onDespawnMole, 500);
+    const killer = setInterval(this.onCheckGameOver, 500);
+    const fullstory = (mouseEvent) => {
+      onWhackAttempt({ event: mouseEvent });
+    };
+    document.addEventListener('click', fullstory);
 
-    this.setState((state) => ({
+    this.setState(() => ({
       spawner,
       despawner,
+      killer,
+      fullstory,
     }));
   }
-
 
   componentWillUnmount() {
     this.onClearSpawners();
   }
 
   onClearSpawners() {
-    const { spawner, despawner } = this.state;
+    const {
+      spawner, despawner, killer, fullstory,
+    } = this.state;
+
     clearInterval(spawner);
     clearInterval(despawner);
+    clearInterval(killer);
+    document.removeEventListener('click', fullstory);
 
     this.setState({
       spawner: null,
       despawner: null,
+      killer: null,
+      fullstory: null,
     });
+  }
+
+  onCheckGameOver() {
+    const { endTime } = this.props.game;
+    const { onEndGame } = this.props;
+    const timeLeft = moment(endTime).diff(moment(), 'seconds');
+    if (timeLeft < 1) {
+      onEndGame();
+    }
   }
 
   onSpawnMole() {
@@ -117,6 +145,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   whackMole: gameActions.whackMole,
   spawnMole: gameActions.spawnMole,
   despawnMole: gameActions.despawnMole,
+  onEndGame: gameActions.endGame,
+  onWhackAttempt: gameActions.saveWhackAttempt,
 }, dispatch);
 
 // no actions needed yet at app layer

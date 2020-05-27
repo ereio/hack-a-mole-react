@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Hack-A-Mole",
+  "name": "A whack-a-mole game",
   "icons": [
     {
       "src": "favicon.ico",

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 
 // redux
 import { bindActionCreators } from 'redux';
@@ -7,13 +8,15 @@ import { connect } from 'react-redux';
 // react router
 import { withRouter } from 'react-router-dom';
 
-
 // actions
 import { logoutUser } from 'store/user/actions';
 import { startGame } from 'store/game/actions';
 
 // global components
+import { FiSettings } from 'react-icons/fi';
 import { MaterialButton } from 'global/components/material/button';
+import { TouchableButton } from 'global/components/material/touchable';
+
 
 // local components
 import Board from './board';
@@ -24,9 +27,11 @@ class Game extends Component {
   constructor() {
     super();
 
+    this.renderGame = this.renderGame.bind(this);
+    this.renderMenu = this.renderMenu.bind(this);
+    this.renderGameOver = this.renderGameOver.bind(this);
+
     this.onClickReady = this.onClickReady.bind(this);
-    this.renderReadyPanel = this.renderReadyPanel.bind(this);
-    this.renderTimeRemaining = this.renderTimeRemaining.bind(this);
   }
 
   componentWillUnmount() {
@@ -35,49 +40,118 @@ class Game extends Component {
   }
 
   onClickReady() {
-    const { onStartGame } = this.props.game;
+    const { onStartGame } = this.props;
     onStartGame();
   }
 
-  renderReadyPanel() {
-    const { isStarted } = this.props.game;
+  renderGameOver() {
+    const { isStarted, score } = this.props.game;
+    const { history } = this.props;
     return (
       <div>
-        <MaterialButton buttonText="Ready?" disabled={isStarted} onClick={this.onClickReady} />
+        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+          <div style={{ paddingBottom: '12px' }}>
+            Final Score
+          </div>
+          <div>
+            {score}
+          </div>
+        </div>
+        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+          <MaterialButton
+            buttonText="review gameplay"
+            disabled={isStarted}
+            onClick={() => history.push('/review')}
+          />
+        </div>
+        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+          <MaterialButton
+            buttonText="start new game"
+            disabled={isStarted}
+            onClick={this.onClickReady}
+          />
+        </div>
       </div>
     );
   }
 
-  renderTimeRemaining() {
-    const { startTime, endTime, isStarted } = this.props.game;
+  renderMenu() {
+    const { isStarted } = this.props.game;
+    const { history } = this.props;
+    return (
+      <div>
+        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+          <MaterialButton
+            buttonText="leaderboards"
+            disabled={isStarted}
+            onClick={() => history.push('/leaderboard')}
+          />
+        </div>
+        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+          <MaterialButton
+            buttonText="review gameplay"
+            disabled={isStarted}
+            onClick={() => history.push('/review')}
+          />
+        </div>
+        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+          <MaterialButton
+            buttonText="start game"
+            disabled={isStarted}
+            onClick={this.onClickReady}
+          />
+        </div>
+      </div>
+    );
+  }
 
-    if (isStarted) {
-      return (
-        <div className="time">{`Time: ${startTime.diff(endTime).format('m:ss')}`}</div>
-      );
+  renderGame() {
+    const { isActive, isStarted, isEnded } = this.props.game;
+    if (isStarted || isActive) {
+      return <Board />;
     }
-    return undefined;
+
+    if (isEnded) {
+      return this.renderGameOver();
+    }
+
+    return this.renderMenu();
   }
 
   render() {
-    const { isStarted, score } = this.props.game;
+    const { isStarted, endTime, score } = this.props.game;
     const { email } = this.props.user.current;
+    const timeLeft = moment(endTime).diff(moment(), 'seconds');
 
     return (
       <div className="game">
-        <div className="stats-container">
-          <div className="score">{`Score: ${score}`}</div>
-          {this.renderTimeRemaining()}
+        <div className="container-stats">
+          {isStarted
+            ? (
+              <div className="score">
+                {`Score: ${score}`}
+              </div>
+            )
+            : (<div className="score" />)}
+          {isStarted ? (
+            <div className="time">
+              {`Time: ${timeLeft}`}
+            </div>
+          ) : (
+            <span className="message">
+              {`Welcome ${email}`}
+            </span>
+          )}
+          <div className="settings">
+            <TouchableButton end onClick={() => {}}>
+              <FiSettings />
+            </TouchableButton>
+          </div>
         </div>
-        <div className="game-board-container">
-          {isStarted ? this.renderReadyPanel() : <Board />}
+        <div className="container-game-board">
+          {this.renderGame()}
         </div>
-        <div className="info-container">
-          <span className="message">
-            {' '}
-            {`Welcome ${email}`}
-          </span>
-        </div>
+        <div className="container-info" />
       </div>
     );
   }

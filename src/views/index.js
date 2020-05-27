@@ -7,15 +7,28 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { withRouter } from 'react-router-dom';
 
+import { store } from '../store';
+
 // scene components
+import Signup from './signup';
 import Login from './login';
 import Game from './game';
 
 // local styling
 import './styles.css';
+import { initApiClient } from '../global/api';
+
+const { REACT_APP_API_GRAPHQL, REACT_APP_API_WEBSOCKET } = process.env;
 
 class App extends Component {
   componentDidMount() {
+    initApiClient(
+      store.getState,
+      {
+        API_GRAPHQL: REACT_APP_API_GRAPHQL,
+        API_WEBSOCKET: REACT_APP_API_WEBSOCKET,
+      },
+    );
     this.redirectUnauthed();
   }
 
@@ -34,7 +47,7 @@ class App extends Component {
     const { isAuthenticated } = this.props.user;
 
     if (!isAuthenticated && history.location.pathname !== '/login') {
-      history.replace('/login');
+      // history.replace('/login');
     }
   }
 
@@ -44,8 +57,9 @@ class App extends Component {
         <header className="App-header">
           <Switch>
             <Route exact path="/" component={Login} />
-            <Route path="/login" component={Login} />
             <Route path="/game" component={Game} />
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={Signup} />
           </Switch>
         </header>
       </div>

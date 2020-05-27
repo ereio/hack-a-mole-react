@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import './styles.css';
 
+import { LoadingIndicator } from '../loading';
+
 export class MaterialButton extends Component {
   // static propTypes = {
   //   buttonText: PropTypes.string,
@@ -22,17 +24,26 @@ export class MaterialButton extends Component {
   }
 
   render() {
-    const { large, disabled, buttonText } = this.props;
-    let containerStyles = 'add-button-field ';
-    containerStyles += large ? 'large ' : '';
+    const {
+      large, disabled, buttonText, loading,
+    } = this.props;
+    let containerStyles = 'material-button-field';
+    containerStyles += large ? ' large' : '';
 
-    let buttonStyles = 'add-button ';
-    buttonStyles += disabled ? 'disabled ' : '';
+    let buttonStyles = 'material-button';
+    buttonStyles += disabled ? ' disabled ' : '';
 
     return (
       <div className={containerStyles}>
-        <div className={buttonStyles} onClick={this.onClick}>
-          <div className="add-button-text">{buttonText}</div>
+        <div className={buttonStyles} tabIndex={0} role="button" onClick={this.onClick} onKeyUp={this.onClick}>
+          {
+            loading ? (<LoadingIndicator />)
+              : (
+                <div className="button-text">
+                  {buttonText || this.props.children}
+                </div>
+              )
+          }
         </div>
       </div>
     );

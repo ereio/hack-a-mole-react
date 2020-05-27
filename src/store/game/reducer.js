@@ -1,13 +1,14 @@
 import moment from 'moment';
 import * as types from './actions';
 
-// libs
-
 const initialState = {
+  isLoading: false,
   isActive: false,
   isStarted: false,
+  isEnded: false,
   startTime: 0,
   endTime: 0,
+  timeLimit: 10,
   rows: ['A', 'B', 'C'],
   holes: ['1', '2', '3'],
   score: 0,
@@ -19,9 +20,10 @@ export default function game(state = initialState, action = {}) {
     case types.START_GAME:
       return {
         ...state,
+        score: 0,
         isStarted: true,
-        startTime: moment(),
-        endTime: moment().addl(1, 'minute'),
+        startTime: moment().format(),
+        endTime: moment().add(state.timeLimit, 'seconds').format(),
       };
     case types.START_GAME_FINISHED:
       return {
@@ -31,14 +33,17 @@ export default function game(state = initialState, action = {}) {
     case types.END_GAME:
       return {
         ...state,
-        isStarted: false,
-        startTime: 0,
-        endTime: 0,
+        isLoading: true,
       };
     case types.END_GAME_FINISHED:
       return {
         ...state,
+        isLoading: false,
+        isStarted: false,
         isActive: false,
+        isEnded: true,
+        startTime: 0,
+        endTime: 0,
       };
     case types.WHACK_MOLE: {
       const whackedMoles = state.moles.filter((mole) => mole.cell !== action.mole.cell);

@@ -3,43 +3,49 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
-  max-width: 600px; 
-  min-height: 500px;
-  margin: 70px auto 0;
+  max-width: 600px;  
+  height: 66vh;  
+  margin: auto 16px;
   padding: 0 25px 0 25px;
-  border-radius: 5px;
-  background-clip: padding-box;
-}
+  border-radius: 8px; 
+} 
 
-.game-board-container {
-  display:flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.stats-container{
-  flex:1; 
+.container-stats{ 
   display:flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;  
-  padding-top:2vh;
+  justify-content: space-between;   
+  padding-top: 16px;
   width: 100%;
 }
 
-.game-board-container{
-  flex:5; 
-  display:flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between; 
+.score {
+  text-align: left;
+  min-width: 120px;
 }
 
-.info-container{
-  flex:1; 
+.time { 
+  text-align: center;
+  min-width: 120px;
+}
+
+.settings { 
+  text-align: right;
+  justify-content: flex-end;
+  min-width: 120px;
+}
+
+.container-game-board {  
+  flex:1;
+  display:flex; 
+  justify-content: center;
+  align-items: center;  
+} 
+
+.container-info{ 
   display:flex;
   flex-direction: row;
   align-items: center;

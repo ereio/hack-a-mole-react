@@ -1,50 +1,53 @@
 /* MATERIAL BUTTON STYLES */
 
-.add-button-field {
+.material-button-field { 
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-content: center;
-  width: 65%;
+  align-content: center;  
 }
 
-.add-button-field.large {
+.material-button-field.large { 
   width: 100%;
 }
  
-.add-button {
+.material-button {
   flex:1;
-  min-height: 6vh; 
-  border-radius: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-content: center;
+  text-align: center; 
+  min-width: 96px;
+  border-radius: 30px; 
+  padding: 12px 24px;
   color: #fefefe; 
-  text-align: center;
   cursor: pointer;  
-  background: linear-gradient(to bottom right, rgba(26, 187, 156, 0.85), rgba(26, 187, 156, 0.55));
+  background-color: rgba(26, 187, 156, 0.85);
+  user-select: none; 
 }
  
-.add-button.disabled { 
+.material-button.disabled { 
   color: #fefefe;
-  background-color: rgba(44, 226, 190, 1);
+  background-color: #747474;
 }
 
-.add-button:hover {
-  color: #fefefe;
-}
-
-.add-button:visited {
+.material-button:hover {
   color: #fefefe;
 }
 
-.add-button:active {
+.material-button:visited {
+  color: #fefefe;
+}
+
+.material-button:active {
   color: #fefefe;
   background-color: rgba(44, 226, 190, 0.85);
+  opacity: 0.95;
 }
 
-.add-button-text {  
-  padding-bottom: 5px;
+.button-text {   
+  font-size: 24px;
   text-decoration: none;
+  padding-bottom: 2px
 }

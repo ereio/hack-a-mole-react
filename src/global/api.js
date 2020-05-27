@@ -4,11 +4,11 @@ import { split } from 'apollo-link';
 import { WebSocketLink } from 'apollo-link-ws';
 import { createUploadLink } from 'apollo-upload-client';
 import { getMainDefinition } from 'apollo-utilities';
-import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
 
 // fragment matcher for unions and interfaces in gql
-import introspectionQueryResultData from './fragmentTypes.json';
+// import introspectionQueryResultData from './fragmentTypes.json';
 
 let apiClient;
 
@@ -25,14 +25,14 @@ const defaultOptions = {
 
 const initApiClient = async (getState, { API_GRAPHQL, API_WEBSOCKET }) => {
   const headers = {
-    'x-token': getState().auth.user && getState().auth.user.getIdToken
-      ? await (getState().auth.user).getIdToken()
+    'x-token': getState().user && getState().user.currentUser
+      ? getState().user.currentUser.token
       : null,
   };
 
   const authLink = setContext(async () => {
-    const { user } = getState().auth;
-    const token = user && user.getIdToken ? await user.getIdToken() : null;
+    const { currentUser } = getState().user;
+    const { token } = currentUser;
     return { headers: { 'x-token': token } };
   });
 
@@ -58,11 +58,11 @@ const initApiClient = async (getState, { API_GRAPHQL, API_WEBSOCKET }) => {
   wsLink,
   authLink.concat(httpLink));
 
-  const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData });
+  // const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData });
 
   apiClient = new ApolloClient({
     link,
-    cache: new InMemoryCache({ fragmentMatcher }),
+    cache: new InMemoryCache(),
     defaultOptions,
   });
 };
