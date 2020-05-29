@@ -35,7 +35,7 @@ export class MaterialButton extends Component {
 
     return (
       <div className={containerStyles}>
-        <div className={buttonStyles} tabIndex={0} role="button" onClick={this.onClick} onKeyUp={this.onClick}>
+        <div className={buttonStyles} tabIndex={0} role="button" onClick={this.onClick}>
           {
             loading ? (<LoadingIndicator />)
               : (

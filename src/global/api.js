@@ -25,16 +25,17 @@ const defaultOptions = {
 
 const initApiClient = async (getState, { API_GRAPHQL, API_WEBSOCKET }) => {
   const headers = {
-    'x-token': getState().user && getState().user.currentUser
-      ? getState().user.currentUser.token
+    'x-token': getState().auth.user && getState().auth.user.getIdToken
+      ? await (getState().auth.user).getIdToken()
       : null,
   };
 
   const authLink = setContext(async () => {
-    const { currentUser } = getState().user;
-    const { token } = currentUser;
+    const { user } = getState().auth;
+    const token = user && user.getIdToken ? await user.getIdToken() : null;
     return { headers: { 'x-token': token } };
   });
+
 
   const httpLink = createUploadLink({
     uri: API_GRAPHQL,

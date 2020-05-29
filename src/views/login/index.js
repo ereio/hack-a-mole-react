@@ -9,8 +9,8 @@ import { withRouter } from 'react-router-dom';
 
 // actions
 import {
-  createUser, loginUser, checkUsernameAvailable, uncheckAuthenticated, checkAuthenticated,
-} from 'store/user/actions';
+  createUser, loginUser, checkUsernameAvailable,
+} from 'store/auth/actions';
 
 // global components
 import { MaterialButton } from 'global/components/material/button';
@@ -40,23 +40,13 @@ class Login extends Component {
     this.onNavigateToSignup = this.onNavigateToSignup.bind(this);
   }
 
-  componentDidMount() {
-    const { onCheckAuthenticated } = this.props;
-    onCheckAuthenticated();
-  }
-
 
   componentDidUpdate() {
     const { history } = this.props;
-    const { isAuthenticated } = this.props.user;
-    if (isAuthenticated && history.location.pathname === '/login') {
+    const { authenticated } = this.props;
+    if (authenticated && history.location.pathname === '/login') {
       history.replace('/game');
     }
-  }
-
-  componentWillUnmount() {
-    const { onUncheckAuthenticated } = this.props;
-    onUncheckAuthenticated();
   }
 
   onUpdateLoginReady() {
@@ -105,9 +95,8 @@ class Login extends Component {
   }
 
   renderErrors() {
-    const { errors } = this.props.user;
+    const { errors } = this.props;
 
-    console.log(errors);
     const errorItems = errors.map((error) => (
       <div key={error} className="errors-item">{error}</div>
     ));
@@ -152,14 +141,16 @@ class Login extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({ user: state.user });
+const mapStateToProps = (state) => ({
+  errors: state.alerts.errors,
+  authenticated: state.auth.authenticated,
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCreateUser: createUser,
   onLoginUser: loginUser,
+
   onCheckUsernameAvailable: checkUsernameAvailable,
-  onCheckAuthenticated: checkAuthenticated,
-  onUncheckAuthenticated: uncheckAuthenticated,
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));

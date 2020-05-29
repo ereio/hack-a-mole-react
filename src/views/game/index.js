@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 // actions
-import { logoutUser } from 'store/user/actions';
 import { startGame } from 'store/game/actions';
+import { logoutUser } from 'store/auth/actions';
 
 // global components
 import { FiSettings } from 'react-icons/fi';
@@ -32,11 +32,6 @@ class Game extends Component {
     this.renderGameOver = this.renderGameOver.bind(this);
 
     this.onClickReady = this.onClickReady.bind(this);
-  }
-
-  componentWillUnmount() {
-    const { onLogoutUser } = this.props;
-    onLogoutUser();
   }
 
   onClickReady() {
@@ -120,7 +115,7 @@ class Game extends Component {
 
   render() {
     const { isStarted, endTime, score } = this.props.game;
-    const { email } = this.props.user;
+    const { onLogoutUser, currentUser } = this.props;
     const timeLeft = moment(endTime).diff(moment(), 'seconds');
 
     return (
@@ -139,11 +134,11 @@ class Game extends Component {
             </div>
           ) : (
             <span className="message">
-              {`Welcome ${email}`}
+              {`Welcome ${currentUser.username}`}
             </span>
           )}
           <div className="settings">
-            <TouchableButton end onClick={() => {}}>
+            <TouchableButton end onClick={() => onLogoutUser()}>
               <FiSettings />
             </TouchableButton>
           </div>
@@ -157,13 +152,13 @@ class Game extends Component {
   }
 }
 const mapStateToProps = (state) => ({
-  user: state.user.currentUser,
   game: state.game,
+  currentUser: state.user.currentUser || {},
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onLogoutUser: logoutUser,
   onStartGame: startGame,
+  onLogoutUser: logoutUser,
 }, dispatch);
 
 // no actions needed yet at app layer

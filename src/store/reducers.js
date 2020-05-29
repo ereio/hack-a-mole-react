@@ -1,4 +1,6 @@
 
+import alerts from './alerts/reducer';
+import auth from './auth/reducer';
 import user from './user/reducer';
 import game from './game/reducer';
 
@@ -18,6 +20,8 @@ import game from './game/reducer';
 //        | - index.js
 
 export {
+  alerts,
+  auth,
   user,
   game,
 };

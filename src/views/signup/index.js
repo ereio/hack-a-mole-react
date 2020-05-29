@@ -12,9 +12,8 @@ import {
   createUser,
   checkUsernameAvailable,
   checkEmailAvailability,
-  uncheckAuthenticated,
-  checkAuthenticated,
-} from 'store/user/actions';
+} from 'store/auth/actions';
+import { resetAlerts } from 'store/alerts/actions';
 
 // global components
 import { MaterialButton } from 'global/components/material/button';
@@ -27,7 +26,7 @@ import './styles.css';
 
 const MIN_PASSWORD_LENGTH = 5;
 
-class Login extends Component {
+class Signup extends Component {
   constructor() {
     super();
 
@@ -55,22 +54,8 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    const { onCheckAuthenticated } = this.props;
-    onCheckAuthenticated();
-  }
-
-
-  componentDidUpdate() {
-    const { history } = this.props;
-    const { isAuthenticated } = this.props.user;
-    if (isAuthenticated && history.location.pathname === '/login') {
-      history.replace('/game');
-    }
-  }
-
-  componentWillUnmount() {
-    const { onUncheckAuthenticated } = this.props;
-    onUncheckAuthenticated();
+    const { onResetAlerts } = this.props;
+    onResetAlerts();
   }
 
   onUpdateSignupReady() {
@@ -247,19 +232,18 @@ class Login extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  user: state.user.currentUser,
-  emailAvailable: state.user.emailAvailable,
-  usernameAvailable: state.user.usernameAvailable,
-  loading: state.user.loading,
-  errors: state.user.errors,
+  errors: state.alerts.errors,
+  loading: state.auth.loading,
+  authenticated: state.auth.authenticated,
+  emailAvailable: state.auth.emailAvailable,
+  usernameAvailable: state.auth.usernameAvailable,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCreateUser: createUser,
+  onResetAlerts: resetAlerts,
   onCheckUsernameAvailable: checkUsernameAvailable,
   onCheckEmailAvailable: checkEmailAvailability,
-  onCheckAuthenticated: checkAuthenticated,
-  onUncheckAuthenticated: uncheckAuthenticated,
 }, dispatch);
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Signup));
