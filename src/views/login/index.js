@@ -40,14 +40,13 @@ class Login extends Component {
     this.onNavigateToSignup = this.onNavigateToSignup.bind(this);
   }
 
-
-  componentDidUpdate() {
-    const { history } = this.props;
-    const { authenticated } = this.props;
-    if (authenticated && history.location.pathname === '/login') {
-      history.replace('/game');
-    }
-  }
+  // componentDidUpdate() {
+  //   const { history } = this.props;
+  //   const { authenticated } = this.props;
+  //   if (authenticated && history.location.pathname === '/login') {
+  //     history.replace('/game');
+  //   }
+  // }
 
   onUpdateLoginReady() {
     const isValidEmail = (state) => state.username.length > MIN_EMAIL_LENGTH;

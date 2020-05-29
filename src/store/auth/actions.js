@@ -75,7 +75,7 @@ export const loginUser = (email, password) => async (dispatch) => {
     dispatch({ type: SET_LOADING, loading: true });
     dispatch(resetAlerts());
 
-    const loginResponse = await apiClient.mutate({
+    const response = await apiClient.mutate({
       mutation: gql`
         mutation loginUser($email: String!, $password: String!) {
           loginUser(email: $email, password: $password){
@@ -90,7 +90,9 @@ export const loginUser = (email, password) => async (dispatch) => {
       },
     });
 
-    const currentAuthUser = loginResponse.data.loginUser;
+    console.log(response);
+
+    const currentAuthUser = response.data.loginUser;
 
     if (!currentAuthUser) {
       // eslint-disable-next-line
@@ -121,26 +123,24 @@ export const logoutUser = () => () => {
 /**
  * Init Auth Listener
  */
-export const initAuthListener = () => (dispatch, getState) => {
+export const initAuthListener = (history) => (dispatch, getState) => {
+  console.log('[initAuthListener] starting');
+
   firebase.auth().onIdTokenChanged(async (user) => {
     console.log('[initAuthListener]', user);
     if (user) {
-      const tokenResult = await firebase.auth().currentUser.getIdTokenResult();
-      console.log(tokenResult);
+      console.log(user.uid);
 
-      if (tokenResult) {
-        dispatch({
-          type: SET_AUTH_USER,
-          user: firebase.auth().currentUser,
-          authenticated: true,
-        });
+      dispatch({
+        type: SET_AUTH_USER,
+        user: firebase.auth().currentUser,
+        authenticated: true,
+      });
 
-        // Fetch Authenticated Data
-        await dispatch(fetchCurrentUser());
-      }
+      // Fetch Authenticated Data
+      await dispatch(fetchCurrentUser());
+      history.replace('/game');
     } else {
-      const { history } = getState();
-
       history.replace('/login');
     }
   });

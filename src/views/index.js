@@ -28,27 +28,31 @@ const { REACT_APP_API_GRAPHQL, REACT_APP_API_WEBSOCKET } = process.env;
 
 class App extends Component {
   componentDidMount() {
+    const { history } = this.props;
     initApiClient(store.getState, {
       API_GRAPHQL: REACT_APP_API_GRAPHQL,
       API_WEBSOCKET: REACT_APP_API_WEBSOCKET,
     });
-    initAuthListener();
-
-    this.redirectUnauthed();
+    store.dispatch(initAuthListener(history));
+    this.checkAuthenticationRedirects();
   }
 
   componentDidUpdate() {
-    this.redirectUnauthed();
+    this.checkAuthenticationRedirects();
   }
 
   // redirects users if they attempt to access the game directly
-  redirectUnauthed() {
+  checkAuthenticationRedirects() {
     const { history } = this.props;
-    const { authenticated } = this.props.auth;
+    const { authenticated } = this.props;
 
-    if (!authenticated && history.location.pathname === '/game') {
-      history.replace('/login');
-    }
+    // NOTE: This will flicker because we'll never
+    // be sure authentication when auth is finished checking
+    // if (!authenticated && history.location.pathname === '/game') {
+    //   history.replace('/login');
+    // } else if (authenticated && history.location.pathname !== '/game') {
+    //   history.replace('/game');
+    // }
   }
 
   render() {
@@ -67,7 +71,7 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({ auth: state.auth.authenticated });
+const mapStateToProps = (state) => ({ authenticated: state.auth.authenticated });
 
 // no actions needed yet at app layer
 export default withRouter(connect(mapStateToProps)(App));

@@ -6,7 +6,7 @@ export const FETCH_USER_ATTEMPT = 'FETCH_USER_ATTEMPT';
 export const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS';
 export const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE';
 
-export const fetchCurrentUser = (authID) => async (dispatch, getState) => {
+export const fetchCurrentUser = (authID) => async (dispatch) => {
   try {
     const response = await apiClient.query({
       query: gql`
