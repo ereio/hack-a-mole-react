@@ -120,7 +120,7 @@ class Game extends Component {
 
   render() {
     const { isStarted, endTime, score } = this.props.game;
-    const { email } = this.props.user.current;
+    const { email } = this.props.user;
     const timeLeft = moment(endTime).diff(moment(), 'seconds');
 
     return (
@@ -157,7 +157,7 @@ class Game extends Component {
   }
 }
 const mapStateToProps = (state) => ({
-  user: state.user,
+  user: state.user.currentUser,
   game: state.game,
 });
 

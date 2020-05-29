@@ -35,7 +35,6 @@ class Login extends Component {
     };
 
     this.onClickLogin = this.onClickLogin.bind(this);
-    this.onBlurUsername = this.onBlurUsername.bind(this);
     this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
     this.onNavigateToSignup = this.onNavigateToSignup.bind(this);
@@ -84,11 +83,6 @@ class Login extends Component {
     history.replace('/signup');
   }
 
-  onBlurUsername() {
-    const { username } = this.state;
-    const { onCheckUsernameAvailable } = this.props;
-    onCheckUsernameAvailable(username);
-  }
 
   onChangePassword({ target }) {
     const { value } = target;
@@ -105,19 +99,15 @@ class Login extends Component {
    */
   onClickLogin() {
     const { username, password } = this.state;
-    const { onCreateUser, onLoginUser } = this.props;
-    const { isNameAvailable } = this.props.user;
+    const { onLoginUser } = this.props;
 
-    if (isNameAvailable) {
-      onCreateUser(username, password);
-    } else {
-      onLoginUser(username, password);
-    }
+    onLoginUser(username, password);
   }
 
   renderErrors() {
     const { errors } = this.props.user;
 
+    console.log(errors);
     const errorItems = errors.map((error) => (
       <div key={error} className="errors-item">{error}</div>
     ));
@@ -147,16 +137,16 @@ class Login extends Component {
           Hack A Mole
         </h1>
         {/** type={'email'} breaks the floaty label */}
-        <MaterialInput label="Email" type="text" onChange={this.onChangeUsername} onBlur={this.onBlurUsername} />
+        <MaterialInput label="Email" type="text" onChange={this.onChangeUsername} />
         <MaterialInput label="Password" type="password" onChange={this.onChangePassword} />
+        {this.renderErrors()}
         <MaterialButton buttonText="login" disabled={!isReady} onClick={this.onClickLogin} />
         <TouchableButton onClick={this.onNavigateToSignup}>
-          <div style={{ marginTop: 16 }}>
+          <div style={{ margin: 16 }}>
             <span style={{ fontSize: 16 }}>New to hack-a-mole?</span>
             <span style={{ fontSize: 16, marginLeft: 4, color: '#FFF800' }}>Signup</span>
           </div>
         </TouchableButton>
-        {this.renderErrors()}
       </div>
     );
   }

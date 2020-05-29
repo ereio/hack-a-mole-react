@@ -36,18 +36,13 @@ class App extends Component {
     this.redirectUnauthed();
   }
 
-  componentWillUnmount() {
-    // Un-registers the auth state observer.
-    this.unregisterAuthObserver();
-  }
-
   // redirects users if they attempt to access the game directly
   redirectUnauthed() {
     const { history } = this.props;
     const { isAuthenticated } = this.props.user;
 
-    if (!isAuthenticated && history.location.pathname !== '/login') {
-      // history.replace('/login');
+    if (!isAuthenticated && history.location.pathname === '/game') {
+      history.replace('/login');
     }
   }
 

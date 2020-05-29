@@ -3,10 +3,11 @@ import * as types from './actions';
 const initialState = {
   errors: [],
   currentUser: {},
+  currentAuth: {},
   isLoading: false,
   isAuthenticated: false,
-  emailAvailable: true,
-  usernameAvailable: true,
+  emailAvailable: undefined,
+  usernameAvailable: undefined,
   unregisterAuthObserver: null,
 };
 
@@ -14,6 +15,14 @@ export default function user(state = initialState, action = {}) {
   // TODO: for debugging
   // console.log(action.type, action, state);
   switch (action.type) {
+    case types.CREATE_USER:
+    case types.LOGIN_ATTEMPT:
+    case types.CHECK_EMAIL_AVAILABLE_ATTEMPT:
+    case types.CHECK_USER_AVAILABLE_ATTEMPT:
+      return {
+        ...state,
+        isLoading: true,
+      };
     case types.LOGIN_SUCCESS:
     case types.CHECK_AUTHENTICATED_SUCCESS:
       return {
@@ -23,6 +32,7 @@ export default function user(state = initialState, action = {}) {
         isAuthenticated: action.isAuthenticated,
         isLoading: false,
       };
+
     case types.CREATE_USER_SUCCESS:
       return {
         ...state,
@@ -33,12 +43,10 @@ export default function user(state = initialState, action = {}) {
     case types.CREATE_USER_FAILURE: {
       return {
         ...state,
-        isUsernameAvailable: true,
         isLoading: false,
         errors: [action.error],
       };
     }
-    case types.CHECK_EMAIL_AVAILABLE:
     case types.CHECK_EMAIL_AVAILABLE_SUCCESS:
       return {
         ...state,
@@ -53,7 +61,6 @@ export default function user(state = initialState, action = {}) {
         errors: [action.error],
       };
     }
-    case types.CHECK_USER_AVAILABLE:
     case types.CHECK_USER_AVAILABLE_SUCCESS:
       return {
         ...state,
@@ -73,14 +80,7 @@ export default function user(state = initialState, action = {}) {
         ...state,
         unregisterAuthObserver: action.unregisterAuthObserver,
       };
-    case types.LOGIN_ATTEMPT:
     case types.LOGOUT:
-    case types.CREATE_USER:
-    case types.CHECK_USER_AVAILABLE:
-      return {
-        ...state,
-        isLoading: true,
-      };
     case types.LOGIN_FAILURE:
     case types.LOGOUT_FAILURE: {
       const loginErrors = [action.error];

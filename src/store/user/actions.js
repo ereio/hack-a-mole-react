@@ -15,11 +15,11 @@ export const CREATE_USER = 'CREATE_USER';
 export const CREATE_USER_SUCCESS = 'CREATE_USER_SUCCESS';
 export const CREATE_USER_FAILURE = 'CREATE_USER_FAILURE';
 
-export const CHECK_EMAIL_AVAILABLE = 'CHECK_EMAIL_AVAILABLE';
+export const CHECK_EMAIL_AVAILABLE_ATTEMPT = 'CHECK_EMAIL_AVAILABLE_ATTEMPT';
 export const CHECK_EMAIL_AVAILABLE_SUCCESS = 'CHECK_EMAIL_AVAILABLE_SUCCESS';
 export const CHECK_EMAIL_AVAILABLE_FAILURE = 'CHECK_EMAIL_AVAILABLE_FAILURE';
 
-export const CHECK_USER_AVAILABLE = 'CHECK_USER_AVAILABLE';
+export const CHECK_USER_AVAILABLE_ATTEMPT = 'CHECK_USER_AVAILABLE_ATTEMPT';
 export const CHECK_USER_AVAILABLE_SUCCESS = 'CHECK_USER_AVAILABLE_SUCCESS';
 export const CHECK_USER_AVAILABLE_FAILURE = 'CHECK_USER_AVAILABLE_FAILURE';
 
@@ -28,22 +28,108 @@ export const CHECK_AUTHENTICATED_SUCCESS = 'CHECK_AUTHENTICATED_SUCCESS';
 export const UNCHECK_AUTHENTICATED = 'UNCHECK_AUTHENTICATED';
 
 // actions
-export const createUser = (email, password) => (dispatch) => {
-  dispatch({
-    type: CREATE_USER,
-  });
+export const createUser = ({
+  email,
+  password,
+  username,
+}) => async (dispatch) => {
+  try {
+    dispatch({ type: CREATE_USER });
+
+    const response = await apiClient.mutate({
+      mutation: gql`
+        mutation signupUser($email: String!, $password: String!, $username: String!) {
+          signupUser(email: $email, password: $password, username: $username)
+        }
+      `,
+      variables: {
+        email,
+        password,
+        username,
+      },
+    });
+
+    const { data } = response;
+    console.log(data);
+
+    if (!data) {
+      throw Error('Could not create an account, please try again');
+    }
+    dispatch({ type: CREATE_USER_SUCCESS });
+    return true;
+  } catch (error) {
+    console.error('[createUser]', error);
+    dispatch({ type: CREATE_USER_FAILURE, error: 'Failed to create user, please try again' });
+    return false;
+  }
 };
 
-export const loginUser = (email, password) => (dispatch) => {
-  dispatch({
-    type: LOGIN_ATTEMPT,
-  });
+export const loginUser = (email, password) => async (dispatch) => {
+  try {
+    dispatch({ type: LOGIN_ATTEMPT });
 
-  dispatch({
-    type: LOGIN_SUCCESS,
-    isAuthenticated: !!{},
-    user: {},
-  });
+    const loginResponse = await apiClient.mutate({
+      mutation: gql`
+        mutation loginUser($email: String!, $password: String!) {
+          loginUser(email: $email, password: $password){
+            id
+            token
+          }
+        }
+      `,
+      variables: {
+        email,
+        password,
+      },
+    });
+
+    const currentAuth = loginResponse.data.loginUser;
+
+    if (!currentAuth) {
+      // eslint-disable-next-line
+      throw 'Failed to authenticate username or password';
+    }
+
+    dispatch({
+      type: LOGIN_SUCCESS,
+      isAuthenticated: !!currentAuth.token,
+      currentAuth,
+    });
+
+    const userResponse = await apiClient.query({
+      query: gql`
+        query user($id: ID, $authId: ID) {
+          user(id: $id, authId: $authId){
+            id
+            gameIds
+            username
+          }
+        }
+      `,
+      variables: {
+        authId: currentAuth.id,
+      },
+    });
+
+    if (!currentAuth) {
+      // eslint-disable-next-line
+      throw 'Failed to find user, create a new one';
+    }
+    const currentUser = userResponse.data.user;
+
+    dispatch({
+      type: LOGIN_SUCCESS,
+      isAuthenticated: !!currentAuth.token,
+      currentAuth,
+      currentUser,
+    });
+  } catch (error) {
+    dispatch({
+      type: LOGIN_FAILURE,
+      isAuthenticated: false,
+      error: error.toString(),
+    });
+  }
 };
 
 export const logoutUser = (email) => (dispatch) => {
@@ -54,7 +140,8 @@ export const logoutUser = (email) => (dispatch) => {
 
 export const checkEmailAvailability = (email) => async (dispatch) => {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    dispatch({ type: CHECK_EMAIL_AVAILABLE_ATTEMPT });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const response = await apiClient.query({
       query: gql`
@@ -65,22 +152,25 @@ export const checkEmailAvailability = (email) => async (dispatch) => {
       variables: { email },
     });
 
-    console.log(response);
-
     const { data } = response;
 
     dispatch({
-      type: CHECK_EMAIL_AVAILABLE,
+      type: CHECK_EMAIL_AVAILABLE_SUCCESS,
       available: data.checkAvailableEmail,
     });
   } catch (error) {
-    console.log(error);
+    console.error('[checkEmailAvailability]', error);
+    dispatch({
+      type: CHECK_EMAIL_AVAILABLE_FAILURE,
+      available: false,
+    });
   }
 };
 
 export const checkUsernameAvailable = (username) => async (dispatch) => {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    dispatch({ type: CHECK_USER_AVAILABLE_ATTEMPT });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const response = await apiClient.query({
       query: gql`
@@ -91,15 +181,18 @@ export const checkUsernameAvailable = (username) => async (dispatch) => {
       variables: { username },
     });
 
-    console.log(response);
-
     const { data } = response;
+
     dispatch({
-      type: CHECK_USER_AVAILABLE,
+      type: CHECK_USER_AVAILABLE_SUCCESS,
       available: data.checkAvailableUsername,
     });
   } catch (error) {
-    console.log(error);
+    console.error('[checkUsernameAvailable]', error);
+    dispatch({
+      type: CHECK_USER_AVAILABLE_FAILURE,
+      available: false,
+    });
   }
 };
 

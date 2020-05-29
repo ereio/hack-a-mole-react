@@ -25,5 +25,8 @@
 
 .error-list {
   color:'#FF3333'; 
-  padding: 2vh 0 2vh 0;
+  word-wrap: break-word;
+  width: 50vw;
+  font-size: 16px;
+  padding: 0 0 24px 0;
 } 

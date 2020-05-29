@@ -95,9 +95,9 @@ export class MaterialInput extends Component {
         <span className="highlight" />
         <span className="bar" />
         <label htmlFor={label} className="input-field-label">{label}</label>
-        {error ? this.renderError() : undefined}
         {loading ? this.renderLoading() : undefined}
-        {valid ? this.renderValid() : undefined}
+        {error && !loading ? this.renderError() : undefined}
+        {valid && !loading ? this.renderValid() : undefined}
       </div>
     );
   }
