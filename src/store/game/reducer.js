@@ -1,30 +1,31 @@
-import moment from 'moment';
+
 import * as types from './actions';
 
-const initialState = {
-  isLoading: false,
-  isActive: false,
-  isStarted: false,
-  isEnded: false,
-  startTime: 0,
-  endTime: 0,
-  timeLimit: 10,
-  rows: ['A', 'B', 'C'],
-  holes: ['1', '2', '3'],
-  score: 0,
-  moles: [],
-};
+import initialState from './state';
 
-export default function game(state = initialState, action = {}) {
+export default function game(state = initialState(), action = {}) {
   switch (action.type) {
-    case types.START_GAME:
+    case types.SET_CURRENT_GAME:
+      return {
+        ...state,
+        currentGame: action.game,
+      };
+    case types.SET_LOADING:
+      return {
+        ...state,
+        loading: action.loading,
+      };
+    case types.START_GAME: {
+      const { startTime, endTime } = action.game;
+
       return {
         ...state,
         score: 0,
         isStarted: true,
-        startTime: moment().format(),
-        endTime: moment().add(state.timeLimit, 'seconds').format(),
+        startTime,
+        endTime,
       };
+    }
     case types.START_GAME_FINISHED:
       return {
         ...state,
@@ -33,12 +34,12 @@ export default function game(state = initialState, action = {}) {
     case types.END_GAME:
       return {
         ...state,
-        isLoading: true,
+        loading: true,
       };
     case types.END_GAME_FINISHED:
       return {
         ...state,
-        isLoading: false,
+        loading: false,
         isStarted: false,
         isActive: false,
         isEnded: true,

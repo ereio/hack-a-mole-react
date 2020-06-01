@@ -36,7 +36,8 @@
     "react-router-redux": "^4.0.8",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "subscriptions-transport-ws": "^0.9.16"
+    "subscriptions-transport-ws": "^0.9.16",
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

@@ -6,12 +6,14 @@ export const FETCH_USER_ATTEMPT = 'FETCH_USER_ATTEMPT';
 export const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS';
 export const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE';
 
-export const fetchCurrentUser = (authID) => async (dispatch) => {
+export const fetchCurrentUser = () => async (dispatch, getState) => {
   try {
+    const authId = getState().auth.user.uid;
+
     const response = await apiClient.query({
       query: gql`
-        query user($id: ID, $authId: ID) {
-          user(id: $id, authId: $authId){
+        query user($authId: ID) {
+          user(authId: $authId){
             id
             gameIds
             username
@@ -19,7 +21,7 @@ export const fetchCurrentUser = (authID) => async (dispatch) => {
         }
       `,
       variables: {
-        authId: authID,
+        authId,
       },
     });
 
