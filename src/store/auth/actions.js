@@ -115,13 +115,13 @@ export const loginUser = (email, password) => async (dispatch) => {
 /**
  * Logout User
  */
-export const logoutUser = () => async (dispatch) => {
+export const logoutUser = () => async () => {
   firebase.auth().signOut();
 
   await apiClient.mutate({
     mutation: gql`
-      mutation signOut() {
-        signOut()
+      mutation signOut {
+        signOut
       }
     `,
   });
@@ -135,10 +135,7 @@ export const initAuthListener = (history) => (dispatch) => {
   console.log('[initAuthListener] starting');
 
   firebase.auth().onIdTokenChanged(async (user) => {
-    console.log('[initAuthListener]', user);
     if (user) {
-      console.log(user.uid);
-
       dispatch({
         type: SET_AUTH_USER,
         user: firebase.auth().currentUser,
@@ -151,6 +148,7 @@ export const initAuthListener = (history) => (dispatch) => {
     } else {
       history.replace('/login');
     }
+    console.log('[initAuthListener] completed');
   });
 };
 

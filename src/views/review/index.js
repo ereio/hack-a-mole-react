@@ -9,8 +9,9 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 // actions
-import { startGame } from 'store/game/actions';
 import { logoutUser } from 'store/auth/actions';
+import { startReview, fetchGameplay } from 'store/game/actions';
+
 
 // global components
 import { FiSettings } from 'react-icons/fi';
@@ -23,23 +24,27 @@ import Board from './board';
 
 import './styles.css';
 
-class Game extends Component {
+class Review extends Component {
   constructor() {
     super();
 
     this.renderGame = this.renderGame.bind(this);
-    this.renderMenu = this.renderMenu.bind(this);
-    this.renderGameOver = this.renderGameOver.bind(this);
+    this.renderReviewMenu = this.renderReviewMenu.bind(this);
 
-    this.onClickReady = this.onClickReady.bind(this);
+    this.onStartReview = this.onStartReview.bind(this);
   }
 
-  onClickReady() {
-    const { onStartGame } = this.props;
-    onStartGame();
+  componentDidMount() {
+    const { onFetchGameplay } = this.props;
+    onFetchGameplay();
   }
 
-  renderGameOver() {
+  onStartReview() {
+    const { onStartReview } = this.props;
+    onStartReview();
+  }
+
+  renderReviewMenu() {
     const { isStarted, score } = this.props.game;
     const { history } = this.props;
     return (
@@ -54,46 +59,16 @@ class Game extends Component {
         </div>
         <div style={{ marginTop: '24px', marginBottom: '24px' }}>
           <MaterialButton
-            buttonText="review gameplay"
+            buttonText="start playback"
             disabled={isStarted}
-            onClick={() => history.push('/review')}
+            onClick={this.onStartReview}
           />
         </div>
         <div style={{ marginTop: '24px', marginBottom: '24px' }}>
           <MaterialButton
-            buttonText="start new game"
+            buttonText="main menu"
             disabled={isStarted}
-            onClick={this.onClickReady}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  renderMenu() {
-    const { isStarted } = this.props.game;
-    const { history } = this.props;
-    return (
-      <div>
-        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
-          <MaterialButton
-            buttonText="leaderboards"
-            disabled={isStarted}
-            onClick={() => history.push('/leaderboard')}
-          />
-        </div>
-        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
-          <MaterialButton
-            buttonText="history"
-            disabled={isStarted}
-            onClick={() => history.push('/history')}
-          />
-        </div>
-        <div style={{ marginTop: '24px', marginBottom: '24px' }}>
-          <MaterialButton
-            buttonText="start game"
-            disabled={isStarted}
-            onClick={this.onClickReady}
+            onClick={() => history.push('/game')}
           />
         </div>
       </div>
@@ -101,16 +76,12 @@ class Game extends Component {
   }
 
   renderGame() {
-    const { isActive, isStarted, isEnded } = this.props.game;
+    const { isActive, isStarted } = this.props.game;
     if (isStarted || isActive) {
       return <Board />;
     }
 
-    if (isEnded) {
-      return this.renderGameOver();
-    }
-
-    return this.renderMenu();
+    return this.renderReviewMenu();
   }
 
   render() {
@@ -157,9 +128,10 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onStartGame: startGame,
+  onStartReview: startReview,
   onLogoutUser: logoutUser,
+  onFetchGameplay: fetchGameplay,
 }, dispatch);
 
 // no actions needed yet at app layer
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Game));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Review));

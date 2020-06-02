@@ -1,0 +1,17 @@
+.mole-hole {
+    width: 24vw;
+    height: 24vw;
+    min-width: 88px;
+    min-height: 88px;
+    max-width: 120px;
+    max-height: 120px;
+    background-color: transparent; 
+    border-radius: 50%; 
+    margin: 2vh 2vw;
+    cursor: pointer;  
+}
+
+.mole-hole.active {
+    background-color: brown;
+    border: 1px solid brown;   
+}

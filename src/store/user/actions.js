@@ -25,8 +25,6 @@ export const fetchCurrentUser = () => async (dispatch, getState) => {
       },
     });
 
-    console.log(response);
-
     if (!response) {
       // eslint-disable-next-line
       throw 'Failed to find user, create a new one';

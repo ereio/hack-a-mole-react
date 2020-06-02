@@ -5,6 +5,16 @@ import initialState from './state';
 
 export default function game(state = initialState(), action = {}) {
   switch (action.type) {
+    case types.SET_ALL_GAMES:
+      return {
+        ...state,
+        allGames: action.games,
+      };
+    case types.SET_REVIEW:
+      return {
+        ...state,
+        currentReview: action.review,
+      };
     case types.SET_CURRENT_GAME:
       return {
         ...state,

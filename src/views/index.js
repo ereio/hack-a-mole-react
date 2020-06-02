@@ -16,6 +16,8 @@ import { store } from '../store';
 import Signup from './signup';
 import Login from './login';
 import Game from './game';
+import Review from './review';
+import History from './history';
 
 // local styling
 import './styles.css';
@@ -64,6 +66,8 @@ class App extends Component {
             <Route path="/game" component={Game} />
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
+            <Route path="/review" component={Review} />
+            <Route path="/history" component={History} />
           </Switch>
         </header>
       </div>

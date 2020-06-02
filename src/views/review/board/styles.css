@@ -1,0 +1,10 @@
+ .board {  
+    flex-direction: column;
+    justify-content: 'center';
+    align-items: center;
+ }  
+
+ .mole-row {
+    flex:1;
+    display:flex;
+ }

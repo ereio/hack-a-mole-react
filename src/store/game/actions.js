@@ -7,7 +7,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { apiClient } from '../../global/api';
 import { addAlert } from '../alerts/actions';
 
+export const SET_REVIEW = 'SET_REVIEW';
 export const SET_LOADING = 'SET_LOADING';
+export const SET_ALL_GAMES = 'SET_ALL_GAMES';
 export const SET_CURRENT_GAME = 'SET_CURRENT_GAME';
 
 export const START_GAME = 'START_GAME';
@@ -22,33 +24,54 @@ export const WHACK_MOLE = 'MOLE_WHACKED';
 export const DESPAWN_MOLE = 'MOLE_DESPAWN';
 export const SPAWN_MOLE = 'MOLE_SPAWN';
 
-
 /**
  *
- * State Management
+ * Fetch Games
  *
- * The following actions call the remote calls above or
- * manage just the local state
+ * Begin the game but also create a game
+ * remotely to save events under
  *
  */
-export const startGame = () => async (dispatch, getState) => {
-  const timelimit = getState().game.timeLimit;
-  const startTime = moment().format();
-  const endTime = moment().add(timelimit, 'seconds').format();
+export const fetchGames = () => async (dispatch, getState) => {
+  try {
+    const userId = getState().auth.user.uid;
 
-  const newGame = {
-    endTime,
-    startTime,
-  };
+    console.log('[fetchGames]', userId);
 
-  dispatch(
-    createGame(newGame),
-  );
+    dispatch({ type: SET_LOADING, loading: true });
 
-  dispatch({
-    type: START_GAME,
-    game: newGame,
-  });
+    const response = await apiClient.query({
+      query: gql`
+        query games($userId: ID!) {
+          games(userId: $userId){
+            id
+            userId
+            score
+            endTime
+            startTime
+          }
+        }
+      `,
+      variables: {
+        userId,
+      },
+    });
+
+    console.log('[fetchGames]', response);
+
+    dispatch({
+      type: SET_CURRENT_GAME,
+      game: response.data.createGame,
+    });
+  } catch (error) {
+    dispatch(addAlert({
+      type: 'error',
+      message: error.message,
+      origin: 'createGame',
+    }));
+  } finally {
+    dispatch({ type: SET_LOADING, loading: false });
+  }
 };
 
 
@@ -99,6 +122,34 @@ export const createGame = ({ startTime, endTime }) => async (dispatch) => {
   }
 };
 
+/**
+ *
+ * Start Game
+ *
+ * Begin the game but also create a game
+ * remotely to save events under
+ *
+ */
+export const startGame = () => async (dispatch, getState) => {
+  const timelimit = getState().game.timeLimit;
+  const startTime = moment().format();
+  const endTime = moment().add(timelimit, 'seconds').format();
+
+  const newGame = {
+    endTime,
+    startTime,
+  };
+
+  dispatch(
+    createGame(newGame),
+  );
+
+  dispatch({
+    type: START_GAME,
+    game: newGame,
+  });
+};
+
 
 /**
  * Save Game
@@ -108,7 +159,6 @@ export const createGame = ({ startTime, endTime }) => async (dispatch) => {
  * (and inefficient) throughput of requests
  */
 export const saveGame = ({ score }) => async (dispatch, getState) => {
-  console.log('[saveGame]', score);
   try {
     dispatch({ type: SET_LOADING, loading: true });
 
@@ -116,8 +166,8 @@ export const saveGame = ({ score }) => async (dispatch, getState) => {
     const { startTime, endTime } = currentGame;
     const response = await apiClient.mutate({
       mutation: gql`
-        mutation saveGame($game: GameInput!) {
-          saveGame(game: $game){
+        mutation updateGame($game: GameInput!) {
+          updateGame(game: $game){
             id
             score
             endTime
@@ -127,6 +177,7 @@ export const saveGame = ({ score }) => async (dispatch, getState) => {
       `,
       variables: {
         game: {
+          id: currentGame.id,
           score,
           endTime,
           startTime,
@@ -168,16 +219,19 @@ export const endGame = () => async (dispatch, getState) => {
  * (and inefficient) throughput of requests
  */
 export const saveMoleSpawn = (mole) => async (dispatch, getState) => {
-  console.log('[saveMoleSpawn]', mole);
   try {
     dispatch({ type: SET_LOADING, loading: true });
 
     const game = getState().game.currentGame;
 
-    const response = await apiClient.mutate({
+    const { data } = await apiClient.mutate({
       mutation: gql`
         mutation saveMoleSpawn($spawn: SpawnInput!) {
-          saveMoleSpawn(spawn: $spawn)
+          saveMoleSpawn(spawn: $spawn){
+            id
+            moleId
+            despawn
+          }
         }
       `,
       variables: {
@@ -191,12 +245,8 @@ export const saveMoleSpawn = (mole) => async (dispatch, getState) => {
       },
     });
 
-    dispatch({
-      type: SET_CURRENT_GAME,
-      game: response.data.saveGame,
-    });
 
-    console.log(response);
+    console.log('[saveMoleDespawn]', { ...data.saveMoleSpawn, cell: mole.cell });
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -217,16 +267,19 @@ export const saveMoleSpawn = (mole) => async (dispatch, getState) => {
  * (and inefficient) throughput of requests
  */
 export const saveMoleDespawn = (mole) => async (dispatch, getState) => {
-  console.log('[saveMoleDespawn]', mole);
   try {
     dispatch({ type: SET_LOADING, loading: true });
 
     const game = getState().game.currentGame;
 
-    const response = await apiClient.mutate({
+    const { data } = await apiClient.mutate({
       mutation: gql`
         mutation saveMoleSpawn($spawn: SpawnInput!) {
-          saveMoleSpawn(spawn: $spawn)
+          saveMoleSpawn(spawn: $spawn){
+            id
+            moleId
+            despawn
+          }
         }
       `,
       variables: {
@@ -240,7 +293,7 @@ export const saveMoleDespawn = (mole) => async (dispatch, getState) => {
       },
     });
 
-    console.log(response);
+    console.log('[saveMoleDespawn]', { ...data.saveMoleSpawn, cell: mole.cell });
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -260,16 +313,19 @@ export const saveMoleDespawn = (mole) => async (dispatch, getState) => {
  * (and inefficient) throughput of requests
  */
 export const saveWhackHit = (mole) => async (dispatch, getState) => {
-  console.log('[saveWhackHit]', mole);
   try {
     dispatch({ type: SET_LOADING, loading: true });
 
     const game = getState().game.currentGame;
 
-    const response = await apiClient.mutate({
+    const { data } = await apiClient.mutate({
       mutation: gql`
-        mutation saveMoleWhack($spawn: SpawnInput!) {
-          saveMoleWhack(spawn: $spawn)
+        mutation saveMoleWhack($whack: WhackInput!) {
+          saveMoleWhack(whack: $whack){
+            id
+            moleId
+            hit
+          }
         }
       `,
       variables: {
@@ -283,7 +339,7 @@ export const saveWhackHit = (mole) => async (dispatch, getState) => {
       },
     });
 
-    console.log(response);
+    console.log('[saveWhackHit]', data.saveMoleWhack);
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -304,16 +360,19 @@ export const saveWhackHit = (mole) => async (dispatch, getState) => {
  * (and inefficient) throughput of requests
  */
 export const saveWhackAttempt = (mole) => async (dispatch, getState) => {
-  console.log('[saveWhackAttempt]', mole);
   try {
     dispatch({ type: SET_LOADING, loading: true });
 
     const game = getState().game.currentGame;
 
-    const response = await apiClient.mutate({
+    const { data } = await apiClient.mutate({
       mutation: gql`
-        mutation saveMoleWhack($spawn: SpawnInput!) {
-          saveMoleWhack(spawn: $spawn)
+        mutation saveMoleWhack($whack: WhackInput!) {
+          saveMoleWhack(whack: $whack){
+            id
+            moleId
+            hit
+          }
         }
       `,
       variables: {
@@ -327,8 +386,7 @@ export const saveWhackAttempt = (mole) => async (dispatch, getState) => {
       },
     });
 
-
-    console.log(response);
+    console.log('[saveWhackAttempt]', data.saveMoleWhack);
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -340,6 +398,10 @@ export const saveWhackAttempt = (mole) => async (dispatch, getState) => {
   }
 };
 
+/**
+ * Whack Mole
+ *
+ */
 export const whackMole = (cell) => (dispatch, getState) => {
   console.log('[ACTION whackMole]', cell);
 
@@ -359,7 +421,6 @@ export const whackMole = (cell) => (dispatch, getState) => {
 export const spawnMole = (cell) => (dispatch, getState) => {
   const { moles } = getState().game;
   const foundMole = moles.filter((mole) => mole.cell === cell);
-  console.log('[ACTION spawnMole]', foundMole);
 
   if (!foundMole.length) {
     const mole = { id: uuidv4(), cell };
@@ -372,9 +433,80 @@ export const despawnMole = (cell) => (dispatch, getState) => {
   const { moles } = getState().game;
   const foundMole = moles.find((mole) => mole.cell === cell);
 
-  console.log('[ACTION despawnMole]', foundMole);
   if (foundMole) {
     dispatch({ type: DESPAWN_MOLE, mole: foundMole });
     dispatch(saveMoleDespawn(foundMole));
   }
+};
+
+
+export const fetchGameplay = (gameId) => async (dispatch, getState) => {
+  try {
+    const { id } = getState().game.currentGame;
+    const { data } = await apiClient.query({
+      query: gql`
+      query gameplay($gameId: ID) {
+        gameplay(gameId: $gameId){
+          id 
+          gameId 
+          moleId 
+          cell 
+          timestamp 
+          ... on Spawn {
+            despawn 
+          }
+          ... on Whack {
+            hit 
+          }
+        }
+      }
+    `,
+      variables: {
+        gameId: gameId || id,
+      },
+    });
+
+    console.log('[fetchGameplay]', data);
+    dispatch({
+      type: SET_REVIEW,
+      review: {
+        gameId: id,
+        events: data.fetchGameplay,
+      },
+    });
+  } catch (error) {
+    dispatch(addAlert({
+      type: 'error',
+      message: error.message,
+      origin: 'fetchGameplay',
+    }));
+  }
+};
+
+/**
+ *
+ * Start Review
+ *
+ * Begin the game but also create a game
+ * remotely to save events under
+ *
+ */
+export const startReview = () => async (dispatch, getState) => {
+  const { id, startTime, endTime } = getState().game.currentGame;
+  const { events } = getState().game.currentReview;
+
+  const timeLimit = moment(startTime).diff(endTime).format('SS');
+
+  console.log('[startReview]', timeLimit);
+
+  // const virtualEndTime = moment().add(timelimit, 'seconds');
+
+  // const virtualTime = setInterval(() => {
+  //   const delta = moment().diff(virtualEndTime);
+  //   console.log(delta);
+
+  //   if (moment().isAfter(virtualEndTime)) {
+  //     clearInterval(virtualEndTime);
+  //   }
+  // }, 100);
 };
