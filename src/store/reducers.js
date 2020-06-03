@@ -1,7 +1,7 @@
 
 import alerts from './alerts/reducer';
 import auth from './auth/reducer';
-import user from './user/reducer';
+import users from './users/reducer';
 import game from './game/reducer';
 
 // would want to combineReducers with an index of several reducers
@@ -22,6 +22,6 @@ import game from './game/reducer';
 export {
   alerts,
   auth,
-  user,
+  users,
   game,
 };

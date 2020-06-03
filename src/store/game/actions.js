@@ -40,7 +40,7 @@ export const fetchGames = () => async (dispatch, getState) => {
 
     dispatch({ type: SET_LOADING, loading: true });
 
-    const response = await apiClient.query({
+    const { data } = await apiClient.query({
       query: gql`
         query games($userId: ID!) {
           games(userId: $userId){
@@ -57,11 +57,18 @@ export const fetchGames = () => async (dispatch, getState) => {
       },
     });
 
-    console.log('[fetchGames]', response);
-
     dispatch({
-      type: SET_CURRENT_GAME,
-      game: response.data.createGame,
+      type: SET_ALL_GAMES,
+      games: data.games,
+    });
+
+    const { games } = getState().games;
+    const { users } = getState().users;
+
+    games.forEach((game) => {
+      if (users[game.userId]) {
+        console.log('[fetchGames[', game.userId);
+      }
     });
   } catch (error) {
     dispatch(addAlert({
@@ -224,7 +231,10 @@ export const saveMoleSpawn = (mole) => async (dispatch, getState) => {
 
     const game = getState().game.currentGame;
 
-    const { data } = await apiClient.mutate({
+    const timestamp = moment().toISOString();
+    console.log('[saveMoleSpawn]', timestamp);
+
+    await apiClient.mutate({
       mutation: gql`
         mutation saveMoleSpawn($spawn: SpawnInput!) {
           saveMoleSpawn(spawn: $spawn){
@@ -240,13 +250,10 @@ export const saveMoleSpawn = (mole) => async (dispatch, getState) => {
           gameId: game.id,
           cell: mole.cell,
           despawn: false,
-          timestamp: moment().format(),
+          timestamp,
         },
       },
     });
-
-
-    console.log('[saveMoleDespawn]', { ...data.saveMoleSpawn, cell: mole.cell });
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -272,7 +279,10 @@ export const saveMoleDespawn = (mole) => async (dispatch, getState) => {
 
     const game = getState().game.currentGame;
 
-    const { data } = await apiClient.mutate({
+    const timestamp = moment().toISOString();
+    console.log('[saveMoleSpawn]', timestamp);
+
+    await apiClient.mutate({
       mutation: gql`
         mutation saveMoleSpawn($spawn: SpawnInput!) {
           saveMoleSpawn(spawn: $spawn){
@@ -288,12 +298,10 @@ export const saveMoleDespawn = (mole) => async (dispatch, getState) => {
           gameId: game.id,
           cell: mole.cell,
           despawn: true,
-          timestamp: moment().format(),
+          timestamp,
         },
       },
     });
-
-    console.log('[saveMoleDespawn]', { ...data.saveMoleSpawn, cell: mole.cell });
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -403,8 +411,6 @@ export const saveWhackAttempt = (mole) => async (dispatch, getState) => {
  *
  */
 export const whackMole = (cell) => (dispatch, getState) => {
-  console.log('[ACTION whackMole]', cell);
-
   const { moles } = getState().game;
   if (moles.find((mole) => mole.cell === cell)) {
     const whackedMole = moles.find((mole) => mole.cell === cell);
@@ -440,39 +446,41 @@ export const despawnMole = (cell) => (dispatch, getState) => {
 };
 
 
-export const fetchGameplay = (gameId) => async (dispatch, getState) => {
+export const fetchGameplay = () => async (dispatch, getState) => {
   try {
-    const { id } = getState().game.currentGame;
+    const { currentGame } = getState().game;
+
     const { data } = await apiClient.query({
       query: gql`
       query gameplay($gameId: ID) {
-        gameplay(gameId: $gameId){
-          id 
-          gameId 
-          moleId 
-          cell 
-          timestamp 
+        gameplay(gameId: $gameId){  
           ... on Spawn {
+            id
+            gameId 
+            moleId 
+            cell 
+            timestamp 
             despawn 
           }
           ... on Whack {
+            id
+            gameId 
+            moleId 
+            cell 
+            timestamp 
             hit 
           }
         }
       }
     `,
       variables: {
-        gameId: gameId || id,
+        gameId: currentGame.id,
       },
     });
 
-    console.log('[fetchGameplay]', data);
     dispatch({
       type: SET_REVIEW,
-      review: {
-        gameId: id,
-        events: data.fetchGameplay,
-      },
+      events: data.gameplay,
     });
   } catch (error) {
     dispatch(addAlert({
@@ -485,6 +493,21 @@ export const fetchGameplay = (gameId) => async (dispatch, getState) => {
 
 /**
  *
+ * Select Game
+ *
+ * Begin the game but also create a game
+ * remotely to save events under
+ *
+ */
+export const selectGame = (game) => (dispatch) => {
+  dispatch({
+    type: SET_CURRENT_GAME,
+    game,
+  });
+};
+
+/**
+ *
  * Start Review
  *
  * Begin the game but also create a game
@@ -492,21 +515,86 @@ export const fetchGameplay = (gameId) => async (dispatch, getState) => {
  *
  */
 export const startReview = () => async (dispatch, getState) => {
-  const { id, startTime, endTime } = getState().game.currentGame;
-  const { events } = getState().game.currentReview;
+  const {
+    id,
+    endTime,
+    startTime,
+    events,
+  } = getState().game.currentGame;
 
-  const timeLimit = moment(startTime).diff(endTime).format('SS');
+  const timelimit = moment(endTime).diff(moment(startTime), 'seconds');
+  const virtualStartTime = moment();
+  const virtualEndTime = moment().add(timelimit, 'seconds');
 
-  console.log('[startReview]', timeLimit);
+  const elapsedEvents = events.map((event) => ({
+    ...event,
+    elapsed: moment(event.timestamp).diff(moment(startTime)),
+  }));
 
-  // const virtualEndTime = moment().add(timelimit, 'seconds');
+  console.log(
+    '[startReview]',
+    id,
+    timelimit,
+    virtualStartTime.format(),
+    virtualEndTime.format(),
+    elapsedEvents,
+  );
 
-  // const virtualTime = setInterval(() => {
-  //   const delta = moment().diff(virtualEndTime);
-  //   console.log(delta);
 
-  //   if (moment().isAfter(virtualEndTime)) {
-  //     clearInterval(virtualEndTime);
-  //   }
-  // }, 100);
+  console.log('[startReview] beginning review');
+  let nextEventIndex = 0;
+
+  const virtualGame = {
+    startTime: virtualStartTime,
+    endTime: virtualEndTime,
+  };
+
+
+  dispatch({ type: START_GAME, game: virtualGame });
+  dispatch({ type: START_GAME_FINISHED });
+
+  const virtualTime = setInterval(() => {
+    const delta = virtualEndTime.diff(moment());
+    const elapsed = (timelimit * 1000) - delta;
+
+    if (delta < 0) {
+      console.log('[startReview] ending review');
+      clearInterval(virtualTime);
+    }
+
+    if (elapsedEvents.length - 1 <= nextEventIndex) {
+      dispatch({ type: END_GAME });
+      dispatch({ type: END_GAME_FINISHED });
+      return;
+    }
+
+    const nextEvent = elapsedEvents[nextEventIndex];
+
+    if (nextEvent.elapsed < elapsed) {
+      // eslint-disable-next-line
+      switch (nextEvent.__typename) {
+        case 'Spawn':
+          if (!nextEvent.despawn) {
+            dispatch({ type: SPAWN_MOLE, mole: nextEvent });
+            console.log('[startReview] spawn', nextEvent);
+          } else {
+            dispatch({ type: DESPAWN_MOLE, mole: nextEvent });
+            console.log('[startReview] despawn', nextEvent);
+          }
+          break;
+        case 'Whack':
+        default:
+          if (nextEvent.hit) {
+            dispatch({ type: INCREMENT_SCORE });
+            dispatch({ type: WHACK_MOLE, mole: nextEvent });
+            console.log('[startReview] hit', nextEvent);
+          } else {
+            dispatch({ type: WHACK_MOLE, mole: nextEvent });
+            console.log('[startReview] miss', nextEvent);
+          }
+          break;
+      }
+      nextEventIndex += 1;
+    }
+  }, 10);
 };

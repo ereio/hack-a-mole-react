@@ -2,7 +2,7 @@ export default function initialState() {
   return {
     loading: false,
     started: false,
-    allGames: [],
+    games: [],
     currentGame: null,
     currentReview: null,
     isActive: false,
@@ -10,7 +10,7 @@ export default function initialState() {
     isEnded: false,
     endTime: 0,
     startTime: 0,
-    timeLimit: 10,
+    timeLimit: 21,
     score: 0,
     moles: [],
     rows: ['A', 'B', 'C'],

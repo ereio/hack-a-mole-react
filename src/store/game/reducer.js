@@ -8,13 +8,18 @@ export default function game(state = initialState(), action = {}) {
     case types.SET_ALL_GAMES:
       return {
         ...state,
-        allGames: action.games,
+        games: action.games,
       };
-    case types.SET_REVIEW:
+    case types.SET_REVIEW: {
+      const currentGame = {
+        ...state.currentGame,
+        events: action.events,
+      };
       return {
         ...state,
-        currentReview: action.review,
+        currentGame,
       };
+    }
     case types.SET_CURRENT_GAME:
       return {
         ...state,
@@ -31,6 +36,7 @@ export default function game(state = initialState(), action = {}) {
       return {
         ...state,
         score: 0,
+        moles: [],
         isStarted: true,
         startTime,
         endTime,

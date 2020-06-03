@@ -10,13 +10,15 @@ import { withRouter } from 'react-router-dom';
 
 // actions
 import { logoutUser } from 'store/auth/actions';
-import { fetchGames } from 'store/game/actions';
+import { fetchGames, selectGame } from 'store/game/actions';
 
 
 // global components
-import { FiSettings } from 'react-icons/fi';
+import { FiSettings, FiChevronLeft } from 'react-icons/fi';
 import { TouchableButton } from 'global/components/material/touchable';
 
+import { ReactComponent as EmptyHole } from '../../global/assets/empty-hole.svg';
+import { ReactComponent as MoleHole } from '../../global/assets/mole-hole.svg';
 
 import './styles.css';
 
@@ -24,6 +26,11 @@ class History extends Component {
   constructor() {
     super();
 
+    this.state = {
+      highlight: null,
+    };
+
+    this.onGoBack = this.onGoBack.bind(this);
     this.renderGames = this.renderGames.bind(this);
     this.onSelectGame = this.onSelectGame.bind(this);
   }
@@ -33,19 +40,78 @@ class History extends Component {
     onFetchAllGames();
   }
 
-  onSelectGame() {
-    const { onStartReview } = this.props;
-    onStartReview();
+  onSelectGame(gameId) {
+    const { onSelectGame, history } = this.props;
+    onSelectGame(gameId);
+    history.push('/review');
   }
 
+  onGoBack() {
+    const { history } = this.props;
+    history.goBack();
+  }
 
   renderGames() {
-    const { allGames } = this.props;
-    return allGames.map((game) => (
-      <div key={game.id}>
-        {game.id}
-      </div>
-    ));
+    const { games = [], users } = this.props;
+    const { highlight } = this.state;
+    return (
+      <ul style={{ flex: 1 }}>
+        {games.map((game) => (
+          <li
+            key={game.id}
+            onClick={() => this.onSelectGame(game)}
+            onKeyPress={() => this.onSelectGame(game)}
+            onMouseEnter={() => this.setState({ highlight: game.id })}
+            style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              marginTop: 8,
+              marginBottom: 8,
+              cursor: 'pointer',
+            }}
+          >
+            { highlight === game.id
+              ? (
+                <MoleHole style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 56,
+                  marginRight: 24,
+                  marginBottom: 8,
+                }}
+                />
+              )
+              : (
+                <EmptyHole style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 56,
+                  marginRight: 24,
+                  marginBottom: 8,
+                }}
+                />
+              )}
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'flex-end',
+            }}
+            >
+              <div style={{ fontSize: 20, marginRight: 24 }}>
+                {users[game.userId] || 'Unknown'}
+              </div>
+              <div style={{ fontSize: 20, marginRight: 24 }}>
+                {`Score ${game.score}`}
+              </div>
+              <div style={{ fontSize: 16, marginBottom: 2 }}>
+                {moment(game.endTime).format('MMMM D, YYYY h:mma')}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
   }
 
   render() {
@@ -54,9 +120,13 @@ class History extends Component {
     return (
       <div className="game">
         <div className="container-stats">
-          <div className="score" />
+          <div className="settings">
+            <TouchableButton start onClick={this.onGoBack}>
+              <FiChevronLeft />
+            </TouchableButton>
+          </div>
           <span className="message">
-            {`Welcome ${currentUser.username}`}
+            History
           </span>
           <div className="settings">
             <TouchableButton end onClick={() => onLogoutUser()}>
@@ -64,7 +134,13 @@ class History extends Component {
             </TouchableButton>
           </div>
         </div>
-        <div className="container-game-board">
+        <div style={{
+          flexDirection: 'row',
+          height: '100%',
+          width: '100%',
+          overflow: 'auto',
+        }}
+        >
           {this.renderGames()}
         </div>
         <div className="container-info" />
@@ -73,12 +149,14 @@ class History extends Component {
   }
 }
 const mapStateToProps = (state) => ({
-  allGames: state.game.allGames,
-  currentUser: state.user.currentUser || {},
+  games: state.game.games,
+  users: state.users.users,
+  currentUser: state.users.currentUser || {},
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onLogoutUser: logoutUser,
+  onSelectGame: selectGame,
   onFetchAllGames: fetchGames,
 }, dispatch);
 

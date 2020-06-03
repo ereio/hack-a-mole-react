@@ -116,15 +116,18 @@ export const loginUser = (email, password) => async (dispatch) => {
  * Logout User
  */
 export const logoutUser = () => async () => {
-  firebase.auth().signOut();
-
-  await apiClient.mutate({
-    mutation: gql`
-      mutation signOut {
-        signOut
-      }
-    `,
-  });
+  try {
+    firebase.auth().signOut();
+    await apiClient.mutate({
+      mutation: gql`
+        mutation signOut {
+          signOut
+        }
+      `,
+    });
+  } catch (error) {
+    console.error('[signOut]', error);
+  }
 };
 
 

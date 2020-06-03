@@ -14,13 +14,13 @@ import { startReview, fetchGameplay } from 'store/game/actions';
 
 
 // global components
-import { FiSettings } from 'react-icons/fi';
+import { FiSettings, FiChevronLeft } from 'react-icons/fi';
 import { MaterialButton } from 'global/components/material/button';
 import { TouchableButton } from 'global/components/material/touchable';
 
 
 // local components
-import Board from './board';
+import ReviewBoard from './review-board';
 
 import './styles.css';
 
@@ -28,20 +28,38 @@ class Review extends Component {
   constructor() {
     super();
 
+    this.state = {
+      timeLeft: 0,
+    };
+
     this.renderGame = this.renderGame.bind(this);
     this.renderReviewMenu = this.renderReviewMenu.bind(this);
 
     this.onStartReview = this.onStartReview.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { onFetchGameplay } = this.props;
-    onFetchGameplay();
+    await onFetchGameplay();
   }
 
-  onStartReview() {
+  async onStartReview() {
     const { onStartReview } = this.props;
-    onStartReview();
+    const { timeLimit } = this.state;
+
+    this.setState({ timeLeft: timeLimit - 1 });
+
+    await onStartReview();
+
+    const { endTime } = this.props.game;
+
+    const timer = setInterval(() => {
+      const timeLeft = moment(endTime).diff(moment(), 'seconds');
+      this.setState({ timeLeft });
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+      }
+    }, 250);
   }
 
   renderReviewMenu() {
@@ -78,16 +96,16 @@ class Review extends Component {
   renderGame() {
     const { isActive, isStarted } = this.props.game;
     if (isStarted || isActive) {
-      return <Board />;
+      return <ReviewBoard />;
     }
 
     return this.renderReviewMenu();
   }
 
   render() {
-    const { isStarted, endTime, score } = this.props.game;
-    const { onLogoutUser, currentUser } = this.props;
-    const timeLeft = moment(endTime).diff(moment(), 'seconds');
+    const { isStarted, score } = this.props.game;
+    const { onLogoutUser, history } = this.props;
+    const { timeLeft } = this.state;
 
     return (
       <div className="game">
@@ -98,14 +116,20 @@ class Review extends Component {
                 {`Score: ${score}`}
               </div>
             )
-            : (<div className="score" />)}
+            : (
+              <div className="settings">
+                <TouchableButton start onClick={() => history.goBack()}>
+                  <FiChevronLeft />
+                </TouchableButton>
+              </div>
+            )}
           {isStarted ? (
             <div className="time">
               {`Time: ${timeLeft}`}
             </div>
           ) : (
             <span className="message">
-              {`Welcome ${currentUser.username}`}
+              Review Game
             </span>
           )}
           <div className="settings">
@@ -124,12 +148,12 @@ class Review extends Component {
 }
 const mapStateToProps = (state) => ({
   game: state.game,
-  currentUser: state.user.currentUser || {},
+  currentUser: state.users.currentUser || {},
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onStartReview: startReview,
   onLogoutUser: logoutUser,
+  onStartReview: startReview,
   onFetchGameplay: fetchGameplay,
 }, dispatch);
 

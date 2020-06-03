@@ -27,6 +27,10 @@ class Game extends Component {
   constructor() {
     super();
 
+    this.state = {
+      timeLeft: this,
+    };
+
     this.renderGame = this.renderGame.bind(this);
     this.renderMenu = this.renderMenu.bind(this);
     this.renderGameOver = this.renderGameOver.bind(this);
@@ -34,9 +38,22 @@ class Game extends Component {
     this.onClickReady = this.onClickReady.bind(this);
   }
 
-  onClickReady() {
-    const { onStartGame } = this.props;
-    onStartGame();
+  async onClickReady() {
+    const { onStartGame, timeLimit } = this.props;
+
+    this.setState({ timeLeft: timeLimit - 1 });
+
+    await onStartGame();
+
+    const { endTime } = this.props.game;
+
+    const timer = setInterval(() => {
+      const timeLeft = moment(endTime).diff(moment(), 'seconds');
+      this.setState({ timeLeft });
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+      }
+    }, 250);
   }
 
   renderGameOver() {
@@ -114,9 +131,9 @@ class Game extends Component {
   }
 
   render() {
-    const { isStarted, endTime, score } = this.props.game;
+    const { isStarted, score } = this.props.game;
     const { onLogoutUser, currentUser } = this.props;
-    const timeLeft = moment(endTime).diff(moment(), 'seconds');
+    const { timeLeft } = this.state;
 
     return (
       <div className="game">
@@ -153,7 +170,8 @@ class Game extends Component {
 }
 const mapStateToProps = (state) => ({
   game: state.game,
-  currentUser: state.user.currentUser || {},
+  timeLimit: state.game.timeLimit,
+  currentUser: state.users.currentUser || {},
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

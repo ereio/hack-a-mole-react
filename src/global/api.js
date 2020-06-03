@@ -4,11 +4,11 @@ import { split } from 'apollo-link';
 import { WebSocketLink } from 'apollo-link-ws';
 import { createUploadLink } from 'apollo-upload-client';
 import { getMainDefinition } from 'apollo-utilities';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
 
 // fragment matcher for unions and interfaces in gql
-// import introspectionQueryResultData from './fragmentTypes.json';
+import introspectionQueryResultData from './fragmentTypes.json';
 
 let apiClient;
 
@@ -61,9 +61,11 @@ const initApiClient = async (getState, { API_GRAPHQL, API_WEBSOCKET }) => {
 
   // const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData });
 
+  const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData });
+
   apiClient = new ApolloClient({
     link,
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({ fragmentMatcher }),
     defaultOptions,
   });
 };

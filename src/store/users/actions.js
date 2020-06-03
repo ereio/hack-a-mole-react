@@ -2,6 +2,10 @@ import gql from 'graphql-tag';
 
 import { apiClient } from '../../global/api';
 
+export const ADD_USER = 'ADD_USER';
+export const SET_USERS = 'SET_USERS';
+
+
 export const FETCH_USER_ATTEMPT = 'FETCH_USER_ATTEMPT';
 export const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS';
 export const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE';
@@ -31,10 +35,16 @@ export const fetchCurrentUser = () => async (dispatch, getState) => {
     }
 
     const currentUser = response.data.user;
+    const users = {};
+    users[currentUser.id] = currentUser;
 
     dispatch({
       type: FETCH_USER_SUCCESS,
       currentUser,
+    });
+    dispatch({
+      type: SET_USERS,
+      users,
     });
   } catch (error) {
     dispatch({
