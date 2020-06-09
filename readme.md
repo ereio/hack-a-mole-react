@@ -5,20 +5,6 @@
     * uses package by feature and duck typing project organization
     * uses .env file with NODE_PATH set so the node development server allows absolute pathing
 
-### Order Of Implementations
-    * added structure of domain - some future packages for redux stores
-    * added redux frameworks and templated actions and reducers
-    * added login scene
-    * added event handler templates for login scene
-    * implemented react-router for navigation
-    * added authentication wall with login and the game
-    * added tests for user redux store
-    * added game board template
-    * added game board redux store
-    * refactored and bug fixes
-    * implemented firebase auth and google cloud storage
-### Requirements:
-
 **Create a simple Whack-a-mole game:**
 1. The game should be hosted behind a login screen. 
 2. The game should keep track of current user’s high score and the top 5 scores of all users. A score is one point for each “mole” whacked during a game (registered as a mouse click).  
