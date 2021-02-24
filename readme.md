@@ -1,5 +1,5 @@
 # Hack A Mole
-### a whack a mole game that was clearly hacked together
+### a whack a mole game example 🦔
 
 ## Convertion Effort
 - Modernize react w/ hooks
