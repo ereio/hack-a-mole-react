@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 
 // redux
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 
 // react router
 import { withRouter } from 'react-router-dom';
@@ -13,92 +13,55 @@ import {
 } from '../../store/auth/actions';
 
 // global components
+import { MoleIcon } from 'global/assets';
 
-import { ReactComponent as MoleIcon } from '../../global/assets/mole-icon.svg';
+import { MaterialButton, TouchableButton, MaterialInput, Panel } from '../components';
 
-import { MaterialButton, TouchableButton, MaterialInput } from '../../global/components';
+import { MIN_EMAIL_LENGTH, MIN_PASSWORD_LENGTH } from 'global/constants';
 
 import './styles.css';
 
-const MIN_EMAIL_LENGTH = 5;
-const MIN_PASSWORD_LENGTH = 5;
+const Login = (props) => {
+  // redux connections
+  const dispatch = useDispatch();
+  const errors = useSelector(state => state.alerts.errors);
 
-class Login extends Component {
-  constructor() {
-    super();
+  // init state
+  const [ready, setReady] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-    this.state = {
-      username: '',
-      password: '',
-      isReady: false,
-    };
+  // effects 
+  useEffect(() => {
+    setReady(username.length > MIN_EMAIL_LENGTH && password.length > MIN_PASSWORD_LENGTH)
+  }, [username, password])
 
-    this.onClickLogin = this.onClickLogin.bind(this);
-    this.onChangeUsername = this.onChangeUsername.bind(this);
-    this.onChangePassword = this.onChangePassword.bind(this);
-    this.onNavigateToSignup = this.onNavigateToSignup.bind(this);
-  }
+  // callbacks
+  const onChangeUsername = useCallback(({ target }) => {
+    setUsername(target.value);
+  }, [setUsername]);
 
-  // componentDidUpdate() {
-  //   const { history } = this.props;
-  //   const { authenticated } = this.props;
-  //   if (authenticated && history.location.pathname === '/login') {
-  //     history.replace('/game');
-  //   }
-  // }
+  const onChangePassword = useCallback(({ target }) => {
+    setPassword(target.value);
+  }, [setPassword]);
 
-  onUpdateLoginReady() {
-    const isValidEmail = (state) => state.username.length > MIN_EMAIL_LENGTH;
-    const isValidPassword = (state) => state.password.length > MIN_PASSWORD_LENGTH;
+  const onNavigateSignup = useCallback(() => {
+    const { history } = props;
+    history.push('/signup');
+  });
 
-    this.setState((state) => ({
-      isReady: isValidEmail(state) && isValidPassword(state),
-    }));
-  }
+  const onClickLogin = () => {
+    dispatch(loginUser(username, password));
+  };
 
-  onChangeUsername({ target }) {
-    const { value } = target;
-
-    this.setState(() => ({
-      username: value,
-    }));
-
-    this.onUpdateLoginReady();
-  }
-
-  onNavigateToSignup() {
-    const { history } = this.props;
-    history.replace('/signup');
-  }
-
-
-  onChangePassword({ target }) {
-    const { value } = target;
-
-    this.setState(() => ({ password: value }));
-    this.onUpdateLoginReady();
-  }
-
-  /**
-   * onClickLogin
-   *
-   * the isNameAvailable value actually dictates if the user is logging in or
-   * creating a new user
-   */
-  onClickLogin() {
-    const { username, password } = this.state;
-    const { onLoginUser } = this.props;
-
-    onLoginUser(username, password);
-  }
-
-  renderErrors() {
-    const { errors } = this.props;
-
+  // render helpers
+  const renderErrors = () => {
     const errorItems = errors.map((error) => (
       <div
         key={error}
-        className="errors-item">{error}</div>
+        className="errors-item">
+        {error}
+      </div>
     ));
 
     return (
@@ -108,57 +71,43 @@ class Login extends Component {
     );
   }
 
-  render() {
-    const { isReady } = this.state;
-
-    return (
-      <div className="login-panel">
-        <MoleIcon
-          alt="Hack a mole login"
-          className="login-logo"
-          style={{
-            flex: 1,
-            height: 84,
-            width: 84,
-          }} />
-        <h1 className="login-title">
-          Hack A Mole
-        </h1>
-        {/** type={'email'} breaks the floaty label */}
-        <MaterialInput
-          label="Email"
-          type="text"
-          onChange={this.onChangeUsername} />
-        <MaterialInput
-          label="Password"
-          type="password"
-          onChange={this.onChangePassword} />
-        {this.renderErrors()}
-        <MaterialButton
-          buttonText="login"
-          disabled={!isReady}
-          onClick={this.onClickLogin} />
-        <TouchableButton onClick={this.onNavigateToSignup}>
-          <div style={{ margin: 16 }}>
-            <span style={{ fontSize: 16 }}>New to hack-a-mole?</span>
-            <span style={{ fontSize: 16, marginLeft: 4, color: '#FFF800' }}>Signup</span>
-          </div>
-        </TouchableButton>
-      </div>
-    );
-  }
+  return (
+    <Panel>
+      <MoleIcon
+        alt="Hack a mole login"
+        className="login-logo"
+        style={{
+          flex: 1,
+          height: 136,
+          width: 136,
+          paddingTop: 32,
+          paddingBottom: 32,
+        }} />
+      <h1 className="login-title">
+        Hack A Mole
+    </h1>
+      {/** type={'email'} breaks the floaty label */}
+      <MaterialInput
+        label="Email"
+        type="text"
+        onChange={onChangeUsername} />
+      <MaterialInput
+        label="Password"
+        type="password"
+        onChange={onChangePassword} />
+      {renderErrors()}
+      <MaterialButton
+        buttonText="login"
+        disabled={!ready}
+        onClick={onClickLogin} />
+      <TouchableButton onClick={onNavigateSignup}>
+        <div style={{ margin: 16 }}>
+          <span style={{ fontSize: 24 }}>New to hack-a-mole?</span>
+          <span style={{ fontSize: 24, marginLeft: 4, color: '#FFF800' }}>Signup</span>
+        </div>
+      </TouchableButton>
+    </Panel>
+  )
 }
 
-const mapStateToProps = (state) => ({
-  errors: state.alerts.errors,
-  authenticated: state.auth.authenticated,
-});
-
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onCreateUser: createUser,
-  onLoginUser: loginUser,
-
-  onCheckUsernameAvailable: checkUsernameAvailable,
-}, dispatch);
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
+export default withRouter(Login);

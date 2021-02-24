@@ -22,7 +22,7 @@ import History from './history';
 import './styles.css';
 
 // services
-import { initApiClient } from '../global/api';
+import { initApiClient } from 'global/api';
 import { initAuthListener } from '../store/auth/actions';
 
 const { REACT_APP_API_GRAPHQL, REACT_APP_API_WEBSOCKET } = process.env;

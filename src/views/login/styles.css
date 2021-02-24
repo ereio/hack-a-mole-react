@@ -1,19 +1,4 @@
 
-.login-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background-color: rgba(0, 0, 0, 0.5);
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
-  max-width: 600px;
-  min-height: 500px;
-  margin: 70px auto 0;
-  padding: 0 25px 0 25px;
-  border-radius: 5px;
-  background-clip: padding-box;
-}
-
 .login-title {
   font-size: 40px;
   margin: 16px 0 40px 0;

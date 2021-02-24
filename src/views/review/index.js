@@ -15,7 +15,7 @@ import { startReview, fetchGameplay } from '../../store/game/actions';
 
 // global components
 import { FiSettings, FiChevronLeft } from 'react-icons/fi';
-import { TouchableButton, MaterialButton } from '../../global/components';
+import { TouchableButton, MaterialButton } from '../components';
 
 
 // local components

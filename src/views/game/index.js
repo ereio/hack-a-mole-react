@@ -14,7 +14,7 @@ import { logoutUser } from '../../store/auth/actions';
 
 // global components
 import { FiSettings } from 'react-icons/fi';
-import { MaterialButton, TouchableButton } from '../../global/components';
+import { MaterialButton, TouchableButton } from '../components';
 
 
 // local components

@@ -1,0 +1,7 @@
+const MIN_EMAIL_LENGTH = 5;
+const MIN_PASSWORD_LENGTH = 5;
+
+export {
+  MIN_EMAIL_LENGTH,
+  MIN_PASSWORD_LENGTH
+}

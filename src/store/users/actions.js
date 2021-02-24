@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { apiClient } from '../../global/api';
+import { apiClient } from 'global/api';
 
 export const ADD_USER = 'ADD_USER';
 export const SET_USERS = 'SET_USERS';

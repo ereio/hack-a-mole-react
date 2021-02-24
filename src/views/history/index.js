@@ -15,7 +15,7 @@ import { fetchGames, selectGame } from '../../store/game/actions';
 
 // global components
 import { FiSettings, FiChevronLeft } from 'react-icons/fi';
-import { TouchableButton } from '../../global/components';
+import { TouchableButton } from '../components';
 
 import { ReactComponent as EmptyHole } from '../../global/assets/empty-hole.svg';
 import { ReactComponent as MoleHole } from '../../global/assets/mole-hole.svg';

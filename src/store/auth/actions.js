@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { apiClient } from '../../global/api';
+import { apiClient } from 'global/api';
 // firebase for auth  
 import { addAlert, resetAlerts } from '../alerts/actions';
 

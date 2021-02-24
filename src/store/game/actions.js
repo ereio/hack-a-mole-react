@@ -3,8 +3,7 @@ import moment from 'moment';
 import gql from 'graphql-tag';
 import { v4 as uuidv4 } from 'uuid';
 
-
-import { apiClient } from '../../global/api';
+import { apiClient } from 'global/api';
 import { addAlert } from '../alerts/actions';
 
 export const SET_REVIEW = 'SET_REVIEW';

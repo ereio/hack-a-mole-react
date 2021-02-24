@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './styles.css';
 
-import colors from '../../../colors';
+import colors from 'global/colors';
 
 export class LoadingIndicator extends Component {
   // static propTypes = {

@@ -17,7 +17,7 @@ import {
 import { resetAlerts } from '../../store/alerts/actions';
 
 // global components
-import { TouchableButton, MaterialInput, MaterialButton } from '../../global/components';
+import { TouchableButton, MaterialInput, MaterialButton } from '../components';
 import { MoleIcon } from '../../global/assets';
 
 import './styles.css';
