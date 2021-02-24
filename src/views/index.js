@@ -1,15 +1,13 @@
-import React, { Component } from 'react';
-
+import React, { useEffect } from 'react';
 
 // redux
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
+
+import { store } from '../store';
 
 // react router
 import { Route, Switch } from 'react-router';
 import { withRouter } from 'react-router-dom';
-
-// main state manager
-import { store } from '../store';
 
 // screen components
 import Game from './game';
@@ -27,54 +25,43 @@ import { initAuthListener } from '../store/auth/actions';
 
 const { REACT_APP_API_GRAPHQL, REACT_APP_API_WEBSOCKET } = process.env;
 
-class App extends Component {
-  componentDidMount() {
-    const { history } = this.props;
+const App = (props) => {
+  const { history } = props;
+
+  const authenticated = useSelector(state => state.auth.authenticated);
+
+  // init api and auth listeners
+  useEffect(() => {
     initApiClient(store.getState, {
       API_GRAPHQL: REACT_APP_API_GRAPHQL,
       API_WEBSOCKET: REACT_APP_API_WEBSOCKET,
     });
     store.dispatch(initAuthListener(history));
-    this.checkAuthenticationRedirects();
-  }
+  }, [])
 
-  componentDidUpdate() {
-    this.checkAuthenticationRedirects();
-  }
+  // check if auth user has updated
+  useEffect(() => {
+    if (!authenticated && history.location.pathname === '/game') {
+      history.replace('/login');
+    } else if (authenticated && history.location.pathname !== '/game') {
+      history.replace('/game');
+    }
+  }, [authenticated])
 
-  // redirects users if they attempt to access the game directly
-  checkAuthenticationRedirects() {
-    const { history } = this.props;
-    const { authenticated } = this.props;
-
-    // NOTE: This will flicker because we'll never
-    // be sure authentication when auth is finished checking
-    // if (!authenticated && history.location.pathname === '/game') {
-    //   history.replace('/login');
-    // } else if (authenticated && history.location.pathname !== '/game') {
-    //   history.replace('/game');
-    // }
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <Switch>
-            <Route exact path="/" component={Login} />
-            <Route path="/game" component={Game} />
-            <Route path="/login" component={Login} />
-            <Route path="/signup" component={Signup} />
-            <Route path="/review" component={Review} />
-            <Route path="/history" component={History} />
-          </Switch>
-        </header>
-      </div>
-    );
-  }
+  return (
+    <div className="App">
+      <header className="App-header">
+        <Switch>
+          <Route exact path="/" component={Login} />
+          <Route path="/game" component={Game} />
+          <Route path="/login" component={Login} />
+          <Route path="/signup" component={Signup} />
+          <Route path="/review" component={Review} />
+          <Route path="/history" component={History} />
+        </Switch>
+      </header>
+    </div>
+  );
 }
 
-const mapStateToProps = (state) => ({ authenticated: state.auth.authenticated });
-
-// no actions needed yet at app layer
-export default withRouter(connect(mapStateToProps)(App));
+export default withRouter(App);

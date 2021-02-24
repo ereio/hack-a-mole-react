@@ -9,6 +9,7 @@
 
 .material-button-field.large { 
   width: 100%;
+  min-width: 144px
 }
  
 .material-button {

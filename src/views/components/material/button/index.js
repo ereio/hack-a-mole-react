@@ -3,49 +3,41 @@ import React, { Component } from 'react';
 import './styles.css';
 
 import { LoadingIndicator } from '../loading';
+import styled from 'styled-components';
 
-export class MaterialButton extends Component {
-  // static propTypes = {
-  //   buttonText: PropTypes.string,
-  //   large: PropTypes.bool
-  // };
+const Active = styled.div`
 
-  constructor() {
-    super();
+`;
+export const MaterialButton = (props) => {
+  const {
+    large, disabled, buttonText, loading,
+  } = props;
 
-    this.onClick = this.onClick.bind(this);
-  }
+  let containerStyles = 'material-button-field';
+  containerStyles += large ? ' large' : '';
 
-  onClick() {
-    const { disabled, onClick } = this.props;
+  let buttonStyles = 'material-button';
+  buttonStyles += disabled ? ' disabled ' : '';
+
+  const onClick = () => {
+    const { disabled, onClick } = props;
     if (!disabled) {
       onClick();
     }
   }
 
-  render() {
-    const {
-      large, disabled, buttonText, loading,
-    } = this.props;
-    let containerStyles = 'material-button-field';
-    containerStyles += large ? ' large' : '';
-
-    let buttonStyles = 'material-button';
-    buttonStyles += disabled ? ' disabled ' : '';
-
-    return (
-      <div className={containerStyles}>
-        <div className={buttonStyles} tabIndex={0} role="button" onClick={this.onClick}>
-          {
-            loading ? (<LoadingIndicator />)
-              : (
-                <div className="button-text">
-                  {buttonText || this.props.children}
-                </div>
-              )
-          }
-        </div>
+  return (
+    <div className={containerStyles}>
+      <div className={buttonStyles} tabIndex={0} role="button" onClick={onClick}>
+        {
+          loading ? (<LoadingIndicator />)
+            : (
+              <div className="button-text">
+                {buttonText || props.children}
+              </div>
+            )
+        }
       </div>
-    );
-  }
+    </div>
+  );
 }

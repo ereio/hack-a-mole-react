@@ -1,8 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 
-// redux
-import { bindActionCreators } from 'redux';
-import { connect, useDispatch, useSelector } from 'react-redux';
+// redux 
+import { useDispatch, useSelector } from 'react-redux';
 
 // react router
 import { withRouter } from 'react-router-dom';
@@ -95,17 +94,17 @@ const Login = (props) => {
         label="Password"
         type="password"
         onChange={onChangePassword} />
-      {renderErrors()}
       <MaterialButton
         buttonText="login"
         disabled={!ready}
         onClick={onClickLogin} />
       <TouchableButton onClick={onNavigateSignup}>
-        <div style={{ margin: 16 }}>
+        <div style={{ marginBottom: 16, marginTop: 24, }}>
           <span style={{ fontSize: 24 }}>New to hack-a-mole?</span>
           <span style={{ fontSize: 24, marginLeft: 4, color: '#FFF800' }}>Signup</span>
         </div>
       </TouchableButton>
+      {renderErrors()}
     </Panel>
   )
 }

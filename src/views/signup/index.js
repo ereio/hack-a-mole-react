@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-// redux
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+// redux 
+import { useDispatch, useSelector } from 'react-redux';
 
 // react router
 import { withRouter } from 'react-router-dom';
+import { MoleIcon } from 'global/assets';
+import { MIN_PASSWORD_LENGTH } from 'global/constants';
 
 // actions
 import {
@@ -17,135 +18,96 @@ import {
 import { resetAlerts } from '../../store/alerts/actions';
 
 // global components
-import { TouchableButton, MaterialInput, MaterialButton } from '../components';
-import { MoleIcon } from '../../global/assets';
+import { Panel, TouchableButton, MaterialInput, MaterialButton } from '../components';
 
 import './styles.css';
+const Signup = (props) => {
+  const dispatch = useDispatch();
 
-const MIN_PASSWORD_LENGTH = 5;
+  const errors = useSelector(state => state.alerts.errors);
+  const availableEmail = useSelector(state => state.auth.emailAvailable);
+  const availableUsername = useSelector(state => state.auth.usernameAvailable);
 
-class Signup extends Component {
-  constructor() {
-    super();
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-    this.state = {
-      username: '',
-      password: '',
-      email: '',
-      isReady: false,
-      loading: false,
-      emailBlured: false,
-      usernameBlured: false,
-      emailLoading: false,
-      usernameLoading: false,
-    };
+  const [ready, setReady] = useState(false);
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [blurredEmail, setBlurredEmail] = useState(false);
+  const [blurredUsername, setBlurredUsername] = useState(false);
+  const [loadingEmail, setLoadingEmail] = useState(false);
+  const [loadingUsername, setLoadingUsername] = useState(false);
 
-    this.onBlurEmail = this.onBlurEmail.bind(this);
-    this.onChangeEmail = this.onChangeEmail.bind(this);
+  const passwordValid = useMemo(
+    () => password.length > MIN_PASSWORD_LENGTH,
+    [password]
+  );
 
+  // effects
+  useEffect(() => {
+    dispatch(resetAlerts());
+  }, [])
 
-    this.onBlurUsername = this.onBlurUsername.bind(this);
-    this.onChangeUsername = this.onChangeUsername.bind(this);
-    this.onChangePassword = this.onChangePassword.bind(this);
-    this.onClickSignup = this.onClickSignup.bind(this);
-    this.onNavigateToLogin = this.onNavigateToLogin.bind(this);
-  }
+  useEffect(() => {
+    const validPassword = password > MIN_PASSWORD_LENGTH;
+    setReady(validPassword && availableEmail && availableUsername)
+  }, [availableEmail, availableUsername, password])
 
-  componentDidMount() {
-    const { onResetAlerts } = this.props;
-    onResetAlerts();
-  }
+  // callbacks
+  const onChangeEmail = useCallback(({ target: { value } }) => {
+    setEmail(value);
+  }, [setEmail]);
 
-  onUpdateSignupReady() {
-    const isValidPassword = (state) => state.password.length > MIN_PASSWORD_LENGTH;
-    const { emailAvailable, usernameAvailable } = this.props;
+  const onChangeUsername = useCallback(({ target: { value } }) => {
+    setUsername(value);
+  }, [setEmail]);
 
-    this.setState((state) => ({
-      isReady: isValidPassword(state)
-        && emailAvailable
-        && usernameAvailable,
-    }));
-  }
+  const onChangePassword = useCallback(({ target: { value } }) => {
+    setPassword(value);
+  }, [setEmail]);
 
-  onChangeEmail({ target }) {
-    const { value } = target;
+  const onBlurEmail = useCallback(async () => {
+    setLoadingEmail(true);
 
-    this.setState(() => ({ email: value }));
+    await dispatch(checkEmailAvailability(email));
 
-    this.onUpdateSignupReady();
-  }
+    setBlurredEmail(true);
+    setLoadingEmail(false);
+  }, []);
 
-  async onBlurEmail() {
-    const { email } = this.state;
-    const { onCheckEmailAvailable } = this.props;
+  const onBlurUsername = useCallback(async () => {
+    setLoadingUsername(true);
 
-    this.setState(() => ({ emailLoading: true }));
-    await onCheckEmailAvailable(email);
+    await dispatch(checkUsernameAvailable(email));
 
-    this.setState(() => ({
-      emailBlured: true,
-      emailLoading: false,
-    }));
-    this.onUpdateSignupReady();
-  }
+    setBlurredUsername(true);
+    setLoadingUsername(false);
+  }, []);
 
 
-  onChangeUsername({ target }) {
-    const { value } = target;
+  const onClickSignup = async () => {
+    setLoadingCreate(true);
 
-    this.setState(() => ({ username: value }));
+    await dispatch(createUser({ email, password, username }));
 
-    this.onUpdateSignupReady();
-  }
+    setLoadingCreate(false);
+  };
 
-  async onBlurUsername() {
-    const { username } = this.state;
-    const { onCheckUsernameAvailable } = this.props;
-    this.setState(() => ({ usernameLoading: true }));
-    await onCheckUsernameAvailable(username);
-    this.setState(() => ({
-      usernameLoading: false,
-      usernameBlured: true,
-    }));
-    this.onUpdateSignupReady();
-  }
-
-  onChangePassword({ target }) {
-    const { value } = target;
-
-    this.setState(() => ({ password: value }));
-    this.onUpdateSignupReady();
-  }
-
-  /**
-   * onClickSignup
-   *
-   * the isNameAvailable value actually dictates if the user is logging in or
-   * creating a new user
-   */
-  async onClickSignup() {
-    const { email, username, password } = this.state;
-    const { onCreateUser } = this.props;
-
-    const created = await onCreateUser({ email, password, username });
-    const { history } = this.props;
-    if (created) {
-      history.replace('/login');
-    }
-  }
-
-  async onNavigateToLogin() {
-    const { history } = this.props;
+  const onNavigateLogin = useCallback(() => {
+    const { history } = props;
     history.push('/login');
-  }
+  }, []);
 
-  renderErrors() {
-    const { errors } = this.props;
 
+  // render helpers
+  const renderErrors = () => {
     const errorItems = errors.map((error) => (
       <div
         key={error}
-        className="errors-item">{error}</div>
+        className="errors-item">
+        {error}
+      </div>
     ));
 
     return (
@@ -155,90 +117,58 @@ class Signup extends Component {
     );
   }
 
-  render() {
-    const {
-      isReady,
-      loading,
-      password,
-      emailLoading,
-      usernameLoading,
-      emailBlured,
-      usernameBlured,
-    } = this.state;
-
-    const {
-      emailAvailable = true,
-      usernameAvailable = true,
-    } = this.props;
-
-    const passwordValid = password.length > MIN_PASSWORD_LENGTH;
-
-    return (
-      <div className="login-panel">
-        <MoleIcon
-          alt="Hack a mole signup"
-          className="login-logo"
-          style={{
-            flex: 1,
-            height: 84,
-            width: 84,
-          }} />
-        <h1 className="login-title">
-          Sign Up To Play
+  return (
+    <Panel>
+      <MoleIcon
+        alt="Hack a mole signup"
+        className="login-logo"
+        style={{
+          flex: 1,
+          height: 136,
+          width: 136,
+          paddingTop: 32,
+          paddingBottom: 32,
+        }} />
+      <h1 className="login-title">
+        Sign Up To Play
         </h1>
-        {/** type={'email'} breaks the floaty label */}
-        <MaterialInput
-          label="Email"
-          type="text"
-          loading={emailLoading}
-          error={!emailAvailable && !emailLoading}
-          valid={!emailLoading && emailAvailable && emailBlured}
-          onChange={this.onChangeEmail}
-          onBlur={this.onBlurEmail} />
-        <MaterialInput
-          label="Password"
-          type="password"
-          valid={passwordValid}
-          error={!passwordValid && password}
-          onChange={this.onChangePassword} />
-        <MaterialInput
-          label="Username"
-          type="text"
-          loading={usernameLoading}
-          error={!usernameAvailable && !emailLoading}
-          valid={!usernameLoading && usernameAvailable && usernameBlured}
-          onChange={this.onChangeUsername}
-          onBlur={this.onBlurUsername} />
-        <MaterialButton
-          buttonText="signup"
-          disabled={loading || !isReady}
-          loading={loading}
-          onClick={this.onClickSignup} />
-        <TouchableButton onClick={this.onNavigateToLogin}>
-          <div style={{ marginTop: 16 }}>
-            <span style={{ fontSize: 16 }}>Already have an account?</span>
-            <span style={{ fontSize: 16, marginLeft: 4, color: '#FFF800' }}>Login</span>
-          </div>
-        </TouchableButton>
-        {this.renderErrors()}
-      </div>
-    );
-  }
+      {/** type={'email'} breaks the floaty label */}
+      <MaterialInput
+        label="Email"
+        type="text"
+        loading={loadingEmail}
+        error={!availableEmail && !loadingEmail && blurredEmail}
+        valid={!loadingEmail && availableEmail && blurredEmail}
+        onChange={onChangeEmail}
+        onBlur={onBlurEmail} />
+      <MaterialInput
+        label="Password"
+        type="password"
+        valid={passwordValid}
+        error={!passwordValid && password}
+        onChange={onChangePassword} />
+      <MaterialInput
+        label="Username"
+        type="text"
+        loading={loadingUsername}
+        error={!availableUsername && !loadingEmail && blurredUsername}
+        valid={!loadingUsername && availableUsername && blurredUsername}
+        onChange={onChangeUsername}
+        onBlur={onBlurUsername} />
+      <MaterialButton
+        buttonText="signup"
+        disabled={loadingCreate || !ready}
+        loading={loadingCreate}
+        onClick={onClickSignup} />
+      <TouchableButton onClick={onNavigateLogin}>
+        <div style={{ marginBottom: 16, marginTop: 24 }}>
+          <span style={{ fontSize: 24 }}>Already have an account?</span>
+          <span style={{ fontSize: 24, color: '#FFF800' }}> Login</span>
+        </div>
+      </TouchableButton>
+      {renderErrors()}
+    </Panel>
+  )
 }
 
-const mapStateToProps = (state) => ({
-  errors: state.alerts.errors,
-  loading: state.auth.loading,
-  authenticated: state.auth.authenticated,
-  emailAvailable: state.auth.emailAvailable,
-  usernameAvailable: state.auth.usernameAvailable,
-});
-
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onCreateUser: createUser,
-  onResetAlerts: resetAlerts,
-  onCheckUsernameAvailable: checkUsernameAvailable,
-  onCheckEmailAvailable: checkEmailAvailability,
-}, dispatch);
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Signup));
+export default withRouter(Signup);

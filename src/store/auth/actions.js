@@ -101,7 +101,7 @@ export const loginUser = (email, password) => async (dispatch) => {
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
-      message: error.message,
+      message: "Failed to login user, please try again later",
       orgin: 'loginUser',
     }));
     dispatch({ type: SET_AUTH_USER, authenticated: false });
