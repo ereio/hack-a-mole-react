@@ -1,4 +1,4 @@
-# Hack A Mole
+# Hack A Mole Client
 ### a whack a mole game that was clearly hacked together
 
 ## Convertion Effort
