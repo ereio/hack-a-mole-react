@@ -95,9 +95,11 @@ const Signup = (props) => {
   };
 
   const onNavigateLogin = useCallback(() => {
+    dispatch(resetAlerts());
+
     const { history } = props;
     history.push('/login');
-  }, []);
+  }, [dispatch]);
 
 
   // render helpers
