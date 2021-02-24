@@ -9,13 +9,13 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 // actions
-import { logoutUser } from 'store/auth/actions';
-import { fetchGames, selectGame } from 'store/game/actions';
+import { logoutUser } from '../../store/auth/actions';
+import { fetchGames, selectGame } from '../../store/game/actions';
 
 
 // global components
 import { FiSettings, FiChevronLeft } from 'react-icons/fi';
-import { TouchableButton } from 'global/components/material/touchable';
+import { TouchableButton } from '../../global/components';
 
 import { ReactComponent as EmptyHole } from '../../global/assets/empty-hole.svg';
 import { ReactComponent as MoleHole } from '../../global/assets/mole-hole.svg';
@@ -69,8 +69,7 @@ class History extends Component {
               marginTop: 8,
               marginBottom: 8,
               cursor: 'pointer',
-            }}
-          >
+            }}>
             { highlight === game.id
               ? (
                 <MoleHole style={{
@@ -79,8 +78,7 @@ class History extends Component {
                   borderRadius: 56,
                   marginRight: 24,
                   marginBottom: 8,
-                }}
-                />
+                }} />
               )
               : (
                 <EmptyHole style={{
@@ -89,15 +87,13 @@ class History extends Component {
                   borderRadius: 56,
                   marginRight: 24,
                   marginBottom: 8,
-                }}
-                />
+                }} />
               )}
             <div style={{
               flex: 1,
               display: 'flex',
               alignItems: 'flex-end',
-            }}
-            >
+            }}>
               <div style={{ fontSize: 20, marginRight: 24 }}>
                 {users[game.userId] || 'Unknown'}
               </div>
@@ -121,7 +117,9 @@ class History extends Component {
       <div className="game">
         <div className="container-stats">
           <div className="settings">
-            <TouchableButton start onClick={this.onGoBack}>
+            <TouchableButton
+              start
+              onClick={this.onGoBack}>
               <FiChevronLeft />
             </TouchableButton>
           </div>
@@ -129,7 +127,9 @@ class History extends Component {
             History
           </span>
           <div className="settings">
-            <TouchableButton end onClick={() => onLogoutUser()}>
+            <TouchableButton
+              end
+              onClick={() => onLogoutUser()}>
               <FiSettings />
             </TouchableButton>
           </div>
@@ -139,8 +139,7 @@ class History extends Component {
           height: '100%',
           width: '100%',
           overflow: 'auto',
-        }}
-        >
+        }}>
           {this.renderGames()}
         </div>
         <div className="container-info" />

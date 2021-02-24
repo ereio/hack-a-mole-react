@@ -5,6 +5,7 @@
 - Modernize react w/ hooks
 - Convert all components to Typescript
     - create typed objects for models
+- Remove moment - use native Date libs
 
 ## Original Spec
 ### Notes:

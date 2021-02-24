@@ -2,10 +2,10 @@
 import { ApolloClient } from 'apollo-client';
 import { split } from 'apollo-link';
 import { WebSocketLink } from 'apollo-link-ws';
-import { createUploadLink } from 'apollo-upload-client';
 import { getMainDefinition } from 'apollo-utilities';
 import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
+import { HttpLink } from 'apollo-link-http';
 
 // fragment matcher for unions and interfaces in gql
 import introspectionQueryResultData from './fragmentTypes.json';
@@ -23,7 +23,7 @@ const defaultOptions = {
   },
 };
 
-const initApiClient = async (getState, { API_GRAPHQL, API_WEBSOCKET }) => {
+const initApiClient = async (getState, { API_GRAPHQL = "localhost", API_WEBSOCKET = "localhost" }) => {
   const headers = {
     'x-token': getState().auth.user && getState().auth.user.getIdToken
       ? await (getState().auth.user).getIdToken()
@@ -36,38 +36,42 @@ const initApiClient = async (getState, { API_GRAPHQL, API_WEBSOCKET }) => {
     return { headers: { 'x-token': token } };
   });
 
+  try {
+    const httpLink = new HttpLink({
+      uri: API_GRAPHQL,
+    });
 
-  const httpLink = createUploadLink({
-    uri: API_GRAPHQL,
-    headers,
-  });
+    // Create a WebSocket link:
+    const wsLink = new WebSocketLink({
+      uri: API_WEBSOCKET, // websocket url
+      options: {
+        reconnect: true,
+        connectionParams: { ...headers },
+      },
+    });
 
-  // Create a WebSocket link:
-  const wsLink = new WebSocketLink({
-    uri: API_WEBSOCKET, // websocket url
-    options: {
-      reconnect: true,
-      connectionParams: { ...headers },
-    },
-  });
+    const requestSplit = ({ query }) => {
+      const { kind, operation } = getMainDefinition(query);
+      return kind === 'OperationDefinition' && operation === 'subscription';
+    };
 
-  // split based on operation type
-  const link = split(({ query }) => {
-    const { kind, operation } = getMainDefinition(query);
-    return kind === 'OperationDefinition' && operation === 'subscription';
-  },
-  wsLink,
-  authLink.concat(httpLink));
+    // split based on operation type
+    const link = split(
+      requestSplit,
+      wsLink,
+      authLink.concat(httpLink)
+    );
 
-  // const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData });
+    const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData });
 
-  const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData });
-
-  apiClient = new ApolloClient({
-    link,
-    cache: new InMemoryCache({ fragmentMatcher }),
-    defaultOptions,
-  });
+    apiClient = new ApolloClient({
+      link,
+      cache: new InMemoryCache({ fragmentMatcher }),
+      defaultOptions,
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export { initApiClient, apiClient };

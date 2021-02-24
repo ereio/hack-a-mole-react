@@ -1,1 +1,18 @@
-{"__schema":{"types":[{"kind":"UNION","name":"Event","possibleTypes":[{"name":"Whack"},{"name":"Spawn"}]}]}}
+{
+  "__schema": {
+    "types": [
+      {
+        "kind": "UNION",
+        "name": "Event",
+        "possibleTypes": [
+          {
+            "name": "Whack"
+          },
+          {
+            "name": "Spawn"
+          }
+        ]
+      }
+    ]
+  }
+}

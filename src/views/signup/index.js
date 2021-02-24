@@ -12,15 +12,13 @@ import {
   createUser,
   checkUsernameAvailable,
   checkEmailAvailability,
-} from 'store/auth/actions';
-import { resetAlerts } from 'store/alerts/actions';
+} from '../../store/auth/actions';
+
+import { resetAlerts } from '../../store/alerts/actions';
 
 // global components
-import { MaterialButton } from 'global/components/material/button';
-import { MaterialInput } from 'global/components/material/input';
-import { TouchableButton } from 'global/components/material/touchable';
-
-import { ReactComponent as MoleIcon } from '../../global/assets/mole-icon.svg';
+import { TouchableButton, MaterialInput, MaterialButton } from '../../global/components';
+import { MoleIcon } from '../../global/assets';
 
 import './styles.css';
 
@@ -64,8 +62,8 @@ class Signup extends Component {
 
     this.setState((state) => ({
       isReady: isValidPassword(state)
-       && emailAvailable
-       && usernameAvailable,
+        && emailAvailable
+        && usernameAvailable,
     }));
   }
 
@@ -145,7 +143,9 @@ class Signup extends Component {
     const { errors } = this.props;
 
     const errorItems = errors.map((error) => (
-      <div key={error} className="errors-item">{error}</div>
+      <div
+        key={error}
+        className="errors-item">{error}</div>
     ));
 
     return (
@@ -182,8 +182,7 @@ class Signup extends Component {
             flex: 1,
             height: 84,
             width: 84,
-          }}
-        />
+          }} />
         <h1 className="login-title">
           Sign Up To Play
         </h1>
@@ -195,15 +194,13 @@ class Signup extends Component {
           error={!emailAvailable && !emailLoading}
           valid={!emailLoading && emailAvailable && emailBlured}
           onChange={this.onChangeEmail}
-          onBlur={this.onBlurEmail}
-        />
+          onBlur={this.onBlurEmail} />
         <MaterialInput
           label="Password"
           type="password"
           valid={passwordValid}
           error={!passwordValid && password}
-          onChange={this.onChangePassword}
-        />
+          onChange={this.onChangePassword} />
         <MaterialInput
           label="Username"
           type="text"
@@ -211,14 +208,12 @@ class Signup extends Component {
           error={!usernameAvailable && !emailLoading}
           valid={!usernameLoading && usernameAvailable && usernameBlured}
           onChange={this.onChangeUsername}
-          onBlur={this.onBlurUsername}
-        />
+          onBlur={this.onBlurUsername} />
         <MaterialButton
           buttonText="signup"
           disabled={loading || !isReady}
           loading={loading}
-          onClick={this.onClickSignup}
-        />
+          onClick={this.onClickSignup} />
         <TouchableButton onClick={this.onNavigateToLogin}>
           <div style={{ marginTop: 16 }}>
             <span style={{ fontSize: 16 }}>Already have an account?</span>

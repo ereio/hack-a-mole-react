@@ -1,9 +1,7 @@
 import gql from 'graphql-tag';
 
 import { apiClient } from '../../global/api';
-// firebase for auth
-import { firebase } from '../../global/firebase';
-import { fetchCurrentUser } from '../user/actions';
+// firebase for auth  
 import { addAlert, resetAlerts } from '../alerts/actions';
 
 // action types
@@ -99,7 +97,7 @@ export const loginUser = (email, password) => async (dispatch) => {
       throw 'Failed to authenticate username or password';
     }
 
-    await firebase.auth().signInWithCustomToken(currentAuthUser.token);
+    // await firebase.auth().signInWithCustomToken(currentAuthUser.token);
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -117,14 +115,14 @@ export const loginUser = (email, password) => async (dispatch) => {
  */
 export const logoutUser = () => async () => {
   try {
-    firebase.auth().signOut();
-    await apiClient.mutate({
-      mutation: gql`
-        mutation signOut {
-          signOut
-        }
-      `,
-    });
+    // firebase.auth().signOut();
+    // await apiClient.mutate({
+    //   mutation: gql`
+    //     mutation signOut {
+    //       signOut
+    //     }
+    //   `,
+    // });
   } catch (error) {
     console.error('[signOut]', error);
   }
@@ -137,22 +135,22 @@ export const logoutUser = () => async () => {
 export const initAuthListener = (history) => (dispatch) => {
   console.log('[initAuthListener] starting');
 
-  firebase.auth().onIdTokenChanged(async (user) => {
-    if (user) {
-      dispatch({
-        type: SET_AUTH_USER,
-        user: firebase.auth().currentUser,
-        authenticated: true,
-      });
+  // firebase.auth().onIdTokenChanged(async (user) => {
+  //   if (user) {
+  //     dispatch({
+  //       type: SET_AUTH_USER,
+  //       user: firebase.auth().currentUser,
+  //       authenticated: true,
+  //     });
 
-      // Fetch Authenticated Data
-      await dispatch(fetchCurrentUser());
-      history.replace('/game');
-    } else {
-      history.replace('/login');
-    }
-    console.log('[initAuthListener] completed');
-  });
+  //     // Fetch Authenticated Data
+  //     await dispatch(fetchCurrentUser());
+  //     history.replace('/game');
+  //   } else {
+  //     history.replace('/login');
+  //   }
+  //   console.log('[initAuthListener] completed');
+  // });
 };
 
 

@@ -5,9 +5,6 @@ import moment from 'moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-// actions
-import * as gameActions from 'store/game/actions';
-
 // local components
 import Hole from './hole';
 

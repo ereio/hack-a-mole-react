@@ -9,13 +9,12 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 // actions
-import { startGame } from 'store/game/actions';
-import { logoutUser } from 'store/auth/actions';
+import { startGame } from '../../store/game/actions';
+import { logoutUser } from '../../store/auth/actions';
 
 // global components
 import { FiSettings } from 'react-icons/fi';
-import { MaterialButton } from 'global/components/material/button';
-import { TouchableButton } from 'global/components/material/touchable';
+import { MaterialButton, TouchableButton } from '../../global/components';
 
 
 // local components
@@ -73,15 +72,13 @@ class Game extends Component {
           <MaterialButton
             buttonText="review gameplay"
             disabled={isStarted}
-            onClick={() => history.push('/review')}
-          />
+            onClick={() => history.push('/review')} />
         </div>
         <div style={{ marginTop: '24px', marginBottom: '24px' }}>
           <MaterialButton
             buttonText="start new game"
             disabled={isStarted}
-            onClick={this.onClickReady}
-          />
+            onClick={this.onClickReady} />
         </div>
       </div>
     );
@@ -96,22 +93,19 @@ class Game extends Component {
           <MaterialButton
             buttonText="leaderboards"
             disabled={isStarted}
-            onClick={() => history.push('/leaderboard')}
-          />
+            onClick={() => history.push('/leaderboard')} />
         </div>
         <div style={{ marginTop: '24px', marginBottom: '24px' }}>
           <MaterialButton
             buttonText="history"
             disabled={isStarted}
-            onClick={() => history.push('/history')}
-          />
+            onClick={() => history.push('/history')} />
         </div>
         <div style={{ marginTop: '24px', marginBottom: '24px' }}>
           <MaterialButton
             buttonText="start game"
             disabled={isStarted}
-            onClick={this.onClickReady}
-          />
+            onClick={this.onClickReady} />
         </div>
       </div>
     );
@@ -150,12 +144,14 @@ class Game extends Component {
               {`Time: ${timeLeft}`}
             </div>
           ) : (
-            <span className="message">
-              {`Welcome ${currentUser.username}`}
-            </span>
-          )}
+              <span className="message">
+                {`Welcome ${currentUser.username}`}
+              </span>
+            )}
           <div className="settings">
-            <TouchableButton end onClick={() => onLogoutUser()}>
+            <TouchableButton
+              end
+              onClick={() => onLogoutUser()}>
               <FiSettings />
             </TouchableButton>
           </div>

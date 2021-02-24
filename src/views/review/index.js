@@ -9,14 +9,13 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 // actions
-import { logoutUser } from 'store/auth/actions';
-import { startReview, fetchGameplay } from 'store/game/actions';
+import { logoutUser } from '../../store/auth/actions';
+import { startReview, fetchGameplay } from '../../store/game/actions';
 
 
 // global components
 import { FiSettings, FiChevronLeft } from 'react-icons/fi';
-import { MaterialButton } from 'global/components/material/button';
-import { TouchableButton } from 'global/components/material/touchable';
+import { TouchableButton, MaterialButton } from '../../global/components';
 
 
 // local components
@@ -128,10 +127,10 @@ class Review extends Component {
               {`Time: ${timeLeft}`}
             </div>
           ) : (
-            <span className="message">
-              Review Game
-            </span>
-          )}
+              <span className="message">
+                Review Game
+              </span>
+            )}
           <div className="settings">
             <TouchableButton end onClick={() => onLogoutUser()}>
               <FiSettings />

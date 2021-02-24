@@ -10,16 +10,15 @@ import { withRouter } from 'react-router-dom';
 // actions
 import {
   createUser, loginUser, checkUsernameAvailable,
-} from 'store/auth/actions';
+} from '../../store/auth/actions';
 
 // global components
-import { MaterialButton } from 'global/components/material/button';
-import { MaterialInput } from 'global/components/material/input';
 
 import { ReactComponent as MoleIcon } from '../../global/assets/mole-icon.svg';
 
+import { MaterialButton, TouchableButton, MaterialInput } from '../../global/components';
+
 import './styles.css';
-import { TouchableButton } from '../../global/components/material/touchable';
 
 const MIN_EMAIL_LENGTH = 5;
 const MIN_PASSWORD_LENGTH = 5;
@@ -97,7 +96,9 @@ class Login extends Component {
     const { errors } = this.props;
 
     const errorItems = errors.map((error) => (
-      <div key={error} className="errors-item">{error}</div>
+      <div
+        key={error}
+        className="errors-item">{error}</div>
     ));
 
     return (
@@ -119,16 +120,24 @@ class Login extends Component {
             flex: 1,
             height: 84,
             width: 84,
-          }}
-        />
+          }} />
         <h1 className="login-title">
           Hack A Mole
         </h1>
         {/** type={'email'} breaks the floaty label */}
-        <MaterialInput label="Email" type="text" onChange={this.onChangeUsername} />
-        <MaterialInput label="Password" type="password" onChange={this.onChangePassword} />
+        <MaterialInput
+          label="Email"
+          type="text"
+          onChange={this.onChangeUsername} />
+        <MaterialInput
+          label="Password"
+          type="password"
+          onChange={this.onChangePassword} />
         {this.renderErrors()}
-        <MaterialButton buttonText="login" disabled={!isReady} onClick={this.onClickLogin} />
+        <MaterialButton
+          buttonText="login"
+          disabled={!isReady}
+          onClick={this.onClickLogin} />
         <TouchableButton onClick={this.onNavigateToSignup}>
           <div style={{ margin: 16 }}>
             <span style={{ fontSize: 16 }}>New to hack-a-mole?</span>

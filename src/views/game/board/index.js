@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 // actions
-import * as gameActions from 'store/game/actions';
+import * as gameActions from '../../../store/game/actions';
 
 // local components
 import Hole from './hole';
@@ -114,12 +114,18 @@ class Board extends Component {
         const isActive = undefined !== moles.find((mole) => mole.cell === cell);
 
         return (
-          <Hole key={row + hole} id={cell} onWhack={this.onWhackMole} isActive={isActive} />
+          <Hole
+            key={row + hole}
+            id={cell}
+            onWhack={this.onWhackMole}
+            isActive={isActive} />
         );
       });
 
       return (
-        <div key={row} className="mole-row">
+        <div
+          key={row}
+          className="mole-row">
           {holeComponents}
         </div>
       );
