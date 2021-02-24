@@ -1,6 +1,12 @@
 # Hack A Mole
 ### a whack a mole game that was clearly hacked together
 
+## Convertion Effort
+- Modernize react w/ hooks
+- Convert all components to Typescript
+    - create typed objects for models
+
+## Original Spec
 ### Notes:
     * uses package by feature and duck typing project organization
     * uses .env file with NODE_PATH set so the node development server allows absolute pathing

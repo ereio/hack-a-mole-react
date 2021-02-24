@@ -1,6 +1,6 @@
 {
   "name": "hack-a-mole",
-  "description": "a whack a mole game for the people",
+  "description": "a whack a mole game example using react + redux",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -48,7 +48,8 @@
     "eslint-plugin-react-hooks": "^4.0.2",
     "react-scripts": "^3.4.1",
     "redux-testkit": "^1.0.6",
-    "seamless-immutable": "^7.1.4"
+    "seamless-immutable": "^7.1.4",
+    "typescript": "^4.2.2"
   },
   "browserslist": {
     "production": [

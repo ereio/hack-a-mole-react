@@ -8,14 +8,13 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { withRouter } from 'react-router-dom';
 
-
 // main state manager
 import { store } from '../store';
 
-// scene components
-import Signup from './signup';
-import Login from './login';
+// screen components
 import Game from './game';
+import Login from './login';
+import Signup from './signup';
 import Review from './review';
 import History from './history';
 
