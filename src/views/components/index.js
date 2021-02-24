@@ -5,6 +5,7 @@ import { TouchableButton } from './material/touchable';
 import { LoadingIndicator } from './material/loading';
 
 import { Panel } from './panel';
+import { Container } from './container';
 
 
 export {
@@ -13,4 +14,5 @@ export {
   TouchableButton,
   LoadingIndicator,
   Panel,
+  Container,
 }
