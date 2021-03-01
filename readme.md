@@ -1,7 +1,7 @@
 # Hack A Mole
 a whack a mole game example 🦔
 
-![Play Now](https://moles.ere.io)
+[Play Now](https://moles.ere.io)
 
 ## Convertion Effort
 - Modernize react w/ hooks
