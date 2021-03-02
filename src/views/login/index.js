@@ -1,39 +1,38 @@
 import React, { useEffect, useCallback, useState } from 'react';
 
-// redux 
+// redux
 import { useDispatch, useSelector } from 'react-redux';
 
 // react router
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 // actions
-import {
-  createUser, loginUser, checkUsernameAvailable,
-} from '../../store/auth/actions';
+import { loginUser } from '../../store/auth/actions';
 
 // global components
 import { MoleIcon } from 'global/assets';
 
-import { MaterialButton, TouchableButton, MaterialInput, Panel } from '../components';
-
-import { MIN_EMAIL_LENGTH, MIN_PASSWORD_LENGTH } from 'global/constants';
+import {
+  MaterialButton, TouchableButton, MaterialInput, Panel, ErrorList
+} from '../components';
 
 import './styles.css';
 
-const Login = (props) => {
+export const Login = (props) => {
   // redux connections
+  const history = useHistory();
   const dispatch = useDispatch();
-  const errors = useSelector(state => state.alerts.errors);
+  const errors = useSelector((state) => state.alerts.errors);
 
   // init state
   const [ready, setReady] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  // effects 
+  // effects
   useEffect(() => {
-    setReady(username.length > MIN_EMAIL_LENGTH && password.length > MIN_PASSWORD_LENGTH)
-  }, [username, password])
+    setReady(username.length > 0 && password.length > 0);
+  }, [username, password]);
 
   // callbacks
   const onChangeUsername = useCallback(({ target }) => {
@@ -44,31 +43,13 @@ const Login = (props) => {
     setPassword(target.value);
   }, [setPassword]);
 
-  const onNavigateSignup = useCallback(() => {
-    const { history } = props;
-    history.push('/signup');
-  });
-
   const onClickLogin = () => {
     dispatch(loginUser(username, password));
   };
 
-  // render helpers
-  const renderErrors = () => {
-    const errorItems = errors.map((error) => (
-      <div
-        key={error}
-        className="errors-item">
-        {error}
-      </div>
-    ));
-
-    return (
-      <div className="error-list">
-        {errorItems}
-      </div>
-    );
-  }
+  const onNavigateSignup = () => {
+    history.push('/signup');
+  };
 
   return (
     <Panel>
@@ -84,7 +65,7 @@ const Login = (props) => {
         }} />
       <h1 className="login-title">
         Hack A Mole
-    </h1>
+      </h1>
       {/** type={'email'} breaks the floaty label */}
       <MaterialInput
         label="Email"
@@ -99,14 +80,14 @@ const Login = (props) => {
         disabled={!ready}
         onClick={onClickLogin} />
       <TouchableButton onClick={onNavigateSignup}>
-        <div style={{ marginBottom: 16, marginTop: 24, }}>
-          <span style={{ fontSize: 24 }}>New to hack-a-mole?</span>
-          <span style={{ fontSize: 24, marginLeft: 4, color: '#FFF800' }}>Signup</span>
+        <div style={{ marginBottom: 16, marginTop: 24 }}>
+          <span style={{ fontSize: 24 }}>New to Hack A Mole?</span>
+          <span style={{ fontSize: 24, color: '#FFF800' }}> Signup</span>
         </div>
       </TouchableButton>
-      {renderErrors()}
+      <div style={{ paddingBottom: 32 }}>
+        <ErrorList errors={errors} />
+      </div>
     </Panel>
-  )
-}
-
-export default withRouter(Login);
+  );
+};

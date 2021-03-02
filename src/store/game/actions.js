@@ -3,7 +3,7 @@ import moment from 'moment';
 import gql from 'graphql-tag';
 import { v4 as uuidv4 } from 'uuid';
 
-import { apiClient } from 'global/api';
+import { apolloClient } from 'services/hack-a-mole';
 import { addAlert } from '../alerts/actions';
 
 export const SET_REVIEW = 'SET_REVIEW';
@@ -39,7 +39,7 @@ export const fetchGames = () => async (dispatch, getState) => {
 
     dispatch({ type: SET_LOADING, loading: true });
 
-    const { data } = await apiClient.query({
+    const { data } = await apolloClient.query({
       query: gql`
         query games($userId: ID!) {
           games(userId: $userId){
@@ -93,7 +93,7 @@ export const createGame = ({ startTime, endTime }) => async (dispatch) => {
 
   try {
     dispatch({ type: SET_LOADING, loading: true });
-    const response = await apiClient.mutate({
+    const response = await apolloClient.mutate({
       mutation: gql`
         mutation createGame($game: GameInput!) {
           createGame(game: $game){
@@ -170,7 +170,7 @@ export const saveGame = ({ score }) => async (dispatch, getState) => {
 
     const { currentGame } = getState().game;
     const { startTime, endTime } = currentGame;
-    const response = await apiClient.mutate({
+    const response = await apolloClient.mutate({
       mutation: gql`
         mutation updateGame($game: GameInput!) {
           updateGame(game: $game){
@@ -233,7 +233,7 @@ export const saveMoleSpawn = (mole) => async (dispatch, getState) => {
     const timestamp = moment().toISOString();
     console.log('[saveMoleSpawn]', timestamp);
 
-    await apiClient.mutate({
+    await apolloClient.mutate({
       mutation: gql`
         mutation saveMoleSpawn($spawn: SpawnInput!) {
           saveMoleSpawn(spawn: $spawn){
@@ -281,7 +281,7 @@ export const saveMoleDespawn = (mole) => async (dispatch, getState) => {
     const timestamp = moment().toISOString();
     console.log('[saveMoleSpawn]', timestamp);
 
-    await apiClient.mutate({
+    await apolloClient.mutate({
       mutation: gql`
         mutation saveMoleSpawn($spawn: SpawnInput!) {
           saveMoleSpawn(spawn: $spawn){
@@ -325,7 +325,7 @@ export const saveWhackHit = (mole) => async (dispatch, getState) => {
 
     const game = getState().game.currentGame;
 
-    const { data } = await apiClient.mutate({
+    const { data } = await apolloClient.mutate({
       mutation: gql`
         mutation saveMoleWhack($whack: WhackInput!) {
           saveMoleWhack(whack: $whack){
@@ -372,7 +372,7 @@ export const saveWhackAttempt = (mole) => async (dispatch, getState) => {
 
     const game = getState().game.currentGame;
 
-    const { data } = await apiClient.mutate({
+    const { data } = await apolloClient.mutate({
       mutation: gql`
         mutation saveMoleWhack($whack: WhackInput!) {
           saveMoleWhack(whack: $whack){
@@ -449,7 +449,7 @@ export const fetchGameplay = () => async (dispatch, getState) => {
   try {
     const { currentGame } = getState().game;
 
-    const { data } = await apiClient.query({
+    const { data } = await apolloClient.query({
       query: gql`
       query gameplay($gameId: ID) {
         gameplay(gameId: $gameId){  

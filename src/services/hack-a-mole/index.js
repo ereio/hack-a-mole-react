@@ -10,7 +10,7 @@ import { HttpLink } from 'apollo-link-http';
 // fragment matcher for unions and interfaces in gql
 import introspectionQueryResultData from './fragmentTypes.json';
 
-let apiClient;
+let apolloClient;
 
 const defaultOptions = {
   watchQuery: {
@@ -23,7 +23,7 @@ const defaultOptions = {
   },
 };
 
-const initApiClient = async (getState, { API_GRAPHQL = "localhost", API_WEBSOCKET = "localhost" }) => {
+const initApolloClient = async (getState, { httpUri, websocketUri }) => {
   const headers = {
     'x-token': getState().auth.user && getState().auth.user.getIdToken
       ? await (getState().auth.user).getIdToken()
@@ -37,13 +37,14 @@ const initApiClient = async (getState, { API_GRAPHQL = "localhost", API_WEBSOCKE
   });
 
   try {
+
     const httpLink = new HttpLink({
-      uri: API_GRAPHQL,
+      uri: httpUri,
     });
 
     // Create a WebSocket link:
     const wsLink = new WebSocketLink({
-      uri: API_WEBSOCKET, // websocket url
+      uri: websocketUri,
       options: {
         reconnect: true,
         connectionParams: { ...headers },
@@ -64,7 +65,7 @@ const initApiClient = async (getState, { API_GRAPHQL = "localhost", API_WEBSOCKE
 
     const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData });
 
-    apiClient = new ApolloClient({
+    apolloClient = new ApolloClient({
       link,
       cache: new InMemoryCache({ fragmentMatcher }),
       defaultOptions,
@@ -74,4 +75,4 @@ const initApiClient = async (getState, { API_GRAPHQL = "localhost", API_WEBSOCKE
   }
 };
 
-export { initApiClient, apiClient };
+export { initApolloClient, apolloClient };

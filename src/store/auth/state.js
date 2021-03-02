@@ -1,4 +1,4 @@
-export default function initialState() {
+export const initialState = () => {
   return {
     user: {},
     loadng: false,
@@ -7,4 +7,4 @@ export default function initialState() {
     usernameAvailable: undefined,
     unregisterAuthObserver: null,
   };
-}
+};

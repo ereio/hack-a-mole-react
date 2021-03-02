@@ -17,3 +17,5 @@ npm-debug.log
 yarn-error.log
 
 firebase-config.json
+.gitsecret/keys/random_seed
+!*.secret

@@ -6,6 +6,9 @@
     "paths": {
       "global": [
         "./global"
+      ],
+      "services": [
+        "./services"
       ]
     }
   },

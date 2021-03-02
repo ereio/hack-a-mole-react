@@ -1,12 +1,10 @@
 import * as types from './actions';
 
-import initialState from './state';
+import { initialState } from './state';
 
-export default function auth(state = initialState(), action = {}) {
-  // TODO: for debugging
-  // console.log(action.type, action, state);
+export const auth = (state = initialState(), action = {}) => {
   switch (action.type) {
-    case types.CREATE_USER:
+    case types.CREATE_USER_ATTEMPT:
     case types.CHECK_EMAIL_AVAILABLE_ATTEMPT:
     case types.CHECK_USER_AVAILABLE_ATTEMPT:
       return {
@@ -18,7 +16,7 @@ export default function auth(state = initialState(), action = {}) {
         ...state,
         loading: action.loading,
       };
-    case types.SET_AUTH_USER:
+    case types.SET_AUTH:
       return {
         ...state,
         user: action.user,
@@ -71,4 +69,4 @@ export default function auth(state = initialState(), action = {}) {
     default:
       return state;
   }
-}
+};

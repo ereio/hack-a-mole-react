@@ -8,13 +8,12 @@ import dotenv from 'dotenv';
 import { store, history } from './store';
 
 // usually used for navigation
-import App from './views';
+import { App } from './views';
 
 // global styling
 import './index.css';
 
 // dotenv
-
 dotenv.config();
 
 ReactDOM.render(

@@ -1,18 +1,18 @@
 import gql from 'graphql-tag';
 
-import { apiClient } from 'global/api';
-// firebase for auth  
+import { apolloClient } from 'services/hack-a-mole';
+
 import { addAlert, resetAlerts } from '../alerts/actions';
 
 // action types
+export const SET_AUTH = 'SET_AUTH';
 export const SET_LOADING = 'SET_LOADING';
-export const SET_AUTH_USER = 'SET_AUTH_USER';
 
 export const LOGOUT = 'LOGOUT';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
 
-export const CREATE_USER = 'CREATE_USER';
+export const CREATE_USER_ATTEMPT = 'CREATE_USER_ATTEMPT';
 export const CREATE_USER_SUCCESS = 'CREATE_USER_SUCCESS';
 export const CREATE_USER_FAILURE = 'CREATE_USER_FAILURE';
 
@@ -32,24 +32,25 @@ export const createUser = ({
   username,
 }) => async (dispatch) => {
   try {
-    dispatch({ type: CREATE_USER });
+    dispatch({ type: CREATE_USER_ATTEMPT });
+    console.log(email, username, password);
 
-    const response = await apiClient.mutate({
+    const { data, errors } = await apolloClient.mutate({
       mutation: gql`
-        mutation signupUser($email: String!, $password: String!, $username: String!) {
-          signupUser(email: $email, password: $password, username: $username)
+        mutation signupUser($authInput: AuthInput!) {
+          signupUser(authInput: $authInput)
         }
       `,
       variables: {
-        email,
-        password,
-        username,
+        authInput: {
+          email,
+          password,
+          username,
+        }
       },
     });
 
-    const { data } = response;
-
-    if (!data) {
+    if (!data || errors.length) {
       throw Error('Could not create an account, please try again');
     }
 
@@ -57,9 +58,10 @@ export const createUser = ({
     dispatch(resetAlerts());
     return true;
   } catch (error) {
+    const message = error.message || error;
     dispatch(addAlert({
       type: 'error',
-      message: 'Failed to create user, please try again',
+      message: message.toString(),
       origin: 'createUser',
     }));
     dispatch({ type: CREATE_USER_FAILURE });
@@ -73,38 +75,41 @@ export const loginUser = (email, password) => async (dispatch) => {
     dispatch({ type: SET_LOADING, loading: true });
     dispatch(resetAlerts());
 
-    const response = await apiClient.mutate({
+    const { data, error } = await apolloClient.mutate({
       mutation: gql`
-        mutation loginUser($email: String!, $password: String!) {
-          loginUser(email: $email, password: $password){
+        mutation loginUser($loginInput: LoginInput!) {
+          loginUser(loginInput: $loginInput){
             id
             token
           }
         }
       `,
       variables: {
-        email,
-        password,
+        loginInput: {
+          email,
+          password,
+        }
       },
     });
 
     console.log(response);
 
-    const currentAuthUser = response.data.loginUser;
+    const { loginUser } = data;
 
-    if (!currentAuthUser) {
+    if (!loginUser) {
       // eslint-disable-next-line
       throw 'Failed to authenticate username or password';
     }
 
-    // await firebase.auth().signInWithCustomToken(currentAuthUser.token);
+    dispatch({ type: SET_AUTH, user: loginUser });
+
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
-      message: "Failed to login user, please try again later",
+      message: 'Failed to login user, please try again later',
       orgin: 'loginUser',
     }));
-    dispatch({ type: SET_AUTH_USER, authenticated: false });
+    dispatch({ type: SET_AUTH, authenticated: false });
   } finally {
     dispatch({ type: SET_LOADING, loading: true });
   }
@@ -115,14 +120,13 @@ export const loginUser = (email, password) => async (dispatch) => {
  */
 export const logoutUser = () => async () => {
   try {
-    // firebase.auth().signOut();
-    // await apiClient.mutate({
-    //   mutation: gql`
-    //     mutation signOut {
-    //       signOut
-    //     }
-    //   `,
-    // });
+    await apolloClient.mutate({
+      mutation: gql`
+        mutation signOut {
+          signOut
+        }
+      `,
+    });
   } catch (error) {
     console.error('[signOut]', error);
   }
@@ -138,7 +142,7 @@ export const initAuthListener = (history) => (dispatch) => {
   // firebase.auth().onIdTokenChanged(async (user) => {
   //   if (user) {
   //     dispatch({
-  //       type: SET_AUTH_USER,
+  //       type: SET_AUTH,
   //       user: firebase.auth().currentUser,
   //       authenticated: true,
   //     });
@@ -157,27 +161,37 @@ export const initAuthListener = (history) => (dispatch) => {
 export const checkEmailAvailability = (email) => async (dispatch) => {
   try {
     dispatch({ type: CHECK_EMAIL_AVAILABLE_ATTEMPT });
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const response = await apiClient.query({
+    console.log(email);
+
+    const { data, error } = await apolloClient.query({
       query: gql`
-        query checkAvailableEmail($email: String!) {
+        query checkAvailableEmail($email: String) {
           checkAvailableEmail(email: $email)
         }
       `,
       variables: { email },
     });
 
-    const { data } = response;
+    if (!data || error) {
+      console.error(data, error);
+      // eslint-disable-next-line
+      throw 'Failed to check email availability, try again later';
+    }
+
+    const { checkAvailableEmail } = data;
 
     dispatch({
       type: CHECK_EMAIL_AVAILABLE_SUCCESS,
-      available: data.checkAvailableEmail,
+      available: checkAvailableEmail,
     });
+
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
-      message: 'Email not available',
+      message: error.toString(),
       orgin: 'checkEmailAvailability',
     }));
     dispatch({
@@ -192,7 +206,7 @@ export const checkUsernameAvailable = (username) => async (dispatch) => {
     dispatch({ type: CHECK_USER_AVAILABLE_ATTEMPT });
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const response = await apiClient.query({
+    const response = await apolloClient.query({
       query: gql`
           query checkAvailableUsername($username: String!) {
             checkAvailableUsername(username: $username)

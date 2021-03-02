@@ -40,7 +40,7 @@ module.exports = {
     'array-callback-return': ['off'],
     'consistent-return': ['off'],
     'react/jsx-first-prop-new-line': ['warn', 'multiline-multiprop'],
-    'react/jsx-max-props-per-line': ['warn'],
+    'react/jsx-max-props-per-line': ['warn', { 'maximum': 3 }],
     'react/jsx-closing-bracket-location': ['warn', 'after-props'],
     'react/prop-types': ['off'],
     'class-methods-use-this': ['off'],

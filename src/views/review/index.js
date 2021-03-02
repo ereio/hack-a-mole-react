@@ -78,15 +78,13 @@ class Review extends Component {
           <MaterialButton
             buttonText="start playback"
             disabled={isStarted}
-            onClick={this.onStartReview}
-          />
+            onClick={this.onStartReview} />
         </div>
         <div style={{ marginTop: '24px', marginBottom: '24px' }}>
           <MaterialButton
             buttonText="main menu"
             disabled={isStarted}
-            onClick={() => history.push('/game')}
-          />
+            onClick={() => history.push('/game')} />
         </div>
       </div>
     );

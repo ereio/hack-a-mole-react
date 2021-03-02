@@ -1,8 +1,8 @@
 import * as types from './actions';
 
-import initialState from './state';
+import { initialState } from './state';
 
-export default function users(state = initialState(), action = {}) {
+export const users = (state = initialState(), action = {}) => {
   // TODO: for debugging
   // console.log(action.type, action, state);
   switch (action.type) {
@@ -19,4 +19,4 @@ export default function users(state = initialState(), action = {}) {
     default:
       return state;
   }
-}
+};

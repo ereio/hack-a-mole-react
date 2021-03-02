@@ -1,4 +1,4 @@
-export default function initialState() {
+export const initialState = () => {
   return {
     loading: false,
     started: false,
@@ -16,4 +16,4 @@ export default function initialState() {
     rows: ['A', 'B', 'C'],
     holes: ['1', '2', '3'],
   };
-}
+};

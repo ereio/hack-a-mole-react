@@ -3,7 +3,7 @@ export const ADD_ALERT = 'ADD_ALERT';
 export const RESET_ALERTS = 'RESET_ALERTS';
 export const ADD_CONFIRMATON = 'ADD_CONFIRMATON';
 
-export const addAlert = ({ message, origin }) => (dispatch) => {
+export const addAlert = ({ message, origin, fallback }) => (dispatch) => {
   console.error(origin ? `[${origin}]` : '[addAlert]', message);
   dispatch({ type: ADD_ALERT, message });
 };

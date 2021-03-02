@@ -1,9 +1,9 @@
 
 import * as types from './actions';
 
-import initialState from './state';
+import { initialState } from './state';
 
-export default function game(state = initialState(), action = {}) {
+export const game = (state = initialState(), action = {}) => {
   switch (action.type) {
     case types.SET_ALL_GAMES:
       return {
@@ -91,4 +91,4 @@ export default function game(state = initialState(), action = {}) {
     default:
       return state;
   }
-}
+};

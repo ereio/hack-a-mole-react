@@ -6,113 +6,111 @@
 } 
 
 .input-field {
-    font-size: 18px;
-    font-family: 'Montserrat', sans-serif;
-    padding: 10px 10px 10px 5px;
-    display: block;
-    width: 300px;
-    border: none;
-    background: rgba(0, 0, 0, 0);
-    border-bottom: 1px solid #757575;   
-    color: #FEFEFE;
-  }
-  
+  font-size: 18px;
+  font-family: 'Montserrat', sans-serif;
+  padding: 10px 0px 10px 5px;
+  display: block;
+  width: 300px;
+  border: none;
+  background: rgba(0, 0, 0, 0);
+  border-bottom: 1px solid #757575;   
+  color: #FEFEFE;
+}
+
 .input-field:focus {
   outline: none;
 }
-  
-  .input-field-label {
-    color: #999;
-    font-size: 18px;
-    font-weight: normal;
-    position: absolute;
-    pointer-events: none;
-    left: 5px;
-    top: 10px;
-    transition: 0.2s ease all;
-    -moz-transition: 0.2s ease all;
-    -webkit-transition: 0.2s ease all;
-  }
-  
-  .input-field:focus~.input-field-label, .input-field:valid~.input-field-label {
-    top: -20px;
-    font-size: 14px;
-    color: #FFF800D9;
-  }
-  
-  .input-field:focus~.bar:before, .input-field:focus~.bar:after {
-    width: 50%;
-  }
-  
-  .bar {
-    position: relative;
-    display: block;
-    width: 300px;
-  }
-  
-  .bar:before, .bar:after {
-    content: '';
-    height: 2px;
-    width: 0;
-    bottom: 1px;
-    position: absolute;
+
+.input-field-label {
+  color: #999;
+  font-size: 18px;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 5px;
+  top: 10px;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
+
+.input-field:focus~.input-field-label, .input-field:valid~.input-field-label {
+  top: -20px;
+  font-size: 14px;
+  color: #FFF800D9;
+}
+
+.input-field:focus~.bar:before, .input-field:focus~.bar:after {
+  width: 50%;
+}
+
+.bar {
+  position: relative;
+  display: block; 
+}
+
+.bar:before, .bar:after {
+  content: '';
+  height: 2px;
+  width: 0;
+  bottom: 1px;
+  position: absolute;
+  background: #FFF800D9;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
+
+.bar:before {
+  left: 50%;
+}
+
+.bar:after {
+  right: 50%;
+}
+
+.highlight {
+  position: absolute;
+  height: 60%;
+  width: 100px;
+  top: 25%;
+  left: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.input-field:focus~.highlight {
+  -webkit-animation: inputHighlighter 0.3s ease;
+  -moz-animation: inputHighlighter 0.3s ease;
+  animation: inputHighlighter 0.3s ease;
+}
+
+@-webkit-keyframes inputHighlighter {
+  from {
     background: #FFF800D9;
-    transition: 0.2s ease all;
-    -moz-transition: 0.2s ease all;
-    -webkit-transition: 0.2s ease all;
   }
-  
-  .bar:before {
-    left: 50%;
+  to {
+    width: 0;
+    background: transparent;
   }
-  
-  .bar:after {
-    right: 50%;
+}
+
+@-moz-keyframes inputHighlighter {
+  from {
+    background: #FFF800D9;
   }
-  
-  .highlight {
-    position: absolute;
-    height: 60%;
-    width: 100px;
-    top: 25%;
-    left: 0;
-    pointer-events: none;
-    opacity: 0.5;
+  to {
+    width: 0;
+    background: transparent;
   }
-  
-  .input-field:focus~.highlight {
-    -webkit-animation: inputHighlighter 0.3s ease;
-    -moz-animation: inputHighlighter 0.3s ease;
-    animation: inputHighlighter 0.3s ease;
+}
+
+@keyframes inputHighlighter {
+  from {
+    background: #FFF800D9;
   }
-  
-  @-webkit-keyframes inputHighlighter {
-    from {
-      background: #FFF800D9;
-    }
-    to {
-      width: 0;
-      background: transparent;
-    }
+  to {
+    width: 0;
+    background: transparent;
   }
-  
-  @-moz-keyframes inputHighlighter {
-    from {
-      background: #FFF800D9;
-    }
-    to {
-      width: 0;
-      background: transparent;
-    }
-  }
-  
-  @keyframes inputHighlighter {
-    from {
-      background: #FFF800D9;
-    }
-    to {
-      width: 0;
-      background: transparent;
-    }
-  }
-  
+}

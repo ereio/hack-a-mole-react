@@ -25,13 +25,11 @@ export class MaterialInput extends Component {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
-      }}
-      >
+      }}>
         <FiX
           style={{
             fontSize: 16,
-          }}
-        />
+          }} />
       </div>
     );
   }
@@ -50,8 +48,7 @@ export class MaterialInput extends Component {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
-      }}
-      >
+      }}>
         <LoadingIndicator size={24} />
       </div>
     );
@@ -72,13 +69,11 @@ export class MaterialInput extends Component {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
-      }}
-      >
+      }}>
         <FiCheck
           style={{
             fontSize: 16,
-          }}
-        />
+          }} />
       </div>
     );
   }
@@ -91,7 +86,9 @@ export class MaterialInput extends Component {
 
     return (
       <div key={label} className="input-field-container">
-        <input id={label} className="input-field" type={type} required="required" onChange={onChange} onBlur={onBlur} />
+        <input
+          id={label} className="input-field" type={type}
+          required="required" onChange={onChange} onBlur={onBlur} />
         <span className="highlight" />
         <span className="bar" />
         <label htmlFor={label} className="input-field-label">{label}</label>

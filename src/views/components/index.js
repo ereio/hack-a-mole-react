@@ -7,6 +7,7 @@ import { LoadingIndicator } from './material/loading';
 import { Panel } from './panel';
 import { Container } from './container';
 
+import { ErrorList } from './errors/error-list';
 
 export {
   MaterialInput,
@@ -15,4 +16,5 @@ export {
   LoadingIndicator,
   Panel,
   Container,
-}
+  ErrorList
+};

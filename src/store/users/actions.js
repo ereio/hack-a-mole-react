@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { apiClient } from 'global/api';
+import { apolloClient } from 'services/hack-a-mole';
 
 export const ADD_USER = 'ADD_USER';
 export const SET_USERS = 'SET_USERS';
@@ -14,7 +14,7 @@ export const fetchCurrentUser = () => async (dispatch, getState) => {
   try {
     const authId = getState().auth.user.uid;
 
-    const response = await apiClient.query({
+    const response = await apolloClient.query({
       query: gql`
         query user($authId: ID) {
           user(authId: $authId){

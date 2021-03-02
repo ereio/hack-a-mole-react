@@ -1,5 +1,5 @@
-export default function initialState() {
+export const initialState = () => {
   return {
     errors: [],
   };
-}
+};

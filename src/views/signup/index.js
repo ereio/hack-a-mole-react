@@ -1,10 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useState
+} from 'react';
 
-// redux 
+// redux
 import { useDispatch, useSelector } from 'react-redux';
 
-// react router
-import { withRouter } from 'react-router-dom';
+// react
+import { useHistory } from 'react-router-dom';
+
 import { MoleIcon } from 'global/assets';
 import { MIN_PASSWORD_LENGTH } from 'global/constants';
 
@@ -18,15 +21,18 @@ import {
 import { resetAlerts } from '../../store/alerts/actions';
 
 // global components
-import { Panel, TouchableButton, MaterialInput, MaterialButton } from '../components';
+import {
+  Panel, TouchableButton, MaterialInput, MaterialButton, ErrorList
+} from '../components';
+import strings from 'global/strings';
 
-import './styles.css';
-const Signup = (props) => {
+export const Signup = (props) => {
+  const history = useHistory();
   const dispatch = useDispatch();
 
-  const errors = useSelector(state => state.alerts.errors);
-  const availableEmail = useSelector(state => state.auth.emailAvailable);
-  const availableUsername = useSelector(state => state.auth.usernameAvailable);
+  const errors = useSelector((state) => state.alerts.errors);
+  const availableEmail = useSelector((state) => state.auth.emailAvailable);
+  const availableUsername = useSelector((state) => state.auth.usernameAvailable);
 
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -39,7 +45,7 @@ const Signup = (props) => {
   const [loadingEmail, setLoadingEmail] = useState(false);
   const [loadingUsername, setLoadingUsername] = useState(false);
 
-  const passwordValid = useMemo(
+  const validPassword = useMemo(
     () => password.length > MIN_PASSWORD_LENGTH,
     [password]
   );
@@ -47,26 +53,26 @@ const Signup = (props) => {
   // effects
   useEffect(() => {
     dispatch(resetAlerts());
-  }, [])
+  }, []);
 
   useEffect(() => {
-    const validPassword = password > MIN_PASSWORD_LENGTH;
-    setReady(validPassword && availableEmail && availableUsername)
-  }, [availableEmail, availableUsername, password])
+    setReady(validPassword && availableEmail && availableUsername);
+  }, [availableEmail, availableUsername, password]);
 
-  // callbacks
+  // onChange handlers
   const onChangeEmail = useCallback(({ target: { value } }) => {
     setEmail(value);
   }, [setEmail]);
 
   const onChangeUsername = useCallback(({ target: { value } }) => {
     setUsername(value);
-  }, [setEmail]);
+  }, [setUsername]);
 
   const onChangePassword = useCallback(({ target: { value } }) => {
     setPassword(value);
-  }, [setEmail]);
+  }, [setPassword]);
 
+  // onBlur handlers
   const onBlurEmail = useCallback(async () => {
     setLoadingEmail(true);
 
@@ -74,18 +80,18 @@ const Signup = (props) => {
 
     setBlurredEmail(true);
     setLoadingEmail(false);
-  }, []);
+  }, [email]);
 
   const onBlurUsername = useCallback(async () => {
     setLoadingUsername(true);
 
-    await dispatch(checkUsernameAvailable(email));
+    await dispatch(checkUsernameAvailable(username));
 
     setBlurredUsername(true);
     setLoadingUsername(false);
-  }, []);
+  }, [username]);
 
-
+  // onClick handlers
   const onClickSignup = async () => {
     setLoadingCreate(true);
 
@@ -96,62 +102,35 @@ const Signup = (props) => {
 
   const onNavigateLogin = useCallback(() => {
     dispatch(resetAlerts());
-
-    const { history } = props;
     history.push('/login');
-  }, [dispatch]);
-
-
-  // render helpers
-  const renderErrors = () => {
-    const errorItems = errors.map((error) => (
-      <div
-        key={error}
-        className="errors-item">
-        {error}
-      </div>
-    ));
-
-    return (
-      <div className="error-list">
-        {errorItems}
-      </div>
-    );
-  }
+  }, [dispatch, history]);
 
   return (
     <Panel>
       <MoleIcon
         alt="Hack a mole signup"
-        className="login-logo"
-        style={{
-          flex: 1,
-          height: 136,
-          width: 136,
-          paddingTop: 32,
-          paddingBottom: 32,
-        }} />
-      <h1 className="login-title">
+        style={styles.signupIcon} />
+      <h1 style={styles.signupTitle}>
         Sign Up To Play
-        </h1>
+      </h1>
       {/** type={'email'} breaks the floaty label */}
       <MaterialInput
-        label="Email"
         type="text"
+        label={strings.email}
         loading={loadingEmail}
         error={!availableEmail && !loadingEmail && blurredEmail}
         valid={!loadingEmail && availableEmail && blurredEmail}
         onChange={onChangeEmail}
         onBlur={onBlurEmail} />
       <MaterialInput
-        label="Password"
         type="password"
-        valid={passwordValid}
-        error={!passwordValid && password}
+        label={strings.password}
+        valid={validPassword}
+        error={!validPassword && password}
         onChange={onChangePassword} />
       <MaterialInput
-        label="Username"
         type="text"
+        label={strings.username}
         loading={loadingUsername}
         error={!availableUsername && !loadingEmail && blurredUsername}
         valid={!loadingUsername && availableUsername && blurredUsername}
@@ -168,9 +147,27 @@ const Signup = (props) => {
           <span style={{ fontSize: 24, color: '#FFF800' }}> Login</span>
         </div>
       </TouchableButton>
-      {renderErrors()}
+      <div style={{ paddingBottom: 32 }}>
+        <ErrorList errors={errors} />
+      </div>
     </Panel>
-  )
-}
+  );
+};
 
-export default withRouter(Signup);
+// Example of pre-defined styles
+// similar in appearance to react-native
+const styles = {
+  signupIcon: {
+    flex: 1,
+    height: 136,
+    width: 136,
+    paddingTop: 32,
+    paddingBottom: 32,
+    marginTop: 24,
+  },
+  signupTitle: {
+    fontSize: 40,
+    marginTop: 16,
+    marginBottom: 40,
+  }
+};

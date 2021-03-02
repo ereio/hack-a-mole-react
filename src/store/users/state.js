@@ -1,7 +1,7 @@
-export default function initialState() {
+export const initialState = () => {
   return {
     users: {},
     loading: false,
     currentUser: {},
   };
-}
+};

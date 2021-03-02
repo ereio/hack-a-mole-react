@@ -3,19 +3,24 @@ import {
 } from 'redux';
 import thunk from 'redux-thunk';
 
-
 // react router navigation history
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { createBrowserHistory as createHistory } from 'history';
 
 // reducer prep
-import * as reducers from './reducers';
+import { alerts } from './alerts/reducer';
+import { auth } from './auth/reducer';
+import { users } from './users/reducer';
+import { game } from './game/reducer';
 
 const history = createHistory();
 
 // redux reducers
 const rootReducer = combineReducers({
-  ...reducers,
+  alerts,
+  auth,
+  users,
+  game,
   router: connectRouter(history),
 });
 
