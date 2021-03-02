@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 import { apolloClient } from 'services/hack-a-mole';
 
-import { addAlert, resetAlerts } from '../alerts/actions';
+import { addAlert, addConfirmation, resetAlerts } from '../alerts/actions';
 
 // action types
 export const SET_AUTH = 'SET_AUTH';
@@ -50,18 +50,18 @@ export const createUser = ({
       },
     });
 
-    if (!data || errors.length) {
+    if (!data || errors) {
       throw Error('Could not create an account, please try again');
     }
 
     dispatch({ type: CREATE_USER_SUCCESS });
     dispatch(resetAlerts());
+    dispatch(addConfirmation({ message: 'Successfully created user account!' }));
     return true;
   } catch (error) {
-    const message = error.message || error;
     dispatch(addAlert({
       type: 'error',
-      message: message.toString(),
+      message: error,
       origin: 'createUser',
     }));
     dispatch({ type: CREATE_USER_FAILURE });
@@ -75,7 +75,7 @@ export const loginUser = (email, password) => async (dispatch) => {
     dispatch({ type: SET_LOADING, loading: true });
     dispatch(resetAlerts());
 
-    const { data, error } = await apolloClient.mutate({
+    const { data, errors } = await apolloClient.mutate({
       mutation: gql`
         mutation loginUser($loginInput: LoginInput!) {
           loginUser(loginInput: $loginInput){
@@ -92,11 +92,10 @@ export const loginUser = (email, password) => async (dispatch) => {
       },
     });
 
-    console.log(response);
 
     const { loginUser } = data;
 
-    if (!loginUser) {
+    if (!loginUser || errors) {
       // eslint-disable-next-line
       throw 'Failed to authenticate username or password';
     }
@@ -106,10 +105,10 @@ export const loginUser = (email, password) => async (dispatch) => {
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
-      message: 'Failed to login user, please try again later',
+      message: error,
       orgin: 'loginUser',
     }));
-    dispatch({ type: SET_AUTH, authenticated: false });
+    dispatch({ type: SET_AUTH });
   } finally {
     dispatch({ type: SET_LOADING, loading: true });
   }

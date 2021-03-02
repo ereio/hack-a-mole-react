@@ -4,8 +4,9 @@ export const RESET_ALERTS = 'RESET_ALERTS';
 export const ADD_CONFIRMATON = 'ADD_CONFIRMATON';
 
 export const addAlert = ({ message, origin, fallback }) => (dispatch) => {
-  console.error(origin ? `[${origin}]` : '[addAlert]', message);
-  dispatch({ type: ADD_ALERT, message });
+  const content = message.message || message.toString();
+  console.error(origin ? `[${origin}]` : '[addAlert]', content);
+  dispatch({ type: ADD_ALERT, message: content });
 };
 
 export const addConfirmation = ({ message, origin }) => (dispatch) => {

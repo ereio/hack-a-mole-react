@@ -53,7 +53,7 @@ export const Signup = (props) => {
   // effects
   useEffect(() => {
     dispatch(resetAlerts());
-  }, []);
+  }, [email, username]);
 
   useEffect(() => {
     setReady(validPassword && availableEmail && availableUsername);
@@ -95,8 +95,11 @@ export const Signup = (props) => {
   const onClickSignup = async () => {
     setLoadingCreate(true);
 
-    await dispatch(createUser({ email, password, username }));
+    const success = await dispatch(createUser({ email, password, username }));
 
+    if (success) {
+      onNavigateLogin();
+    }
     setLoadingCreate(false);
   };
 
