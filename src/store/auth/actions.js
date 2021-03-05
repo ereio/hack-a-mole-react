@@ -1,8 +1,11 @@
+
 import gql from 'graphql-tag';
 
+import { Subject } from 'rxjs';
 import { apolloClient } from 'services/hack-a-mole';
 
 import { addAlert, addConfirmation, resetAlerts } from '../alerts/actions';
+import { fetchCurrentUser } from '../users/actions';
 
 // action types
 export const SET_AUTH = 'SET_AUTH';
@@ -24,6 +27,7 @@ export const CHECK_USER_AVAILABLE_ATTEMPT = 'CHECK_USER_AVAILABLE_ATTEMPT';
 export const CHECK_USER_AVAILABLE_SUCCESS = 'CHECK_USER_AVAILABLE_SUCCESS';
 export const CHECK_USER_AVAILABLE_FAILURE = 'CHECK_USER_AVAILABLE_FAILURE';
 
+export const onAuthChanged = new Subject();
 
 // actions
 export const createUser = ({
@@ -79,7 +83,6 @@ export const loginUser = (email, password) => async (dispatch) => {
       mutation: gql`
         mutation loginUser($loginInput: LoginInput!) {
           loginUser(loginInput: $loginInput){
-            id
             token
           }
         }
@@ -101,6 +104,9 @@ export const loginUser = (email, password) => async (dispatch) => {
     }
 
     dispatch({ type: SET_AUTH, user: loginUser });
+
+    // Fire a subject update to other subscribers
+    onAuthChanged.next(loginUser);
 
   } catch (error) {
     dispatch(addAlert({
@@ -131,6 +137,9 @@ export const logoutUser = () => async () => {
   }
 };
 
+export const refreshToken = () => async () => {
+
+};
 
 /**
  * Init Auth Listener
@@ -138,22 +147,34 @@ export const logoutUser = () => async () => {
 export const initAuthListener = (history) => (dispatch) => {
   console.log('[initAuthListener] starting');
 
-  // firebase.auth().onIdTokenChanged(async (user) => {
-  //   if (user) {
-  //     dispatch({
-  //       type: SET_AUTH,
-  //       user: firebase.auth().currentUser,
-  //       authenticated: true,
-  //     });
+  // update if a user has been found
+  onAuthChanged.subscribe(async (auth) => {
+    if (auth) {
+      console.log('[initAuthListener] found', auth);
+      dispatch({
+        type: SET_AUTH,
+        auth: auth,
+        authenticated: true,
+      });
 
-  //     // Fetch Authenticated Data
-  //     await dispatch(fetchCurrentUser());
-  //     history.replace('/game');
-  //   } else {
-  //     history.replace('/login');
-  //   }
-  //   console.log('[initAuthListener] completed');
-  // });
+      // Fetch Authenticated Data
+      await dispatch(fetchCurrentUser());
+      history.replace('/game');
+    } else {
+      history.replace('/login');
+    }
+    console.log('[initAuthListener] completed');
+  });
+
+  // check local storage and cookies for auth tokens
+  try {
+    if (auth) {
+      onAuthChanged.next(auth);
+    }
+  } catch (error) {
+    console.error('[initAuthListener] failed to initialize auth');
+    onAuthChanged.next(null);
+  }
 };
 
 

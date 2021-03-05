@@ -24,19 +24,11 @@ const defaultOptions = {
 };
 
 const initApolloClient = async (getState, { httpUri, websocketUri }) => {
-  const headers = {
-    'x-token': getState().auth.user && getState().auth.user.getIdToken
-      ? await (getState().auth.user).getIdToken()
-      : null,
-  };
-
-  const authLink = setContext(async () => {
-    const { user } = getState().auth;
-    const token = user && user.getIdToken ? await user.getIdToken() : null;
-    return { headers: { 'x-token': token } };
-  });
-
   try {
+    const authLink = setContext(async () => {
+      const { user: { token } } = getState().auth;
+      return { headers: { 'x-token': token } };
+    });
 
     const httpLink = new HttpLink({
       uri: httpUri,
@@ -47,7 +39,6 @@ const initApolloClient = async (getState, { httpUri, websocketUri }) => {
       uri: websocketUri,
       options: {
         reconnect: true,
-        connectionParams: { ...headers },
       },
     });
 
@@ -59,7 +50,7 @@ const initApolloClient = async (getState, { httpUri, websocketUri }) => {
     // split based on operation type
     const link = split(
       requestSplit,
-      wsLink,
+      authLink.concat(wsLink),
       authLink.concat(httpLink)
     );
 
@@ -69,6 +60,8 @@ const initApolloClient = async (getState, { httpUri, websocketUri }) => {
       link,
       cache: new InMemoryCache({ fragmentMatcher }),
       defaultOptions,
+
+      credentials: true // <-- REQUIRED backend setting
     });
   } catch (error) {
     console.error(error);

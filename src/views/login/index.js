@@ -15,6 +15,7 @@ import { MoleIcon } from 'global/assets';
 import {
   MaterialButton, TouchableButton, MaterialInput, Panel, ErrorList
 } from '../components';
+import { calculateCoins } from './calculate';
 
 import './styles.css';
 

@@ -33,7 +33,7 @@ export const SPAWN_MOLE = 'MOLE_SPAWN';
  */
 export const fetchGames = () => async (dispatch, getState) => {
   try {
-    const userId = getState().auth.user.uid;
+    const { user: { id: userId } } = getState().user;
 
     console.log('[fetchGames]', userId);
 
