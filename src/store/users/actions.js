@@ -12,8 +12,10 @@ export const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE';
 
 export const fetchCurrentUser = () => async (dispatch, getState) => {
   try {
-    const authId = getState().auth.user.uid;
+    dispatch({ type: FETCH_USER_ATTEMPT });
 
+    // uses contents of the httpOnly jwt on the backend
+    // to only return the user associated with the auth account
     const response = await apolloClient.query({
       query: gql`
         query currentUser{
@@ -24,27 +26,22 @@ export const fetchCurrentUser = () => async (dispatch, getState) => {
           }
         }
       `,
-      variables: {
-        authId,
-      },
     });
 
-    const { data, error } = response;
+    // magic parsing of graphql payloads
+    const { data: { currentUser }, errors = [] } = response || { data: {} };
 
-    if (!error) {
+    if (errors.length) {
       // eslint-disable-next-line
       throw 'Failed to find user, create a new one';
     }
 
-    const { currentUser } = response.data;
+    console.log(response);
 
     dispatch({ type: FETCH_USER_SUCCESS, currentUser });
-    dispatch({ type: SET_USERS, users: { [currentUser.id]: currentUser } });
 
   } catch (error) {
-    dispatch({
-      type: FETCH_USER_FAILURE,
-      currentUser: {},
-    });
+    console.error('[fetchCurrentUser]', error);
+    dispatch({ type: FETCH_USER_FAILURE });
   }
 };

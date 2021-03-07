@@ -1,44 +1,34 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import './styles.css';
 
-export class TouchableButton extends Component {
+export const TouchableButton = ({
+  large, start, end, disabled, onClick, children
+}) => {
   // static propTypes = {
   //   buttonText: PropTypes.string,
   //   large: PropTypes.bool
   // };
 
-  constructor() {
-    super();
-
-    this.onClick = this.onClick.bind(this);
-  }
-
-  onClick() {
-    const { disabled, onClick } = this.props;
+  const onClickWrapper = () => {
     if (!disabled) {
       onClick();
     }
-  }
+  };
 
-  render() {
-    const {
-      large, start, end, disabled,
-    } = this.props;
-    let containerStyles = 'touchable-button-field';
-    containerStyles += large ? ' large' : '';
-    containerStyles += end ? ' end' : '';
-    containerStyles += start ? ' start' : '';
+  let containerStyles = 'touchable-button-field';
+  containerStyles += large ? ' large' : '';
+  containerStyles += end ? ' end' : '';
+  containerStyles += start ? ' start' : '';
 
-    let buttonStyles = 'touchable-button';
-    buttonStyles += disabled ? ' disabled' : '';
+  let buttonStyles = 'touchable-button';
+  buttonStyles += disabled ? ' disabled' : '';
 
-    return (
-      <div className={containerStyles} onClick={this.onClick}>
-        <div className={buttonStyles}>
-          {this.props.children}
-        </div>
+  return (
+    <div className={containerStyles} onClick={onClickWrapper}>
+      <div className={buttonStyles}>
+        {children}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};

@@ -370,7 +370,9 @@ export const saveWhackAttempt = (mole) => async (dispatch, getState) => {
   try {
     dispatch({ type: SET_LOADING, loading: true });
 
-    const game = getState().game.currentGame;
+    console.log('[saveWhackAttempt]', mole);
+
+    const { currentGame } = getState().game;
 
     const { data } = await apolloClient.mutate({
       mutation: gql`
@@ -385,8 +387,8 @@ export const saveWhackAttempt = (mole) => async (dispatch, getState) => {
       variables: {
         whack: {
           moleId: mole.id,
-          gameId: game.id,
           cell: mole.cell,
+          gameId: currentGame.id,
           hit: false,
           timestamp: moment().format(),
         },
@@ -410,13 +412,18 @@ export const saveWhackAttempt = (mole) => async (dispatch, getState) => {
  *
  */
 export const whackMole = (cell) => (dispatch, getState) => {
+  console.log('[whackMole ARGUMENT]', cell);
+
   const { moles } = getState().game;
-  if (moles.find((mole) => mole.cell === cell)) {
-    const whackedMole = moles.find((mole) => mole.cell === cell);
+  const whackedMole = moles.find((mole) => mole.cell === cell);
+  console.log('[whackMole]', whackedMole);
+
+  // TODO: misses handled by "fullstory" handler in view
+  if (whackedMole) {
     dispatch({ type: INCREMENT_SCORE });
     dispatch(saveWhackHit(whackedMole));
   } else {
-    dispatch(saveWhackAttempt({ cell }));
+    dispatch(saveWhackAttempt({ id: null, cell }));
   }
 
   dispatch({ type: WHACK_MOLE, mole: { cell } });

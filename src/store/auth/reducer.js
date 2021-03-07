@@ -20,7 +20,7 @@ export const auth = (state = initialState(), action = {}) => {
       return {
         ...state,
         user: action.user,
-        authenticated: !!action.user,
+        authenticated: action.authenticated,
         loading: false,
         errors: [],
       };

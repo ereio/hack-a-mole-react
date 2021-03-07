@@ -29,6 +29,8 @@ export const CHECK_USER_AVAILABLE_FAILURE = 'CHECK_USER_AVAILABLE_FAILURE';
 
 export const onAuthChanged = new Subject();
 
+const { REACT_APP_API } = process.env;
+
 // actions
 export const createUser = ({
   email,
@@ -83,7 +85,7 @@ export const loginUser = (email, password) => async (dispatch) => {
       mutation: gql`
         mutation loginUser($loginInput: LoginInput!) {
           loginUser(loginInput: $loginInput){
-            token
+            email
           }
         }
       `,
@@ -97,6 +99,7 @@ export const loginUser = (email, password) => async (dispatch) => {
 
 
     const { loginUser } = data;
+    console.log(data, errors);
 
     if (!loginUser || errors) {
       // eslint-disable-next-line
@@ -125,56 +128,62 @@ export const loginUser = (email, password) => async (dispatch) => {
  */
 export const logoutUser = () => async () => {
   try {
-    await apolloClient.mutate({
+    const { data: { signOut }, errors } = await apolloClient.mutate({
       mutation: gql`
         mutation signOut {
           signOut
         }
       `,
     });
+
+    if (signOut) {
+      onAuthChanged.next(null);
+    }
+
   } catch (error) {
     console.error('[signOut]', error);
   }
 };
 
-export const refreshToken = () => async () => {
-
-};
-
 /**
  * Init Auth Listener
  */
-export const initAuthListener = (history) => (dispatch) => {
+export const initAuthListener = (history) => async (dispatch) => {
   console.log('[initAuthListener] starting');
 
   // update if a user has been found
   onAuthChanged.subscribe(async (auth) => {
+    console.log('[onAuthChanged] updated', auth);
     if (auth) {
-      console.log('[initAuthListener] found', auth);
-      dispatch({
-        type: SET_AUTH,
-        auth: auth,
-        authenticated: true,
-      });
+      await dispatch({ type: SET_AUTH, auth: auth, authenticated: true });
 
       // Fetch Authenticated Data
       await dispatch(fetchCurrentUser());
-      history.replace('/game');
     } else {
-      history.replace('/login');
+      dispatch({ type: SET_AUTH, auth: null, authenticated: false });
     }
-    console.log('[initAuthListener] completed');
   });
 
-  // check local storage and cookies for auth tokens
   try {
-    if (auth) {
+    const url = `${REACT_APP_API}/refresh`;
+    const response = await fetch(url, {
+      method: 'GET',
+      credentials: 'include'
+    }, 5000);
+
+    // response json { email:"testing@example.com" }
+    const auth = await response.json();
+
+    // valid refresh tokens will have been supplied to httpOnly cookies
+    if (auth.email) {
       onAuthChanged.next(auth);
     }
   } catch (error) {
-    console.error('[initAuthListener] failed to initialize auth');
+    console.error('[initAuthListener] failed to initialize auth', error);
     onAuthChanged.next(null);
   }
+
+  console.log('[initAuthListener] completed');
 };
 
 

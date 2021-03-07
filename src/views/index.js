@@ -29,7 +29,6 @@ export const App = () => {
 
   const authenticated = useSelector((state) => state.auth.authenticated);
 
-  console.log(REACT_APP_API_GRAPHQL);
   // init api and auth listeners
   useEffect(() => {
     initApolloClient(store.getState, {
@@ -41,7 +40,7 @@ export const App = () => {
 
   // check if auth user has updated
   useEffect(() => {
-    if (!authenticated && history.location.pathname === '/game') {
+    if (!authenticated && history.location.pathname !== '/login') {
       history.replace('/login');
     } else if (authenticated && history.location.pathname !== '/game') {
       history.replace('/game');

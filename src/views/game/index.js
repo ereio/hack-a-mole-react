@@ -144,10 +144,10 @@ class Game extends Component {
               {`Time: ${timeLeft}`}
             </div>
           ) : (
-              <span className="message">
-                {`Welcome ${currentUser.username}`}
-              </span>
-            )}
+            <span className="message">
+              {`Welcome ${currentUser.username}`}
+            </span>
+          )}
           <div className="settings">
             <TouchableButton
               end

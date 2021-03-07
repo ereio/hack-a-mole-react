@@ -14,12 +14,12 @@
   flex-direction: column;
   justify-content: center;
   align-content: center;
+  align-items: center;
   text-align: center; 
   border-radius: 30px; 
   padding: 8px;
   padding: 8px;
   color: #fefefe; 
-  text-align: center;
   cursor: pointer;
   user-select: none; 
 }

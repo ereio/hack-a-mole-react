@@ -26,17 +26,20 @@ const defaultOptions = {
 const initApolloClient = async (getState, { httpUri, websocketUri }) => {
   try {
     const authLink = setContext(async () => {
-      const { user: { token } } = getState().auth;
+      const { user = {} } = getState().auth;
+      const { token } = user;
       return { headers: { 'x-token': token } };
     });
 
     const httpLink = new HttpLink({
       uri: httpUri,
+      credentials: 'include'
     });
 
     // Create a WebSocket link:
     const wsLink = new WebSocketLink({
       uri: websocketUri,
+      credentials: 'include',
       options: {
         reconnect: true,
       },

@@ -31,21 +31,21 @@ class Board extends Component {
   }
 
   componentDidMount() {
-    const { onWhackAttempt } = this.props;
+    // TODO: track all mouse clicks - even outside board
+    // const { onWhackAttempt } = this.props;
+    // const fullstory = ({ clientX, clientY }) => {
+    //   onWhackAttempt({ cell: `${clientX},${clientY}` });
+    // };
+    // document.addEventListener('click', fullstory);
 
     const spawner = setInterval(this.onSpawnMole, 750);
     const despawner = setInterval(this.onDespawnMole, 500);
     const killer = setInterval(this.onCheckGameOver, 500);
-    const fullstory = (mouseEvent) => {
-      onWhackAttempt({ event: mouseEvent });
-    };
-    document.addEventListener('click', fullstory);
 
     this.setState(() => ({
       spawner,
       despawner,
       killer,
-      fullstory,
     }));
   }
 
@@ -58,16 +58,17 @@ class Board extends Component {
       spawner, despawner, killer, fullstory,
     } = this.state;
 
+    // TODO: track all mouse clicks
+    // document.removeEventListener('click', fullstory);
+
     clearInterval(spawner);
     clearInterval(despawner);
     clearInterval(killer);
-    document.removeEventListener('click', fullstory);
 
     this.setState({
       spawner: null,
       despawner: null,
       killer: null,
-      fullstory: null,
     });
   }
 
