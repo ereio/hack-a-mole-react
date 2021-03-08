@@ -9,11 +9,11 @@ a whack a mole game example 🦔
 - Convert all components to Typescript
     - create typed objects for models
 - Remove moment - use native Date libs
-- Replace Firebase Auth
-    - JWT
-    - bcrypt
-    - refresh token
-    - revoke list for jwts
+- ~~Replace Firebase Auth~~
+    - ~~JWT~~
+    - ~~bcrypt~~
+    - ~~refresh token~~
+    - ~~revoke list for jwts~~
 - Sanitize GraphQL Variables
 - Rate limit GraphQL
 

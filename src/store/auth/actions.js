@@ -81,7 +81,7 @@ export const loginUser = (email, password) => async (dispatch) => {
     dispatch({ type: SET_LOADING, loading: true });
     dispatch(resetAlerts());
 
-    const { data, errors } = await apolloClient.mutate({
+    const { data: { loginUser }, errors } = await apolloClient.mutate({
       mutation: gql`
         mutation loginUser($loginInput: LoginInput!) {
           loginUser(loginInput: $loginInput){
@@ -97,8 +97,6 @@ export const loginUser = (email, password) => async (dispatch) => {
       },
     });
 
-
-    const { loginUser } = data;
 
     if (!loginUser || errors) {
       // eslint-disable-next-line
@@ -192,15 +190,17 @@ export const checkEmailAvailability = (email) => async (dispatch) => {
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    console.log(email);
-
     const { data, error } = await apolloClient.query({
       query: gql`
-        query checkAvailableEmail($email: String) {
+        query checkAvailableEmail($email: EmailInput!) {
           checkAvailableEmail(email: $email)
         }
       `,
-      variables: { email },
+      variables: {
+        email: {
+          text: email // allows for constraint directive
+        }
+      },
     });
 
     if (!data || error) {
@@ -236,11 +236,15 @@ export const checkUsernameAvailable = (username) => async (dispatch) => {
 
     const response = await apolloClient.query({
       query: gql`
-          query checkAvailableUsername($username: String!) {
+          query checkAvailableUsername($username: FieldInput!) {
             checkAvailableUsername(username: $username)
           }
         `,
-      variables: { username },
+      variables: {
+        username: {
+          text: username // allows for constraint directive
+        }
+      },
     });
 
     const { data } = response;
