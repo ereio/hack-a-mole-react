@@ -147,7 +147,7 @@ export const logoutUser = () => async () => {
 /**
  * Init Auth Listener
  */
-export const initAuthListener = (history) => async (dispatch) => {
+export const initAuthListener = ({ httpsUrl }) => async (dispatch) => {
   console.log('[initAuthListener] starting');
 
   // update if a user has been found
@@ -164,7 +164,7 @@ export const initAuthListener = (history) => async (dispatch) => {
   });
 
   try {
-    const url = `${REACT_APP_API}/refresh`;
+    const url = `${httpsUrl}/refresh`;
     const response = await fetch(url, {
       method: 'GET',
       credentials: 'include'

@@ -22,7 +22,11 @@ import './styles.css';
 import { initApolloClient } from 'services/hack-a-mole';
 import { initAuthListener } from '../store/auth/actions';
 
-const { REACT_APP_API_GRAPHQL, REACT_APP_API_WEBSOCKET } = process.env;
+const {
+  REACT_APP_API = 'https://mole-api.ere.io',
+  REACT_APP_API_GRAPHQL = 'https://mole-api.ere.io/graphql',
+  REACT_APP_API_WEBSOCKET = 'wss://mole-api.ere.io/graphql',
+} = process.env;
 
 export const App = () => {
   const history = useHistory();
@@ -35,7 +39,9 @@ export const App = () => {
       httpUri: REACT_APP_API_GRAPHQL,
       websocketUri: REACT_APP_API_WEBSOCKET,
     });
-    store.dispatch(initAuthListener(history));
+    store.dispatch(initAuthListener({
+      httpsUrl: REACT_APP_API,
+    }));
   }, []);
 
   // check if auth user has updated
