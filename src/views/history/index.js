@@ -1,163 +1,151 @@
-import React, { Component } from 'react';
+import React, {
+  useEffect, useState, useMemo, useCallback
+} from 'react';
 import moment from 'moment';
 
 // redux
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // react router
-import { withRouter } from 'react-router-dom';
+import { useHistory, withRouter } from 'react-router-dom';
 
 // actions
 import { logoutUser } from '../../store/auth/actions';
 import { fetchGames, selectGame } from '../../store/game/actions';
 
-
 // global components
 import { FiSettings, FiChevronLeft } from 'react-icons/fi';
-import { TouchableButton } from '../components';
+import { Panel, TouchableButton } from '../components';
 
 import { ReactComponent as EmptyHole } from '../../global/assets/empty-hole.svg';
 import { ReactComponent as MoleHole } from '../../global/assets/mole-hole.svg';
 
 import './styles.css';
 
-class History extends Component {
-  constructor() {
-    super();
+export const History = () => {
+  const history = useHistory();
+  const dispatch = useDispatch();
 
-    this.state = {
-      highlight: null,
-    };
+  const [highlight, setHighlight] = useState(null);
 
-    this.onGoBack = this.onGoBack.bind(this);
-    this.renderGames = this.renderGames.bind(this);
-    this.onSelectGame = this.onSelectGame.bind(this);
-  }
+  const games = useSelector((state) => state.game.games, []);
+  const users = useSelector((state) => state.users.users, []);
+  const currentUser = useSelector((state) => state.users.currentUser);
 
-  componentDidMount() {
-    const { onFetchAllGames } = this.props;
-    onFetchAllGames();
-  }
+  useEffect(() => {
+    dispatch(fetchGames());
+  }, []);
 
-  onSelectGame(gameId) {
-    const { onSelectGame, history } = this.props;
-    onSelectGame(gameId);
+  const onSelectGame = (gameId) => {
+    dispatch(selectGame(gameId));
     history.push('/review');
-  }
+  };
 
-  onGoBack() {
-    const { history } = this.props;
+  const onGoBack = () => {
     history.goBack();
-  }
+  };
 
-  renderGames() {
-    const { games = [], users } = this.props;
-    const { highlight } = this.state;
+  const onLogoutUser = () => {
+    dispatch(logoutUser());
+  };
+
+  const renderGames = () => {
+    const allGames = Object.values(games).map((game) => {
+      const { score } = game;
+      const { username } = users[game.userId];
+
+      const dateOptions = {
+        month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric',
+      };
+      const dateFormatter = Intl.DateTimeFormat('en-US', dateOptions);
+      const dateString = dateFormatter.format(new Date(game.endTime)); // 'MMMM D, YYYY h:mma'
+
+
+      return (
+        <li
+          key={game.id}
+          onClick={() => onSelectGame(game)}
+          onKeyPress={() => onSelectGame(game)}
+          onMouseEnter={() => setHighlight(game.id)}
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            marginTop: 8,
+            marginBottom: 8,
+            cursor: 'pointer',
+          }}>
+          {highlight === game.id
+            ? (
+              <MoleHole style={{
+                width: 48,
+                height: 48,
+                borderRadius: 56,
+                marginRight: 24,
+                marginBottom: 8,
+              }} />
+            )
+            : (
+              <EmptyHole style={{
+                width: 48,
+                height: 48,
+                borderRadius: 56,
+                marginRight: 24,
+                marginBottom: 8,
+              }} />
+            )}
+          <div style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'flex-end',
+          }}>
+            <div style={{ fontSize: 20, marginRight: 24 }}>
+              {username || 'Unknown'}
+            </div>
+            <div style={{ fontSize: 20, marginRight: 24 }}>
+              {`Score ${score}`}
+            </div>
+            <div style={{ fontSize: 16, marginBottom: 2 }}>
+              {dateString}
+            </div>
+          </div>
+        </li>);
+    });
+
     return (
       <ul style={{ flex: 1 }}>
-        {games.map((game) => (
-          <li
-            key={game.id}
-            onClick={() => this.onSelectGame(game)}
-            onKeyPress={() => this.onSelectGame(game)}
-            onMouseEnter={() => this.setState({ highlight: game.id })}
-            style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              marginTop: 8,
-              marginBottom: 8,
-              cursor: 'pointer',
-            }}>
-            { highlight === game.id
-              ? (
-                <MoleHole style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 56,
-                  marginRight: 24,
-                  marginBottom: 8,
-                }} />
-              )
-              : (
-                <EmptyHole style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 56,
-                  marginRight: 24,
-                  marginBottom: 8,
-                }} />
-              )}
-            <div style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'flex-end',
-            }}>
-              <div style={{ fontSize: 20, marginRight: 24 }}>
-                {users[game.userId] || 'Unknown'}
-              </div>
-              <div style={{ fontSize: 20, marginRight: 24 }}>
-                {`Score ${game.score}`}
-              </div>
-              <div style={{ fontSize: 16, marginBottom: 2 }}>
-                {moment(game.endTime).format('MMMM D, YYYY h:mma')}
-              </div>
-            </div>
-          </li>
-        ))}
+        {allGames}
       </ul>
     );
-  }
+  };
 
-  render() {
-    const { onLogoutUser, currentUser } = this.props;
 
-    return (
-      <div className="game">
-        <div className="container-stats">
-          <div className="settings">
-            <TouchableButton
-              start
-              onClick={this.onGoBack}>
-              <FiChevronLeft />
-            </TouchableButton>
-          </div>
-          <span className="message">
-            History
-          </span>
-          <div className="settings">
-            <TouchableButton
-              end
-              onClick={() => onLogoutUser()}>
-              <FiSettings />
-            </TouchableButton>
-          </div>
+  return (
+    <Panel>
+      <div className="container-stats">
+        <div className="settings">
+          <TouchableButton start onClick={onGoBack}>
+            <FiChevronLeft />
+          </TouchableButton>
         </div>
-        <div style={{
-          flexDirection: 'row',
-          height: '100%',
-          width: '100%',
-          overflow: 'auto',
-        }}>
-          {this.renderGames()}
+        <span className="message">
+          History
+        </span>
+        <div className="settings">
+          <TouchableButton end onClick={onLogoutUser}>
+            <FiSettings />
+          </TouchableButton>
         </div>
-        <div className="container-info" />
       </div>
-    );
-  }
-}
-const mapStateToProps = (state) => ({
-  games: state.game.games,
-  users: state.users.users,
-  currentUser: state.users.currentUser || {},
-});
-
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onLogoutUser: logoutUser,
-  onSelectGame: selectGame,
-  onFetchAllGames: fetchGames,
-}, dispatch);
-
-// no actions needed yet at app layer
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(History));
+      <div style={{
+        flexDirection: 'row',
+        height: '100%',
+        width: '100%',
+        overflow: 'auto',
+      }}>
+        {renderGames()}
+      </div>
+      <div className="container-info" />
+    </Panel>
+  );
+};

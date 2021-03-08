@@ -5,6 +5,17 @@ import { initialState } from './state';
 
 export const game = (state = initialState(), action = {}) => {
   switch (action.type) {
+    case types.SET_LOADING:
+      return {
+        ...state,
+        loading: action.loading,
+      };
+    case types.SET_CURRENT_GAME:
+      const { game } = action;
+      return {
+        ...state,
+        currentGame: game,
+      };
     case types.SET_ALL_GAMES:
       return {
         ...state,
@@ -20,26 +31,18 @@ export const game = (state = initialState(), action = {}) => {
         currentGame,
       };
     }
-    case types.SET_CURRENT_GAME:
-      return {
-        ...state,
-        currentGame: action.game,
-      };
-    case types.SET_LOADING:
-      return {
-        ...state,
-        loading: action.loading,
-      };
     case types.START_GAME: {
-      const { startTime, endTime } = action.game;
+      const { currentGame } = action;
+      const { startTime, endTime } = currentGame;
 
       return {
         ...state,
         score: 0,
         moles: [],
         isStarted: true,
+        currentGame,
         startTime,
-        endTime,
+        endTime
       };
     }
     case types.START_GAME_FINISHED:

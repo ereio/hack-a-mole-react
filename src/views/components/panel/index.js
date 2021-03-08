@@ -7,16 +7,16 @@ const PanelBase = styled.div`
   align-items: center;
   justify-content: flex-start;
   max-width: 500px;   
-  min-height: 500px;
+  min-height: ${(props) => props.mobile ? '85vh' : '500px'};
   padding: 0 8vw 0 8vw;
   background-color: rgba(0, 0, 0, 0.5);
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   border-radius: 24px;  
 `;
 
-const Panel = (props) => {
+const Panel = (props = { mobile: false }) => {
   return (
-    <PanelBase>
+    <PanelBase {...props} mobile={props.mobile}>
       {props.children}
     </PanelBase>
   );

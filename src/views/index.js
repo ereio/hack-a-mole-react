@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 // screen components
 import Game from './game';
 import Review from './review';
-import History from './history';
+import { History } from './history';
 import { Login } from './login';
 import { Signup } from './signup';
 

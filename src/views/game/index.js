@@ -14,7 +14,7 @@ import { logoutUser } from '../../store/auth/actions';
 
 // global components
 import { FiSettings } from 'react-icons/fi';
-import { MaterialButton, TouchableButton } from '../components';
+import { MaterialButton, Panel, TouchableButton } from '../components';
 
 
 // local components
@@ -130,7 +130,7 @@ class Game extends Component {
     const { timeLeft } = this.state;
 
     return (
-      <div className="game">
+      <Panel>
         <div className="container-stats">
           {isStarted
             ? (
@@ -160,7 +160,7 @@ class Game extends Component {
           {this.renderGame()}
         </div>
         <div className="container-info" />
-      </div>
+      </Panel>
     );
   }
 }

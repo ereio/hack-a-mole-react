@@ -33,9 +33,9 @@ export const SPAWN_MOLE = 'MOLE_SPAWN';
  */
 export const fetchGames = () => async (dispatch, getState) => {
   try {
-    const { user: { id: userId } } = getState().user;
+    const { currentUser } = getState().users;
 
-    console.log('[fetchGames]', userId);
+    console.log('[fetchGames]', currentUser);
 
     dispatch({ type: SET_LOADING, loading: true });
 
@@ -52,28 +52,17 @@ export const fetchGames = () => async (dispatch, getState) => {
         }
       `,
       variables: {
-        userId,
+        userId: currentUser.id,
       },
     });
 
-    dispatch({
-      type: SET_ALL_GAMES,
-      games: data.games,
-    });
+    dispatch({ type: SET_ALL_GAMES, games: data.games });
 
-    const { games } = getState().games;
-    const { users } = getState().users;
-
-    games.forEach((game) => {
-      if (users[game.userId]) {
-        console.log('[fetchGames[', game.userId);
-      }
-    });
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
       message: error.message,
-      origin: 'createGame',
+      origin: 'fetchGames',
     }));
   } finally {
     dispatch({ type: SET_LOADING, loading: false });
@@ -89,11 +78,10 @@ export const fetchGames = () => async (dispatch, getState) => {
  * (and inefficient) throughput of requests
  */
 export const createGame = ({ startTime, endTime }) => async (dispatch) => {
-  console.log('[createGame]', startTime, endTime);
-
   try {
     dispatch({ type: SET_LOADING, loading: true });
-    const response = await apolloClient.mutate({
+
+    const { data: { createGame }, errors } = await apolloClient.mutate({
       mutation: gql`
         mutation createGame($game: GameInput!) {
           createGame(game: $game){
@@ -112,11 +100,7 @@ export const createGame = ({ startTime, endTime }) => async (dispatch) => {
       },
     });
 
-    console.log('[createGame]', response);
-    dispatch({
-      type: SET_CURRENT_GAME,
-      game: response.data.createGame,
-    });
+    return createGame;
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -140,20 +124,10 @@ export const startGame = () => async (dispatch, getState) => {
   const timelimit = getState().game.timeLimit;
   const startTime = moment().format();
   const endTime = moment().add(timelimit, 'seconds').format();
+  const newGame = { endTime, startTime };
+  const currentGame = await dispatch(createGame(newGame));
 
-  const newGame = {
-    endTime,
-    startTime,
-  };
-
-  dispatch(
-    createGame(newGame),
-  );
-
-  dispatch({
-    type: START_GAME,
-    game: newGame,
-  });
+  dispatch({ type: START_GAME, currentGame: currentGame });
 };
 
 
@@ -164,13 +138,16 @@ export const startGame = () => async (dispatch, getState) => {
  * action at once, this is so we can have a high
  * (and inefficient) throughput of requests
  */
-export const saveGame = ({ score }) => async (dispatch, getState) => {
+export const saveGame = () => async (dispatch, getState) => {
   try {
     dispatch({ type: SET_LOADING, loading: true });
 
-    const { currentGame } = getState().game;
-    const { startTime, endTime } = currentGame;
-    const response = await apolloClient.mutate({
+    const { currentGame, score } = getState().game;
+    const { id, startTime, endTime } = currentGame;
+
+    console.log(id, score, startTime, endTime);
+
+    const { data: { updateGame }, errors } = await apolloClient.mutate({
       mutation: gql`
         mutation updateGame($game: GameInput!) {
           updateGame(game: $game){
@@ -183,7 +160,7 @@ export const saveGame = ({ score }) => async (dispatch, getState) => {
       `,
       variables: {
         game: {
-          id: currentGame.id,
+          id,
           score,
           endTime,
           startTime,
@@ -191,12 +168,8 @@ export const saveGame = ({ score }) => async (dispatch, getState) => {
       },
     });
 
-    dispatch({
-      type: SET_CURRENT_GAME,
-      game: response.data.saveGame,
-    });
+    dispatch({ type: SET_CURRENT_GAME, game: updateGame });
 
-    console.log('[saveGame]', response);
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -210,9 +183,8 @@ export const saveGame = ({ score }) => async (dispatch, getState) => {
 
 
 export const endGame = () => async (dispatch, getState) => {
-  const { score, startTime, endTime } = getState().game;
   dispatch({ type: END_GAME });
-  await dispatch(saveGame({ score, startTime, endTime }));
+  await dispatch(saveGame());
   dispatch({ type: END_GAME_FINISHED });
 };
 
@@ -228,10 +200,9 @@ export const saveMoleSpawn = (mole) => async (dispatch, getState) => {
   try {
     dispatch({ type: SET_LOADING, loading: true });
 
-    const game = getState().game.currentGame;
+    const { currentGame } = getState().game;
 
     const timestamp = moment().toISOString();
-    console.log('[saveMoleSpawn]', timestamp);
 
     await apolloClient.mutate({
       mutation: gql`
@@ -246,7 +217,7 @@ export const saveMoleSpawn = (mole) => async (dispatch, getState) => {
       variables: {
         spawn: {
           moleId: mole.id,
-          gameId: game.id,
+          gameId: currentGame.id,
           cell: mole.cell,
           despawn: false,
           timestamp,
@@ -276,10 +247,10 @@ export const saveMoleDespawn = (mole) => async (dispatch, getState) => {
   try {
     dispatch({ type: SET_LOADING, loading: true });
 
-    const game = getState().game.currentGame;
+    const { currentGame: { id: gameId } } = getState().game;
+    const { id: moleId, cell } = mole;
 
     const timestamp = moment().toISOString();
-    console.log('[saveMoleSpawn]', timestamp);
 
     await apolloClient.mutate({
       mutation: gql`
@@ -293,14 +264,17 @@ export const saveMoleDespawn = (mole) => async (dispatch, getState) => {
       `,
       variables: {
         spawn: {
-          moleId: mole.id,
-          gameId: game.id,
-          cell: mole.cell,
+          moleId: moleId,
+          gameId: gameId,
+          cell: cell,
           despawn: true,
           timestamp,
         },
       },
     });
+
+    console.log('[saveMoleSpawn]', timestamp);
+
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -325,13 +299,14 @@ export const saveWhackHit = (mole) => async (dispatch, getState) => {
 
     const game = getState().game.currentGame;
 
-    const { data } = await apolloClient.mutate({
+    const { data: { saveMoleWhack } } = await apolloClient.mutate({
       mutation: gql`
         mutation saveMoleWhack($whack: WhackInput!) {
           saveMoleWhack(whack: $whack){
             id
-            moleId
             hit
+            cell
+            moleId
           }
         }
       `,
@@ -346,7 +321,7 @@ export const saveWhackHit = (mole) => async (dispatch, getState) => {
       },
     });
 
-    console.log('[saveWhackHit]', data.saveMoleWhack);
+    console.log('[saveWhackHit]', saveMoleWhack);
   } catch (error) {
     dispatch(addAlert({
       type: 'error',
@@ -369,8 +344,6 @@ export const saveWhackHit = (mole) => async (dispatch, getState) => {
 export const saveWhackAttempt = (mole) => async (dispatch, getState) => {
   try {
     dispatch({ type: SET_LOADING, loading: true });
-
-    console.log('[saveWhackAttempt]', mole);
 
     const { currentGame } = getState().game;
 
@@ -412,11 +385,9 @@ export const saveWhackAttempt = (mole) => async (dispatch, getState) => {
  *
  */
 export const whackMole = (cell) => (dispatch, getState) => {
-  console.log('[whackMole ARGUMENT]', cell);
 
   const { moles } = getState().game;
   const whackedMole = moles.find((mole) => mole.cell === cell);
-  console.log('[whackMole]', whackedMole);
 
   // TODO: misses handled by "fullstory" handler in view
   if (whackedMole) {
@@ -506,10 +477,7 @@ export const fetchGameplay = () => async (dispatch, getState) => {
  *
  */
 export const selectGame = (game) => (dispatch) => {
-  dispatch({
-    type: SET_CURRENT_GAME,
-    game,
-  });
+  dispatch({ type: SET_CURRENT_GAME, game });
 };
 
 /**
@@ -555,8 +523,7 @@ export const startReview = () => async (dispatch, getState) => {
     endTime: virtualEndTime,
   };
 
-
-  dispatch({ type: START_GAME, game: virtualGame });
+  dispatch({ type: START_GAME, currentGame: virtualGame });
   dispatch({ type: START_GAME_FINISHED });
 
   const virtualTime = setInterval(() => {

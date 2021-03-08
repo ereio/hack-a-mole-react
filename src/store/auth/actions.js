@@ -99,7 +99,6 @@ export const loginUser = (email, password) => async (dispatch) => {
 
 
     const { loginUser } = data;
-    console.log(data, errors);
 
     if (!loginUser || errors) {
       // eslint-disable-next-line
